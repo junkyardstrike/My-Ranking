@@ -78,11 +78,12 @@ export default function RankingView() {
         </div>
       </div>
 
-      {isEditMode ? (
-        <RankingEditor ranking={ranking} onSave={handleSave} />
-      ) : (
-        <RankingList ranking={ranking} viewMode="list" isCollapsed={isCollapsed} />
-      )}
+      <RankingList 
+        ranking={ranking} 
+        isCollapsed={isCollapsed} 
+        isEditMode={isEditMode}
+        onSave={handleSave}
+      />
     </div>
   );
 }

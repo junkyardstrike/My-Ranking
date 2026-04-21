@@ -4,6 +4,7 @@ import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertC
 
 export default function SettingsView() {
   const rankings = useStore(state => state.rankings) || [];
+  const unrankedItems = useStore(state => state.unrankedItems) || [];
   const folders = useStore(state => state.folders) || [];
   const importData = useStore(state => state.importData);
   const clearData = useStore(state => state.clearData);
@@ -12,7 +13,8 @@ export default function SettingsView() {
   const [status, setStatus] = useState(null); // { type: 'success'|'error', message: string }
   const fileInputRef = useRef(null);
 
-  const totalItems = rankings.reduce((acc, r) => acc + (r.items || []).filter(i => i.title).length, 0);
+  const totalItemsInRankings = rankings.reduce((acc, r) => acc + (r.items || []).filter(i => i.title).length, 0);
+  const totalItems = totalItemsInRankings + unrankedItems.length;
 
   const handleExport = () => {
     const data = { rankings, folders, exportedAt: new Date().toISOString() };
