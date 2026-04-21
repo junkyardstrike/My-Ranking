@@ -50,7 +50,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20 } = liveItem;
 
   const handleUpdate = (updates) => {
-    updateItem(id, updates);
+    if (onUpdate) {
+      onUpdate(id, updates);
+    } else {
+      updateItemStore(id, updates);
+    }
   };
 
   const handleTitleSync = () => {
@@ -80,7 +84,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     try {
       const result = await fetchMetadata(localTitle.trim(), genre);
       if (result) {
-        updateItem(id, { memo: result.memo, author: result.author || author });
+        handleUpdate({ memo: result.memo, author: result.author || author });
         if (result.author) setLocalAuthor(result.author);
       }
     } catch (e) { console.error(e); }
@@ -260,7 +264,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
                   )}
  
-                  {!isSelected && !rankingId && !isGlobalEditMode && (
+                  {!isSelected && !rankingId && (
                     <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
                        {!isAddingToRanking ? (
                          <button onClick={() => setIsAddingToRanking(true)} className="w-full py-4 rounded-[20px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-accent/20 text-xl tracking-tight italic">

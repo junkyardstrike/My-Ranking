@@ -46,7 +46,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   }) || propItem;
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = liveItem;
-  const effectiveGenre = itemGenre || propGenre || 'other';
+  const effectiveGenre = itemGenre || propItem.genre || propGenre || 'music';
 
   // Local states to fix IME bug for lists
   const [localTitle, setLocalTitle] = useState(title || '');
@@ -272,6 +272,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         item={liveItem} 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+        onUpdate={onUpdate}
       />
     </>
   );
