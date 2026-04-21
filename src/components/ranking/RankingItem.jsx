@@ -66,7 +66,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       const reader = new FileReader();
       reader.onloadend = async () => { 
         const compressed = await compressImage(reader.result);
-        onUpdate(item.id, { imageBase64: compressed }); 
+        onUpdate(propItem.id, { imageBase64: compressed }); 
       };
       reader.readAsDataURL(file);
     }
@@ -78,7 +78,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     try {
       const result = await fetchMetadata(localTitle.trim(), effectiveGenre);
       if (result) {
-        onUpdate(item.id, { memo: result.memo, author: result.author || author });
+        onUpdate(propItem.id, { memo: result.memo, author: result.author || author });
         if (result.author) setLocalAuthor(result.author);
         setFetchStatus('success');
       } else { setFetchStatus('error'); }
@@ -90,13 +90,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     if (localTitle !== title) {
       const updates = { title: localTitle };
       if (!createdAt && localTitle.trim() !== '') updates.createdAt = new Date().toISOString();
-      onUpdate(item.id, updates);
+      onUpdate(propItem.id, updates);
     }
   };
 
   const handleAuthorSync = () => {
     if (localAuthor !== author) {
-      onUpdate(item.id, { author: localAuthor });
+      onUpdate(propItem.id, { author: localAuthor });
     }
   };
 
@@ -140,7 +140,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 {renderRankBadge(currentRank)}
                 <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
                   {GENRES.map(g => (
-                    <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}>
+                    <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}>
                       <g.icon size={14} />
                     </button>
                   ))}
@@ -192,7 +192,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   type="date" 
                   value={createdAt ? createdAt.split('T')[0] : ''} 
                   onClick={e => e.stopPropagation()} 
-                  onChange={e => onUpdate(item.id, { createdAt: new Date(e.target.value).toISOString() })} 
+                  onChange={e => onUpdate(propItem.id, { createdAt: new Date(e.target.value).toISOString() })} 
                   className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" 
                 />
               </div>
@@ -202,14 +202,14 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Rating</span>
-                <div className="flex-1 flex justify-center"><ScoreRating rating={rating} onRatingChange={v => onUpdate(item.id, { rating: v })} /></div>
+                <div className="flex-1 flex justify-center"><ScoreRating rating={rating} onRatingChange={v => onUpdate(propItem.id, { rating: v })} /></div>
               </div>
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                  <Eye className="w-3.5 h-3.5 text-blue-500" />
                  <div className="flex items-center gap-2 flex-1">
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { views: Math.max(0, views - 1) }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">-</button>
+                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: Math.max(0, views - 1) }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">-</button>
                     <span className="text-[11px] font-mono font-bold text-white flex-1 text-center">{views}</span>
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { views: views + 1 }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">+</button>
+                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: views + 1 }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">+</button>
                  </div>
               </div>
             </div>
@@ -224,12 +224,12 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   max="32" 
                   value={localFontSize} 
                   onClick={e => e.stopPropagation()}
-                  onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} 
+                  onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(propItem.id, { fontSize: v }); }} 
                   className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" 
                 />
               </div>
-              <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
-              <input type="color" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
+              <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
+              <input type="color" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
             </div>
 
             {/* Image Row */}
