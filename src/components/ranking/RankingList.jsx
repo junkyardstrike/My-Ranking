@@ -86,6 +86,7 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
   };
 
   const handleLocalUpdate = (id, updates) => {
+    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
     updateItem(id, updates);
     setHasChanges(true);
   };
@@ -127,7 +128,7 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
       </DndContext>
 
       {isEditMode && hasChanges && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-10 fade-in duration-300">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[10001] animate-in slide-in-from-bottom-10 fade-in duration-300">
           <button 
             onClick={handleSave}
             className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
