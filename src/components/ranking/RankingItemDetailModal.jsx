@@ -13,7 +13,7 @@ const GENRE_MAP = {
   music: { label: '音楽', icon: Music },
 };
 
-export default function RankingItemDetailModal({ item: propItem, isOpen, onClose }) {
+export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
