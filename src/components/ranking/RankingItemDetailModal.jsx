@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, Type, Sparkles, Loader, Trash2 } from 'lucide-react';
+import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, MoreHorizontal, Type, Sparkles, Loader, Trash2 } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
