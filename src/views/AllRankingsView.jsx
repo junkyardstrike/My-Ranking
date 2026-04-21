@@ -112,7 +112,7 @@ export default function AllRankingsView() {
               item={item}
               isEditMode={isEditMode}
               onUpdate={handleUpdate}
-              genre={item.genre || 'other'}
+              genre={item.genre || 'music'}
             />
           ))}
         </div>
