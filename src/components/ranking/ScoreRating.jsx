@@ -17,12 +17,11 @@ export default function ScoreRating({ rating = 0, onRatingChange, readOnly = fal
       className={`transition-all duration-200 ${readOnly ? 'cursor-default' : 'hover:scale-125 cursor-pointer'}`}
     >
       <Star
-        size={13} 
-        className={`${
-          star <= rating
+        size={13}
+        className={`${star <= rating
             ? 'fill-accent text-accent shadow-accent/50 drop-shadow-[0_0_2px_rgba(212,175,55,0.8)]'
             : 'text-slate-800'
-        }`}
+          }`}
       />
     </button>
   );
