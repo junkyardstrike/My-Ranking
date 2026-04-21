@@ -67,7 +67,7 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
       
       <div className="relative w-full max-w-5xl bg-surface/95 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-2xl flex flex-col h-full sm:h-auto sm:max-h-[92vh] animate-in zoom-in-95 duration-300">
         
-        {/* Header */}
+        {/* Header Control */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/40 backdrop-blur-md">
           <div className="flex items-center gap-4">
              <div onClick={() => setEditMode(!isGlobalEditMode)} className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all">
@@ -83,7 +83,7 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {/* Hero Image - Corner Radius Removed per request */}
+          {/* Hero Image */}
           <div className="relative w-full aspect-video sm:aspect-[21/9] bg-black group">
              {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
@@ -102,10 +102,24 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-surface/95 to-transparent" />
           </div>
 
-          <div className="px-6 pb-12 sm:px-12 -mt-24 relative z-10 space-y-8">
-            {/* Metadata Section - Reordered based on request */}
+          <div className="px-6 pb-12 sm:px-12 -mt-24 relative z-10 space-y-10">
+            {/* Metadata Section - Strictly ordered per user request */}
             <div className="space-y-6">
-               {/* Line 1: Rank & Genre Selector */}
+               {/* 1. Title (TOP PRIORITY) */}
+               <div className="space-y-2">
+                  {isGlobalEditMode ? (
+                    <div className="flex items-center gap-3">
+                       <input type="text" value={title || ''} onChange={e => handleUpdate({ title: e.target.value })} className="flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white text-4xl sm:text-6xl font-black italic tracking-tighter pb-2" placeholder="作品名..." />
+                       <button onClick={handleAutoFetch} disabled={isFetching} className="p-4 rounded-2xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20">
+                          {isFetching ? <Loader size={24} className="animate-spin" /> : <Sparkles size={24} />}
+                       </button>
+                    </div>
+                  ) : (
+                    <h2 className="text-5xl sm:text-7xl font-black text-white leading-[1.1] tracking-tighter italic" style={{ color, textShadow: '0 10px 40px rgba(0,0,0,0.6)' }}>{title || 'Untitled'}</h2>
+                  )}
+               </div>
+
+               {/* 2. Rank & Genre (Line 2) */}
                <div className="flex flex-wrap items-center gap-3">
                   {rankingId && <div className="px-4 py-2 bg-accent text-black font-black text-xs uppercase tracking-widest rounded-xl shadow-xl shadow-accent/20 italic"><Crown size={14} className="inline mr-2" />Rank {currentRank}</div>}
                   
@@ -134,14 +148,14 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                   </div>
                </div>
 
-               {/* Line 2: Author & Date (Moved below Rank/Genre) */}
+               {/* 3. Author & Date (Line 3) */}
                <div className="flex flex-wrap items-center gap-8 pl-1">
                   <div className="flex items-center gap-2.5">
                      <User size={18} className="text-accent" />
                      {isGlobalEditMode ? (
                         <input type="text" value={author || ''} onChange={e => handleUpdate({ author: e.target.value })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-bold text-white outline-none focus:border-accent" placeholder="作者名" />
                      ) : (
-                        <span className="text-slate-400 font-black uppercase tracking-[0.3em] text-[11px]">{author || 'UNKNOWN'}</span>
+                        <span className="text-slate-400 font-black uppercase tracking-[0.3em] text-[11px]">{author || 'UNKNOWN AUTHOR'}</span>
                      )}
                   </div>
                   <div className="flex items-center gap-2.5">
@@ -153,25 +167,11 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                      )}
                   </div>
                </div>
-
-               {/* Line 3: Title */}
-               <div className="space-y-2">
-                  {isGlobalEditMode ? (
-                    <div className="flex items-center gap-3">
-                       <input type="text" value={title || ''} onChange={e => handleUpdate({ title: e.target.value })} className="flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white text-4xl sm:text-6xl font-black italic tracking-tighter pb-2" placeholder="作品名..." />
-                       <button onClick={handleAutoFetch} disabled={isFetching} className="p-4 rounded-2xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20">
-                          {isFetching ? <Loader size={24} className="animate-spin" /> : <Sparkles size={24} />}
-                       </button>
-                    </div>
-                  ) : (
-                    <h2 className="text-5xl sm:text-7xl font-black text-white leading-[1.1] tracking-tighter italic" style={{ color, textShadow: '0 10px 40px rgba(0,0,0,0.6)' }}>{title || 'Untitled'}</h2>
-                  )}
-               </div>
             </div>
 
-            {/* Metrics & Narrative */}
+            {/* 4. Metrics & Narrative (Further down) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-               {/* Left Column: Full-width Metrics */}
+               {/* Left Specs */}
                <div className="lg:col-span-5 space-y-6">
                   <div className="bg-white/5 p-8 rounded-[40px] border border-white/5 space-y-6 shadow-xl">
                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3"><Star size={14} className="text-accent" /> SCORE RATING</p>
@@ -236,7 +236,7 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                   )}
                </div>
 
-               {/* Right Narrative Column */}
+               {/* Right Narrative */}
                <div className="lg:col-span-7 space-y-4 flex flex-col h-full">
                   <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.2em] flex items-center gap-3 px-2"><AlignLeft size={14} /> NARRATIVE & THOUGHTS</p>
                   {isGlobalEditMode ? (

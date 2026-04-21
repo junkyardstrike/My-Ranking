@@ -110,7 +110,7 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
 
   return (
     <>
-      <div className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col ${!isEditMode ? 'cursor-pointer hover:bg-white/5 active:scale-[0.98]' : ''} ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} onClick={() => !isEditMode && setIsModalOpen(true)}>
+      <div className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer hover:bg-white/5 active:scale-[0.98] ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} onClick={() => setIsModalOpen(true)}>
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
             {/* Rank and Genre Select */}
@@ -134,7 +134,7 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
             
             {/* Title & Sparkle */}
             <div className="flex items-center gap-2">
-              <input type="text" value={title || ''} onChange={handleTitleChange} placeholder="作品名を入力..." className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} style={{ color, fontSize: `${localFontSize}px` }} />
+              <input type="text" value={title || ''} onClick={e => e.stopPropagation()} onChange={handleTitleChange} placeholder="作品名を入力..." className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} style={{ color, fontSize: `${localFontSize}px` }} />
               <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!title?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}>
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
@@ -144,11 +144,11 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <User className="w-3.5 h-3.5 text-accent" />
-                <input type="text" value={author || ''} onChange={e => onUpdate(item.id, { author: e.target.value })} placeholder="作者名" className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
+                <input type="text" value={author || ''} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { author: e.target.value })} placeholder="作者名" className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
               </div>
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <Calendar className="w-3.5 h-3.5 text-emerald-500" />
-                <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => onUpdate(item.id, { createdAt: new Date(e.target.value).toISOString() })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
+                <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { createdAt: new Date(e.target.value).toISOString() })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
               </div>
             </div>
 
@@ -175,7 +175,7 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
                 <input type="range" min="12" max="32" value={localFontSize} onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" />
               </div>
               <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
-              <input type="color" value={color} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
+              <input type="color" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
             </div>
 
             {/* Image Upload Area */}

@@ -1,7 +1,7 @@
 import { useStore } from '../store/useStore';
 import { useState, useMemo } from 'react';
 import RankingItem from '../components/ranking/RankingItem';
-import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, Hash } from 'lucide-react';
+import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, Hash, Save } from 'lucide-react';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -20,6 +20,7 @@ export default function AllRankingsView() {
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
+  const [hasChanges, setHasChanges] = useState(false);
   
   const filteredItems = useMemo(() => {
     return allItems
@@ -32,6 +33,17 @@ export default function AllRankingsView() {
       })
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
   }, [allItems, searchQuery, selectedGenre]);
+
+  const handleUpdate = (id, updates) => {
+    updateItem(id, updates);
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    setHasChanges(false);
+    // Zustand store persists to localStorage automatically in this app's current setup
+    alert('変更を保存しました。');
+  };
 
   return (
     <div className="animate-in fade-in duration-500 pb-32">
@@ -99,10 +111,23 @@ export default function AllRankingsView() {
               key={item.id}
               item={item}
               isEditMode={isEditMode}
-              onUpdate={(itemId, updates) => updateItem(itemId, updates)}
+              onUpdate={handleUpdate}
               genre={item.genre || 'other'}
             />
           ))}
+        </div>
+      )}
+
+      {/* Floating Save Button for Records Tab */}
+      {isEditMode && hasChanges && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-300">
+          <button 
+            onClick={handleSave}
+            className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
+          >
+            <Save className="w-6 h-6" />
+            変更を保存
+          </button>
         </div>
       )}
     </div>

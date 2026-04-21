@@ -175,30 +175,22 @@ export const useStore = create((set, get) => ({
   // Unified Update Action for any item
   updateItem: (itemId, updates) => {
     set(state => {
-      // 1. Try finding in rankings
-      let foundInRanking = false;
-      const rankings = state.rankings.map(r => {
-        const itemIdx = r.items.findIndex(i => i.id === itemId);
-        if (itemIdx !== -1) {
-          foundInRanking = true;
-          const newItems = [...r.items];
-          newItems[itemIdx] = { ...newItems[itemIdx], ...updates };
-          return { ...r, items: newItems };
-        }
-        return r;
-      });
+      // Update in rankings
+      const newRankings = state.rankings.map(r => ({
+        ...r,
+        items: r.items.map(item => item.id === itemId ? { ...item, ...updates } : item)
+      }));
 
-      if (foundInRanking) {
-        saveData('rankings', rankings);
-        return { rankings };
-      }
-
-      // 2. Try finding in unrankedItems
-      const unrankedItems = state.unrankedItems.map(i => 
-        i.id === itemId ? { ...i, ...updates } : i
+      // Update in unrankedItems
+      const newUnrankedItems = state.unrankedItems.map(item => 
+        item.id === itemId ? { ...item, ...updates } : item
       );
-      saveData('unrankedItems', unrankedItems);
-      return { unrankedItems };
+
+      // Save both
+      saveData('rankings', newRankings);
+      saveData('unrankedItems', newUnrankedItems);
+
+      return { rankings: newRankings, unrankedItems: newUnrankedItems };
     });
   },
 
