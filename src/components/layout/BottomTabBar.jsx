@@ -15,11 +15,17 @@ export default function BottomTabBar() {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const activeTab = TABS.find(t => t.path && t.path !== '/' && location.pathname.startsWith(t.path))?.id
-    || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null);
+  const activeTab = searchOpen ? 'search' : (
+    TABS.find(t => t.path && t.path !== '/' && location.pathname.startsWith(t.path))?.id
+    || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null)
+  );
 
   const handleTab = (tab) => {
-    if (tab.id === 'search') { setSearchOpen(true); return; }
+    if (tab.id === 'search') { 
+      setSearchOpen(true); 
+      return; 
+    }
+    setSearchOpen(false);
     navigate(tab.path);
   };
 
