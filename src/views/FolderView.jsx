@@ -77,8 +77,13 @@ function DroppableFolder({ folder, rankings }) {
   const isEditMode = useStore(state => state.isEditMode);
   const updateFolder = useStore(state => state.updateFolder);
 
-  const { isOver, setNodeRef } = useDroppable({
+  const { isOver, setNodeRef: setDroppableRef } = useDroppable({
     id: folder.id,
+  });
+
+  const { attributes, listeners, setNodeRef: setDraggableRef, transform, isDragging } = useDraggable({
+    id: folder.id,
+    disabled: !isEditMode
   });
 
   const handleImageUpload = (e) => {
@@ -94,10 +99,24 @@ function DroppableFolder({ folder, rankings }) {
 
   const coverImage = getFolderCoverImage(folder, rankings);
 
+  const style = transform ? {
+    transform: CSS.Translate.toString(transform),
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  } : undefined;
+
+  // Use a combined ref for both draggable and droppable
+  const setCombinedRef = (node) => {
+    setDroppableRef(node);
+    setDraggableRef(node);
+  };
+
   return (
     <div 
-      ref={isEditMode ? setNodeRef : null}
+      ref={isEditMode ? setCombinedRef : null}
+      style={style}
       className={`group relative overflow-hidden bg-surface rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-lg border block w-full h-full min-h-[160px] ${
+        isDragging ? 'scale-[1.02] shadow-2xl z-50' :
         isOver 
           ? 'border-accent bg-accent/20 scale-[1.02] shadow-[0_0_20px_rgba(59,130,246,0.3)] z-10' 
           : 'border-white/5 hover:border-white/20 hover:bg-surface-light hover:-translate-y-1'
@@ -106,6 +125,16 @@ function DroppableFolder({ folder, rankings }) {
       <Link to={`/folder/${folder.id}`} className="absolute inset-0 z-10" />
       
       {isEditMode && <ActionButtons id={folder.id} name={folder.name} type="folder" />}
+
+      {isEditMode && (
+        <div 
+          {...listeners} 
+          {...attributes} 
+          className="absolute top-3 right-3 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
+        >
+          <GripVertical className="w-5 h-5" />
+        </div>
+      )}
 
       {coverImage && (
          <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
@@ -225,8 +254,13 @@ function RootFolderCard({ folder, rankings }) {
   const updateFolder = useStore(state => state.updateFolder);
   const isEditMode = useStore(state => state.isEditMode);
 
-  const { isOver, setNodeRef } = useDroppable({
+  const { isOver, setNodeRef: setDroppableRef } = useDroppable({
     id: folder.id,
+  });
+
+  const { attributes, listeners, setNodeRef: setDraggableRef, transform, isDragging } = useDraggable({
+    id: folder.id,
+    disabled: !isEditMode
   });
 
   const handleImageUpload = (e) => {
@@ -242,10 +276,23 @@ function RootFolderCard({ folder, rankings }) {
 
   const coverImage = getFolderCoverImage(folder, rankings);
 
+  const style = transform ? {
+    transform: CSS.Translate.toString(transform),
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  } : undefined;
+
+  const setCombinedRef = (node) => {
+    setDroppableRef(node);
+    setDraggableRef(node);
+  };
+
   return (
     <div 
-      ref={isEditMode ? setNodeRef : null}
+      ref={isEditMode ? setCombinedRef : null}
+      style={style}
       className={`group relative overflow-hidden rounded-2xl w-full h-48 sm:h-56 transition-all duration-500 shadow-2xl border block ${
+        isDragging ? 'scale-[1.02] shadow-2xl z-50 opacity-50' :
         isOver 
           ? 'border-accent scale-[1.02] shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10' 
           : 'border-white/10 hover:border-white/30 hover:-translate-y-1'
@@ -254,6 +301,16 @@ function RootFolderCard({ folder, rankings }) {
       <Link to={`/folder/${folder.id}`} className="absolute inset-0 z-10" />
       
       {isEditMode && <ActionButtons id={folder.id} name={folder.name} type="folder" />}
+
+      {isEditMode && (
+        <div 
+          {...listeners} 
+          {...attributes} 
+          className="absolute top-3 right-3 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
+        >
+          <GripVertical className="w-5 h-5" />
+        </div>
+      )}
 
       {coverImage ? (
         <img src={coverImage} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 z-0" />

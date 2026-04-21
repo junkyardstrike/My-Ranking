@@ -13,6 +13,9 @@ export default function AppLayout() {
   const isEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const moveRanking = useStore(state => state.moveRanking);
+  const moveFolder = useStore(state => state.moveFolder);
+  const folders = useStore(state => state.folders);
+  const rankings = useStore(state => state.rankings);
 
   useEffect(() => { init(); }, [init]);
 
@@ -23,7 +26,18 @@ export default function AppLayout() {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (over && active.id !== over.id) moveRanking(active.id, over.id);
+    if (!over || active.id === over.id) return;
+
+    // Check if moving folders
+    const isActiveFolder = folders.some(f => f.id === active.id);
+    const isOverFolder = folders.some(f => f.id === over.id);
+
+    if (isActiveFolder && isOverFolder) {
+      moveFolder(active.id, over.id);
+    } else {
+      // Otherwise assume ranking move
+      moveRanking(active.id, over.id);
+    }
   };
 
   if (!isInitialized) {

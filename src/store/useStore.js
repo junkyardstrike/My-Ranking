@@ -249,6 +249,21 @@ export const useStore = create((set, get) => ({
     });
   },
 
+  moveFolder: (activeId, overId) => {
+    set((state) => {
+      const oldIndex = state.folders.findIndex(f => f.id === activeId);
+      const newIndex = state.folders.findIndex(f => f.id === overId);
+      if (oldIndex === -1 || newIndex === -1) return state;
+      
+      const newFolders = [...state.folders];
+      const [moved] = newFolders.splice(oldIndex, 1);
+      newFolders.splice(newIndex, 0, moved);
+      
+      saveData('folders', newFolders);
+      return { folders: newFolders };
+    });
+  },
+
   importData: async (data) => {
     const { rankings = [], folders = [], unrankedItems = [] } = data;
     set({ rankings, folders, unrankedItems, isInitialized: true });
