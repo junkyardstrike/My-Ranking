@@ -49,7 +49,7 @@ export const useStore = create((set, get) => ({
   isInitialized: false,
   folders: [], 
   rankings: [], 
-  unrankedItems: [], // New: Store for items not in any specific ranking yet
+  unrankedItems: [], 
   isEditMode: false,
   viewMode: 'list', 
   currentFolderId: null,
@@ -64,13 +64,22 @@ export const useStore = create((set, get) => ({
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
   setEditMode: (mode) => set({ isEditMode: mode }),
   
-  // ALL Tab Data Helper: Returns all items from all rankings + unranked ones
   getAllItems: () => {
     const state = get();
     const rankedItems = state.rankings.flatMap(r => 
-      (r.items || []).filter(item => item.title).map(item => ({ ...item, rankingId: r.id, isSelected: true }))
+      (r.items || []).filter(item => item.title).map(item => ({ 
+        ...item, 
+        rankingId: r.id, 
+        isSelected: true,
+        rankingTitle: r.title,
+        genre: item.genre || r.genre || 'other'
+      }))
     );
-    return [...rankedItems, ...state.unrankedItems.map(item => ({ ...item, isSelected: false }))];
+    return [...rankedItems, ...state.unrankedItems.map(item => ({ 
+      ...item, 
+      isSelected: false,
+      genre: item.genre || 'other'
+    }))];
   },
 
   addFolder: async (name, parentId = null) => {
@@ -97,16 +106,6 @@ export const useStore = create((set, get) => ({
       saveData('folders', folders);
       return { folders };
     });
-    if (updates.name) {
-      const englishName = await translateToEnglish(updates.name);
-      if (englishName) {
-        set((state) => {
-          const folders = state.folders.map(f => f.id === id ? { ...f, englishName: englishName.toUpperCase() } : f);
-          saveData('folders', folders);
-          return { folders };
-        });
-      }
-    }
   },
 
   deleteFolder: (id) => {
@@ -119,7 +118,7 @@ export const useStore = create((set, get) => ({
 
   addRanking: async (title, folderId = null, genre = 'other') => {
     const initialItems = Array.from({ length: 100 }, (_, i) => ({
-      id: generateId(), currentRank: i + 1, previousRanks: [], title: '', color: '#ffffff', fontSize: 20, imageBase64: null, memo: '', createdAt: null, author: '', isBold: false, views: 0, rating: 0
+      id: generateId(), currentRank: i + 1, previousRanks: [], title: '', color: '#ffffff', fontSize: 20, imageBase64: null, memo: '', createdAt: null, author: '', isBold: false, views: 0, rating: 0, genre
     }));
     const id = generateId();
     const newRanking = { id, folderId, title, englishName: '', coverImageBase64: null, genre, items: initialItems };
@@ -173,7 +172,36 @@ export const useStore = create((set, get) => ({
     });
   },
 
-  // Record a standalone item (作品を記録)
+  // Unified Update Action for any item
+  updateItem: (itemId, updates) => {
+    set(state => {
+      // 1. Try finding in rankings
+      let foundInRanking = false;
+      const rankings = state.rankings.map(r => {
+        const itemIdx = r.items.findIndex(i => i.id === itemId);
+        if (itemIdx !== -1) {
+          foundInRanking = true;
+          const newItems = [...r.items];
+          newItems[itemIdx] = { ...newItems[itemIdx], ...updates };
+          return { ...r, items: newItems };
+        }
+        return r;
+      });
+
+      if (foundInRanking) {
+        saveData('rankings', rankings);
+        return { rankings };
+      }
+
+      // 2. Try finding in unrankedItems
+      const unrankedItems = state.unrankedItems.map(i => 
+        i.id === itemId ? { ...i, ...updates } : i
+      );
+      saveData('unrankedItems', unrankedItems);
+      return { unrankedItems };
+    });
+  },
+
   recordItem: (data) => {
     const newItem = {
       id: generateId(),
@@ -187,7 +215,8 @@ export const useStore = create((set, get) => ({
       fontSize: 20,
       color: '#ffffff',
       isBold: false,
-      previousRanks: []
+      previousRanks: [],
+      genre: data.genre || 'other'
     };
     set(state => {
       const unrankedItems = [newItem, ...state.unrankedItems];
@@ -197,42 +226,16 @@ export const useStore = create((set, get) => ({
     return newItem;
   },
 
-  // Move an item into a ranking and push out existing ones
   insertItemIntoRanking: (targetRankingId, itemToInsert, targetRank) => {
     set(state => {
       const ranking = state.rankings.find(r => r.id === targetRankingId);
       if (!ranking) return state;
-
-      let newItems = [...ranking.items];
-      // Prepare the item for ranking
-      const itemToRank = { ...itemToInsert, currentRank: targetRank };
-      
-      // The push-out logic:
-      // 1. Remove the empty slot/old item at targetRank
-      // 2. Insert the new item
-      // 3. Re-index everything from that point onwards
-      const index = targetRank - 1;
-      
-      // Filter out this item if it was already in this ranking (to prevent duplicates)
-      newItems = newItems.filter(i => i.id !== itemToInsert.id);
-      
-      // Actually we want to keep the 100-item limit usually, 
-      // but let's just insert and shift.
-      newItems.splice(index, 0, itemToRank);
-      
-      // Re-calculate all ranks
-      const finalItems = newItems.map((item, i) => ({
-        ...item,
-        currentRank: i + 1
-      })).slice(0, 100); // Keep top 100
-
-      const rankings = state.rankings.map(r => 
-        r.id === targetRankingId ? { ...r, items: finalItems } : r
-      );
-
-      // Also remove from unranked if it was there
+      const itemToRank = { ...itemToInsert, currentRank: targetRank, genre: itemToInsert.genre || ranking.genre };
+      let newItems = [...ranking.items].filter(i => i.id !== itemToInsert.id);
+      newItems.splice(targetRank - 1, 0, itemToRank);
+      const finalItems = newItems.map((item, i) => ({ ...item, currentRank: i + 1 })).slice(0, 100);
+      const rankings = state.rankings.map(r => r.id === targetRankingId ? { ...r, items: finalItems } : r);
       const unrankedItems = state.unrankedItems.filter(i => i.id !== itemToInsert.id);
-      
       saveData('rankings', rankings);
       saveData('unrankedItems', unrankedItems);
       return { rankings, unrankedItems };
@@ -240,9 +243,7 @@ export const useStore = create((set, get) => ({
   },
 
   importData: async (data) => {
-    const rankings = data.rankings || [];
-    const folders = data.folders || [];
-    const unrankedItems = data.unrankedItems || [];
+    const { rankings = [], folders = [], unrankedItems = [] } = data;
     set({ rankings, folders, unrankedItems, isInitialized: true });
     await saveData('rankings', rankings);
     await saveData('folders', folders);
