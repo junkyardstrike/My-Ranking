@@ -10,7 +10,7 @@ const GENRE_MAP = {
   manga: { label: '漫画', icon: BookOpen },
   movie: { label: '映画', icon: Film },
   drama: { label: 'ドラマ', icon: Clapperboard },
-  other: { label: '他', icon: MoreHorizontal },
+  music: { label: '音楽', icon: Music },
 };
 
 export default function RankingItemDetailModal({ item: propItem, isOpen, onClose }) {
@@ -218,84 +218,84 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
             </div>
 
             {/* 3. Metrics & Content (Bottom Section) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 pt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                {/* Left Specs */}
-               <div className="lg:col-span-5 space-y-10">
-                  <div className="bg-white/5 p-12 rounded-[56px] border border-white/5 space-y-10 shadow-2xl">
-                     <div className="space-y-6">
-                        <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"><Star size={14} className="text-accent" /> SCORE RATING</p>
-                        <div className="flex justify-center py-2">
+               <div className="lg:col-span-5 space-y-4">
+                  <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 flex items-center justify-around shadow-lg">
+                     <div className="space-y-2 text-center">
+                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
+                        <div className="flex justify-center scale-90 origin-center">
                            <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                         </div>
                      </div>
                      
-                     <div className="h-px bg-white/5 w-1/3 mx-auto" />
-
-                     <div className="space-y-6">
-                        <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3"><Eye size={14} className="text-blue-500" /> INTERACTION VIEWS</p>
+                     <div className="w-px h-10 bg-white/10" />
+ 
+                     <div className="space-y-2 text-center">
+                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> VIEWS</p>
                         {isGlobalEditMode ? (
-                           <div className="flex items-center gap-8 justify-center">
-                              <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-14 h-14 bg-white/5 rounded-2xl border border-white/10 text-white text-2xl font-bold hover:bg-white/10 transition-all">-</button>
-                              <span className="text-center font-mono font-black text-5xl tracking-tighter w-24">{views}</span>
-                              <button onClick={() => handleUpdate({ views: views + 1 })} className="w-14 h-14 bg-white/5 rounded-2xl border border-white/10 text-white text-2xl font-bold hover:bg-white/10 transition-all">+</button>
+                           <div className="flex items-center gap-4 justify-center">
+                              <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-8 h-8 bg-white/5 rounded-lg border border-white/10 text-white text-lg font-bold hover:bg-white/10 transition-all">-</button>
+                              <span className="text-center font-mono font-black text-2xl tracking-tighter w-12">{views}</span>
+                              <button onClick={() => handleUpdate({ views: views + 1 })} className="w-8 h-8 bg-white/5 rounded-lg border border-white/10 text-white text-lg font-bold hover:bg-white/10 transition-all">+</button>
                            </div>
                         ) : (
-                           <p className="text-7xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
+                           <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
                         )}
                      </div>
                   </div>
-
+ 
                   {isGlobalEditMode && (
-                     <div className="bg-white/5 p-12 rounded-[56px] border border-white/5 space-y-12 shadow-2xl">
-                        <div className="space-y-6">
-                           <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.3em] flex items-center gap-3"><Type size={16} /> TEXT STYLING</p>
-                           <div className="flex items-center gap-8">
-                              <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-2 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
-                              <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-14 h-14 rounded-2xl bg-transparent border-none cursor-pointer shadow-2xl hover:scale-110 transition-transform" />
+                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
+                        <div className="flex items-center justify-between gap-4">
+                           <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> STYLE</p>
+                           <div className="flex items-center gap-4 flex-1">
+                              <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
+                              <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-8 h-8 rounded-lg bg-transparent border-none cursor-pointer" />
                            </div>
                         </div>
-                        <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-7 rounded-[32px] border font-black text-[12px] tracking-[0.4em] transition-all ${isBold ? 'bg-accent text-black border-accent shadow-2xl shadow-accent/30' : 'bg-white/5 text-slate-600 border-white/10'}`}>
-                           BOLD FONT: {isBold ? 'ACTIVE' : 'INACTIVE'}
+                        <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-3 rounded-xl border font-black text-[10px] tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-600 border-white/10'}`}>
+                           BOLD FONT: {isBold ? 'ON' : 'OFF'}
                         </button>
                      </div>
                   )}
-
+ 
                   {!isSelected && !rankingId && !isGlobalEditMode && (
-                    <div className="bg-accent/10 border border-accent/20 p-12 rounded-[64px] space-y-10 shadow-[0_20px_80px_rgba(0,0,0,0.5)]">
+                    <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
                        {!isAddingToRanking ? (
-                         <button onClick={() => setIsAddingToRanking(true)} className="w-full py-8 rounded-[40px] bg-accent text-black font-black flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/40 text-3xl tracking-tighter italic">
-                            <ListPlus size={36} /> ADD TO RANKING
+                         <button onClick={() => setIsAddingToRanking(true)} className="w-full py-4 rounded-[20px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-accent/20 text-xl tracking-tight italic">
+                            <ListPlus size={24} /> ADD TO RANKING
                          </button>
                        ) : (
-                         <div className="space-y-6 animate-in slide-in-from-bottom-8">
-                           <div className="grid grid-cols-1 gap-4">
-                              <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-[28px] px-8 py-6 text-white font-bold outline-none focus:border-accent appearance-none text-xl shadow-inner">
-                                 <option value="">追加先のランキングを選択...</option>
+                         <div className="space-y-4 animate-in slide-in-from-bottom-4">
+                           <div className="grid grid-cols-1 gap-2">
+                              <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-accent appearance-none text-sm">
+                                 <option value="">Select Ranking...</option>
                                  {rankings.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
                               </select>
                               <div className="relative">
-                                 <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-[28px] px-8 py-6 text-white font-black outline-none focus:border-accent text-3xl shadow-inner" placeholder="Position" />
-                                 <span className="absolute right-8 top-1/2 -translate-y-1/2 text-[12px] font-black text-slate-500 uppercase tracking-widest">Rank Pos</span>
+                                 <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-black outline-none focus:border-accent text-lg" placeholder="Pos" />
+                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-500 uppercase tracking-widest">Rank</span>
                               </div>
                            </div>
-                           <div className="flex gap-6 pt-4">
-                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-6 text-slate-500 font-black uppercase text-sm tracking-[0.3em] hover:text-white transition-colors">Cancel</button>
-                              <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-6 rounded-[32px] bg-accent text-black font-black flex items-center justify-center gap-4 disabled:opacity-30 tracking-tight text-2xl shadow-2xl">INSERT NOW <ArrowRight size={28} /></button>
+                           <div className="flex gap-4 pt-2">
+                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-slate-600 font-black uppercase text-[10px] tracking-widest">Cancel</button>
+                              <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-3 rounded-xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-30 tracking-tight text-sm shadow-lg">INSERT NOW <ArrowRight size={18} /></button>
                            </div>
                          </div>
                        )}
                     </div>
                   )}
                </div>
-
+ 
                {/* Right Narrative Section */}
-               <div className="lg:col-span-7 space-y-6 flex flex-col h-full">
-                  <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.3em] flex items-center gap-3 px-2"><AlignLeft size={16} /> NARRATIVE & THOUGHTS</p>
+               <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
+                  <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2 px-1"><AlignLeft size={12} /> NARRATIVE</p>
                   {isGlobalEditMode ? (
-                     <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-16 rounded-[64px] border border-white/5 text-slate-300 text-2xl min-h-[600px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="作品への熱い想いや記録を残しましょう..." />
+                     <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-300 text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
                   ) : (
-                     <div className="flex-1 bg-white/5 p-16 rounded-[64px] border border-white/5 text-slate-300 text-2xl leading-relaxed italic shadow-inner min-h-[500px] whitespace-pre-wrap custom-scrollbar">
-                        {memo || <span className="opacity-10 text-7xl not-italic font-black">NO NARRATIVE RECORDED.</span>}
+                     <div className="flex-1 bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-400 text-base leading-relaxed italic shadow-inner min-h-[150px] whitespace-pre-wrap custom-scrollbar">
+                        {memo || <span className="opacity-10 text-3xl not-italic font-black">NO NARRATIVE.</span>}
                      </div>
                   )}
                </div>

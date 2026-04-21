@@ -59,7 +59,7 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
   useEffect(() => {
     setItems(ranking.items);
     setHasChanges(false);
-  }, [ranking.items]);
+  }, [ranking.id]); // Only reset when switching rankings, not items
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),

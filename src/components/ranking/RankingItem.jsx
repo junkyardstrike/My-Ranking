@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
-import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, ChevronRight } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, ChevronRight } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -10,7 +10,7 @@ const GENRES = [
   { id: 'manga', label: '漫画', icon: BookOpen },
   { id: 'movie', label: '映画', icon: Film },
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
-  { id: 'other', label: '他', icon: MoreHorizontal },
+  { id: 'music', label: '音楽', icon: Music },
 ];
 
 const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
