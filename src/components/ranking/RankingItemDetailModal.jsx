@@ -43,7 +43,16 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const liveItem = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
     const allUnranked = state.unrankedItems || [];
-    return [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
+    const found = [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
+    if (found) {
+      return { 
+        ...found, 
+        isSelected: propItem?.isSelected || found.isSelected,
+        rankingId: propItem?.rankingId || found.rankingId,
+        rankingTitle: propItem?.rankingTitle || found.rankingTitle
+      };
+    }
+    return found;
   }) || propItem;
 
   const [isAddingToRanking, setIsAddingToRanking] = useState(false);
@@ -192,8 +201,16 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
             </div>
 
             <div className="flex flex-col gap-3">
-               <div className="flex flex-wrap items-center gap-3">
-                  {rankingId && <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2"><Crown size={14} />Rank {currentRank}</div>}
+                <div className="flex flex-wrap items-center gap-3">
+                  {rankingId ? (
+                    <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
+                      <Crown size={14} /> Rank {currentRank}
+                    </div>
+                  ) : isSelected && (
+                    <div className="px-4 py-2 bg-accent/20 border border-accent/30 text-accent font-black text-[10px] uppercase tracking-widest rounded-lg shadow-sm italic flex items-center gap-2">
+                      <Crown size={14} /> 選出済み
+                    </div>
+                  )}
                   
                   <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 flex items-center gap-0.5">
                      {isGlobalEditMode ? (

@@ -42,7 +42,17 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const liveItem = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
     const allUnranked = state.unrankedItems || [];
-    return [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
+    const found = [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
+    if (found) {
+      // Preserve isSelected and rankingId from prop if they exist (passed from getAllItems)
+      return { 
+        ...found, 
+        isSelected: propItem.isSelected || found.isSelected,
+        rankingId: propItem.rankingId || found.rankingId,
+        rankingTitle: propItem.rankingTitle || found.rankingTitle
+      };
+    }
+    return found;
   }) || propItem;
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = liveItem;
@@ -252,6 +262,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: isCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
                 {!isCollapsed && (
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    {isSelected && !rankingId && (
+                      <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
+                        <Crown size={8} /> 選出済み
+                      </span>
+                    )}
                     {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
                     {rating > 0 && <div className="scale-75 origin-left -ml-1"><ScoreRating rating={rating} readOnly /></div>}
                     {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
