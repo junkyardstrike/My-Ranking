@@ -1,7 +1,7 @@
 import { useStore } from '../store/useStore';
 import { useState, useMemo } from 'react';
 import RankingItem from '../components/ranking/RankingItem';
-import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, Hash, Save } from 'lucide-react';
+import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Hash, Save } from 'lucide-react';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -9,7 +9,7 @@ const GENRE_FILTERS = [
   { id: 'manga', label: '漫画', icon: BookOpen },
   { id: 'movie', label: '映画', icon: Film },
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
-  { id: 'other', label: '他', icon: MoreHorizontal },
+  { id: 'music', label: '音楽', icon: Music },
 ];
 
 export default function AllRankingsView() {

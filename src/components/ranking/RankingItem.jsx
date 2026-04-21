@@ -242,31 +242,29 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             </div>
           </div>
         ) : (
-          <div className={`flex flex-row items-stretch ${isCollapsed ? 'min-h-[52px]' : 'min-h-[104px]'}`}>
-            <div className={`flex-1 flex flex-row min-w-0 gap-4 ${isCollapsed ? 'p-3 items-center' : 'p-4'}`}>
+          <div className={`flex flex-row items-stretch ${isCollapsed ? 'min-h-[44px]' : 'min-h-[84px]'}`}>
+            <div className={`flex-1 flex flex-row min-w-0 gap-3 ${isCollapsed ? 'p-2 items-center' : 'p-3'}`}>
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: isCollapsed ? '14px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
+                <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: isCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
                 {!isCollapsed && (
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-2">
-                    {author && <span className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-3 h-3 text-accent" />{author}</span>}
-                    {rating > 0 && <ScoreRating rating={rating} readOnly />}
-                    {views > 0 && <span className="flex items-center gap-1 text-[10px] text-slate-500 font-mono"><Eye className="w-3 h-3 text-blue-500" />{views}</span>}
-                    {formattedDate && <span className="flex items-center gap-1 text-[10px] text-slate-500"><Calendar className="w-3 h-3 text-emerald-500" />{formattedDate}</span>}
-                    {isSelected && <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[8px] font-black tracking-[0.2em] border border-emerald-500/25 uppercase">Selected</span>}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                    {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
+                    {rating > 0 && <div className="scale-75 origin-left -ml-1"><ScoreRating rating={rating} readOnly /></div>}
+                    {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
+                    {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                   </div>
                 )}
-                {isCollapsed && author && <p className="text-[10px] text-slate-600 font-bold truncate mt-1">{author}</p>}
               </div>
             </div>
             {!isCollapsed && imageBase64 && (
-              <div className="flex-shrink-0 p-3 flex items-center">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black">
+              <div className="flex-shrink-0 p-2 flex items-center">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                   <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
                 </div>
               </div>
             )}
-            <div className="flex items-center pr-3 text-slate-800"><ChevronRight size={16} /></div>
+            <div className="flex items-center pr-2 text-slate-800"><ChevronRight size={14} /></div>
           </div>
         )}
       </div>
