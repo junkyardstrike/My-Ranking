@@ -1,37 +1,32 @@
 import { Star } from 'lucide-react';
 
-/**
- * 10-point Star rating component.
- */
 export default function ScoreRating({ rating = 0, onRatingChange, readOnly = false }) {
+  // 10-point scale (0 to 10)
+  const stars = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <div className="flex items-center gap-0.5">
-      {[...Array(10)].map((_, i) => {
-        const val = i + 1;
-        const filled = rating >= val;
-        return (
-          <button
-            key={i}
-            type="button"
-            disabled={readOnly}
-            onClick={readOnly ? undefined : () => onRatingChange(rating === val ? 0 : val)}
-            className={`
-              transition-all duration-150
-              ${readOnly ? 'cursor-default' : 'cursor-pointer hover:scale-125'}
-              ${filled ? 'text-accent drop-shadow-[0_0_3px_rgba(212,175,55,0.4)]' : 'text-slate-700 hover:text-accent/40'}
-            `}
-          >
-            <Star 
-              className={readOnly ? 'w-2.5 h-2.5' : 'w-3.5 h-3.5'} 
-              fill={filled ? 'currentColor' : 'none'} 
-              strokeWidth={filled ? 0 : 2}
-            />
-          </button>
-        );
-      })}
-      {rating > 0 && (
-        <span className="ml-1.5 text-[10px] font-black text-accent font-mono leading-none">{rating}<span className="text-[8px] opacity-60 ml-0.5">/10</span></span>
-      )}
+      {stars.map((star) => (
+        <button
+          key={star}
+          type="button"
+          disabled={readOnly}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!readOnly && onRatingChange) onRatingChange(star);
+          }}
+          className={`transition-all duration-200 ${readOnly ? 'cursor-default' : 'hover:scale-125 cursor-pointer'}`}
+        >
+          <Star
+            size={11} // Slightly smaller to ensure fit
+            className={`${
+              star <= rating
+                ? 'fill-accent text-accent shadow-accent/50 drop-shadow-[0_0_2px_rgba(212,175,55,0.8)]'
+                : 'text-slate-800'
+            }`}
+          />
+        </button>
+      ))}
     </div>
   );
 }
