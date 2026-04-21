@@ -13,12 +13,32 @@ const GENRE_MAP = {
   music: { label: '音楽', icon: Music },
 };
 
+const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+  });
+};
+
 export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
-  const updateItem = useStore(state => state.updateItem);
+  const updateItemStore = useStore(state => state.updateItem);
 
   const liveItem = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
@@ -94,14 +114,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
   const GenreIcon = genreInfo.icon;
 
-  // Portal to body to ensure it's above everything including fixed navigation bars
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-black/98 backdrop-blur-3xl" onClick={onClose} />
       
       <div className="relative w-full max-w-5xl bg-surface/98 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
         
-        {/* Top Control Bar */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-30">
           <div className="flex items-center gap-4">
              <div onClick={() => setEditMode(!isGlobalEditMode)} className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all">
@@ -117,29 +135,28 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          {/* Hero Image Section */}
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
              {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
-                <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 backdrop-blur-sm">
+                <label className="absolute inset-0 bg-black/60 opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 backdrop-blur-sm">
                    <div className="bg-white text-black px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.3em] shadow-2xl">画像を更新</div>
                    <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                       const file = e.target.files[0];
                       if (file) {
                         const reader = new FileReader();
-                        reader.onloadend = () => handleUpdate({ imageBase64: reader.result });
+                        reader.onloadend = async () => {
+                          const compressed = await compressImage(reader.result);
+                          handleUpdate({ imageBase64: compressed });
+                        };
                         reader.readAsDataURL(file);
                       }
                    }} />
                 </label>
              )}
-             {/* Gradient for title contrast - adjusted for better overlap */}
              <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-surface/100 via-surface/40 to-transparent" />
           </div>
 
-          {/* Content Area - Adjusted overlap and tight spacing */}
           <div className="px-6 pb-12 sm:px-12 -mt-16 relative z-10 space-y-4">
-            {/* 1. Title (Overlapping image bottom) */}
             <div className="mb-2">
                {isGlobalEditMode ? (
                  <div className="flex items-center gap-3">
@@ -161,9 +178,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                )}
             </div>
 
-            {/* 2. Meta Info (Tight layout) */}
             <div className="flex flex-col gap-3">
-               {/* Rank & Genre Row */}
                <div className="flex flex-wrap items-center gap-3">
                   {rankingId && <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2"><Crown size={14} />Rank {currentRank}</div>}
                   
@@ -192,7 +207,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   </div>
                </div>
 
-               {/* Author & Date Row (Tightened) */}
                <div className="flex flex-wrap items-center gap-6 pl-1">
                   <div className="flex items-center gap-2">
                      <User size={16} className="text-accent/60" />
@@ -221,9 +235,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                </div>
             </div>
 
-            {/* 3. Metrics & Content (Bottom Section) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
-               {/* Left Specs */}
                <div className="lg:col-span-5 space-y-4">
                   <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 flex items-center justify-around shadow-lg">
                      <div className="space-y-2 text-center">
@@ -234,7 +246,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
                      
                      <div className="w-px h-10 bg-white/10" />
- 
+
                      <div className="space-y-2 text-center">
                         <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> VIEWS</p>
                         {isGlobalEditMode ? (
@@ -248,7 +260,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         )}
                      </div>
                   </div>
- 
+
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
@@ -263,7 +275,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         </button>
                      </div>
                   )}
- 
+
                   {!isSelected && !rankingId && (
                     <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
                        {!isAddingToRanking ? (
@@ -291,8 +303,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     </div>
                   )}
                </div>
- 
-               {/* Right Narrative Section */}
+
                <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
                   <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2 px-1"><AlignLeft size={12} /> NARRATIVE</p>
                   {isGlobalEditMode ? (
