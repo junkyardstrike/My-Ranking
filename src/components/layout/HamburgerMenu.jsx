@@ -80,9 +80,9 @@ export default function HamburgerMenu() {
                   <span className="font-black text-lg tracking-tight uppercase">Record Item</span>
                 </button>
 
-                <button onClick={handleCreateFolder} className="w-full flex items-center justify-center gap-4 p-4 rounded-3xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all text-slate-500 hover:scale-[1.02] active:scale-[0.98]">
-                  <FolderPlus className="w-6 h-6" />
-                  <span className="font-bold text-lg tracking-tight">New Folder</span>
+                <button onClick={handleCreateFolder} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
+                  <FolderPlus className="w-6 h-6 text-emerald-500" strokeWidth={3} />
+                  <span className="font-black text-lg tracking-tight uppercase">New Folder</span>
                 </button>
               </div>
             </div>
