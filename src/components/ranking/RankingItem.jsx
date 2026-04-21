@@ -271,7 +271,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         )}
       </div>
       <RankingItemDetailModal 
-        item={item} 
+        item={liveItem} 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
       />
