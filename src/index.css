@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'WDXL Lubrifont JP N', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    @apply bg-background text-slate-100 antialiased min-h-screen overflow-x-hidden;
+    background-image:
+      /* Colorful noise-like diagonal lines */
+      repeating-linear-gradient(
+        45deg,
+        rgba(212,175,55,0.03) 0px,
+        rgba(212,175,55,0.03) 1px,
+        transparent 1px,
+        transparent 20px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(139,92,246,0.03) 0px,
+        rgba(139,92,246,0.03) 1px,
+        transparent 1px,
+        transparent 20px
+      ),
+      /* Subtle radial color pops */
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,58,237,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212,175,55,0.10) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(14,165,233,0.06) 0%, transparent 70%),
+      /* Base */
+      linear-gradient(160deg, #080808 0%, #0c0a10 40%, #0a0c08 100%);
+  }
+
+  input, textarea, select {
+    font-family: inherit;
+    font-size: 16px !important;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+/* Animated gradient orbs in background */
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -20px) scale(1.05); }
+  66% { transform: translate(-10px, 10px) scale(0.95); }
+}
+
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+  animation: float-orb 12s ease-in-out infinite;
+}
+.bg-orb-1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; animation-delay: 0s; }
+.bg-orb-2 { width: 300px; height: 300px; background: #D4AF37; bottom: 100px; right: -80px; animation-delay: -4s; }
+.bg-orb-3 { width: 250px; height: 250px; background: #0ea5e9; top: 40%; left: 50%; animation-delay: -8s; }
