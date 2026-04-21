@@ -140,7 +140,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
              {isGlobalEditMode && (
                 <label className="absolute inset-0 bg-black/60 opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 backdrop-blur-sm">
                    <div className="bg-white text-black px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.3em] shadow-2xl">画像を更新</div>
-                   <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                   <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={async (e) => {
                       const file = e.target.files[0];
                       if (file) {
                         const reader = new FileReader();
