@@ -72,6 +72,14 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
     finally { setIsFetching(false); setTimeout(() => setFetchStatus(null), 3000); }
   };
 
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    const updates = { title: newTitle };
+    if (!createdAt && newTitle.trim() !== '') updates.createdAt = new Date().toISOString();
+    onUpdate(item.id, updates);
+    setFetchStatus(null);
+  };
+
   const renderRankBadge = (rank) => {
     const size = isCollapsed ? "w-8 h-8" : "w-10 h-10";
     let bgClass = "bg-black/40 text-slate-500 border-white/5";
