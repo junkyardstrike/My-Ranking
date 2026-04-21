@@ -46,6 +46,7 @@ function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
         rankingId={rankingId}
         dragHandleProps={isEditMode ? {...attributes, ...listeners} : null}
         onUpdate={onUpdate}
+        genre={item.genre || 'music'}
       />
     </div>
   );
