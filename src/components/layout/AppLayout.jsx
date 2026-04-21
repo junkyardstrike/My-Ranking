@@ -50,18 +50,18 @@ export default function AppLayout() {
             <div className="flex-1 min-w-0">
               <Breadcrumb />
             </div>
-            <div className="flex items-center gap-2">
-              <button
+            <div className="flex items-center gap-3">
+              <div 
                 onClick={() => setEditMode(!isEditMode)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-300 border text-sm ${
-                  isEditMode
-                    ? 'bg-accent/20 border-accent/50 text-accent shadow-[0_0_12px_rgba(212,175,55,0.3)]'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 text-slate-300'
-                }`}
+                className="flex items-center gap-2 cursor-pointer group"
               >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span className="font-semibold tracking-wide hidden sm:inline">Edit</span>
-              </button>
+                <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isEditMode ? 'text-accent' : 'text-slate-500 group-hover:text-slate-400'}`}>
+                  編集モード
+                </span>
+                <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 flex items-center ${isEditMode ? 'bg-accent/30 border border-accent/50 shadow-[0_0_8px_rgba(212,175,55,0.3)]' : 'bg-white/10 border border-white/10'}`}>
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${isEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600'}`} />
+                </div>
+              </div>
               <HamburgerMenu />
             </div>
           </div>

@@ -27,7 +27,7 @@ export default function GlobalSearchOverlay({ onClose }) {
   const go = (path) => { navigate(path); onClose(); };
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-xl animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[70] flex flex-col bg-black/95 backdrop-blur-3xl animate-in fade-in duration-200">
       <div className="p-4 border-b border-white/10 flex items-center gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -43,7 +43,7 @@ export default function GlobalSearchOverlay({ onClose }) {
         <button onClick={onClose} className="p-2 text-slate-400 hover:text-white"><X className="w-6 h-6" /></button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar pb-28">
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar pb-32">
         {!q ? (
           <div className="h-full flex items-center justify-center text-slate-500 flex-col gap-3">
             <Search className="w-12 h-12 opacity-30" />

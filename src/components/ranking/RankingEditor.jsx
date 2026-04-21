@@ -143,7 +143,7 @@ export default function RankingEditor({ ranking, onSave }) {
 
       {/* Floating Save Button */}
       {hasChanges && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-300">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 fade-in duration-300">
           <button 
             onClick={handleSave}
             className="bg-accent text-white px-8 py-4 rounded-full font-bold shadow-xl shadow-accent/30 flex items-center gap-3 hover:bg-blue-600 hover:scale-105 transition-all text-lg"
