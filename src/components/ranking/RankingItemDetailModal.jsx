@@ -47,7 +47,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   if (!isOpen || !liveItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'other', isBold = false, color = '#ffffff', fontSize = 20 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20 } = liveItem;
 
   const handleUpdate = (updates) => {
     updateItem(id, updates);
@@ -68,7 +68,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const handleAddToRanking = () => {
     if (!selectedRankingId) return;
     if (window.confirm(`${selectedRank}位に挿入します。よろしいですか？`)) {
-      insertItemIntoRanking(selectedRankingId, item, parseInt(selectedRank));
+      insertItemIntoRanking(selectedRankingId, liveItem, parseInt(selectedRank));
       setIsAddingToRanking(false);
       onClose();
     }
@@ -87,7 +87,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     finally { setIsFetching(false); }
   };
 
-  const genreInfo = GENRE_MAP[genre] || GENRE_MAP.other;
+  const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
   const GenreIcon = genreInfo.icon;
 
   // Portal to body to ensure it's above everything including fixed navigation bars
