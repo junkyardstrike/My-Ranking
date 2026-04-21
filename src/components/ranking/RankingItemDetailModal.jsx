@@ -40,20 +40,18 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItemStore = useStore(state => state.updateItem);
 
-  const liveItem = useStore(state => {
+  const itemFromStore = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
     const allUnranked = state.unrankedItems || [];
-    const found = [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
-    if (found) {
-      return { 
-        ...found, 
-        isSelected: propItem?.isSelected || found.isSelected,
-        rankingId: propItem?.rankingId || found.rankingId,
-        rankingTitle: propItem?.rankingTitle || found.rankingTitle
-      };
-    }
-    return found;
-  }) || propItem;
+    return [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
+  });
+
+  const liveItem = itemFromStore ? {
+    ...itemFromStore,
+    isSelected: propItem?.isSelected || itemFromStore.isSelected,
+    rankingId: propItem?.rankingId || itemFromStore.rankingId,
+    rankingTitle: propItem?.rankingTitle || itemFromStore.rankingTitle
+  } : propItem;
 
   const [isAddingToRanking, setIsAddingToRanking] = useState(false);
   const [selectedRankingId, setSelectedRankingId] = useState('');
@@ -296,6 +294,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <div className="flex items-center justify-between gap-4">
                            <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> STYLE</p>
                            <div className="flex items-center gap-4 flex-1">
+                              <span className="text-[10px] font-mono font-black text-accent w-6 text-center">{fontSize}</span>
                               <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
                               <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-8 h-8 rounded-lg bg-transparent border-none cursor-pointer" />
                            </div>

@@ -107,8 +107,10 @@ function DroppableFolder({ folder, rankings }) {
 
   // Use a combined ref for both draggable and droppable
   const setCombinedRef = (node) => {
-    setDroppableRef(node);
-    setDraggableRef(node);
+    if (node) {
+      setDroppableRef(node);
+      setDraggableRef(node);
+    }
   };
 
   return (

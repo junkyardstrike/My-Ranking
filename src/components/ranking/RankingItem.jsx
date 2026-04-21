@@ -39,21 +39,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const [fetchStatus, setFetchStatus] = useState(null);
 
   // Subscribe to live store updates for this specific item
-  const liveItem = useStore(state => {
+  const liveItemFromStore = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
     const allUnranked = state.unrankedItems || [];
-    const found = [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
-    if (found) {
-      // Preserve isSelected and rankingId from prop if they exist (passed from getAllItems)
-      return { 
-        ...found, 
-        isSelected: propItem.isSelected || found.isSelected,
-        rankingId: propItem.rankingId || found.rankingId,
-        rankingTitle: propItem.rankingTitle || found.rankingTitle
-      };
-    }
-    return found;
-  }) || propItem;
+    return [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
+  });
+
+  const liveItem = liveItemFromStore ? {
+    ...liveItemFromStore,
+    isSelected: propItem.isSelected || liveItemFromStore.isSelected,
+    rankingId: propItem.rankingId || liveItemFromStore.rankingId,
+    rankingTitle: propItem.rankingTitle || liveItemFromStore.rankingTitle
+  } : propItem;
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = liveItem;
   
