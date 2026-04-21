@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, ChevronRight } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
@@ -33,7 +33,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed = false }) {
+export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed = false, rankingId }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
@@ -41,7 +41,13 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
   const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = item;
   const effectiveGenre = itemGenre || propGenre || 'other';
 
+  // Local states to fix IME bug for lists
+  const [localTitle, setLocalTitle] = useState(title || '');
+  const [localAuthor, setLocalAuthor] = useState(author || '');
   const [localFontSize, setLocalFontSize] = useState(fontSize);
+
+  useEffect(() => { setLocalTitle(title || ''); }, [title]);
+  useEffect(() => { setLocalAuthor(author || ''); }, [author]);
   useEffect(() => { setLocalFontSize(fontSize); }, [fontSize]);
 
   const dateObj = createdAt ? new Date(createdAt) : null;
@@ -60,24 +66,31 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
   };
 
   const handleAutoFetch = async () => {
-    if (!title || !title.trim() || isFetching) return;
+    if (!localTitle || !localTitle.trim() || isFetching) return;
     setIsFetching(true); setFetchStatus(null);
     try {
-      const result = await fetchMetadata(title.trim(), effectiveGenre);
+      const result = await fetchMetadata(localTitle.trim(), effectiveGenre);
       if (result) {
         onUpdate(item.id, { memo: result.memo, author: result.author || author });
+        if (result.author) setLocalAuthor(result.author);
         setFetchStatus('success');
       } else { setFetchStatus('error'); }
     } catch { setFetchStatus('error'); }
     finally { setIsFetching(false); setTimeout(() => setFetchStatus(null), 3000); }
   };
 
-  const handleTitleChange = (e) => {
-    const newTitle = e.target.value;
-    const updates = { title: newTitle };
-    if (!createdAt && newTitle.trim() !== '') updates.createdAt = new Date().toISOString();
-    onUpdate(item.id, updates);
-    setFetchStatus(null);
+  const handleTitleSync = () => {
+    if (localTitle !== title) {
+      const updates = { title: localTitle };
+      if (!createdAt && localTitle.trim() !== '') updates.createdAt = new Date().toISOString();
+      onUpdate(item.id, updates);
+    }
+  };
+
+  const handleAuthorSync = () => {
+    if (localAuthor !== author) {
+      onUpdate(item.id, { author: localAuthor });
+    }
   };
 
   const renderRankBadge = (rank) => {
@@ -85,16 +98,14 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
     let bgClass = "bg-black/40 text-slate-500 border-white/5";
     let icon = null;
     
-    // Ranked badges
-    if (rank === 1) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-[0_0_10px_rgba(253,224,71,0.3)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 2) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-[0_0_8px_rgba(148,163,184,0.2)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 3) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-[0_0_8px_rgba(251,146,60,0.2)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
+    if (rank === 1) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 2) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 3) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
     
-    // Genre Badge if unranked
     if (!rank) {
       const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;
       return (
-        <div className={`flex-shrink-0 flex items-center justify-center bg-white/5 text-accent rounded-lg border border-white/5 transition-all duration-300 ${size}`}>
+        <div className={`flex-shrink-0 flex items-center justify-center bg-white/5 text-accent rounded-lg border border-white/5 ${size}`}>
           <GenreIcon size={isCollapsed ? 12 : 16} />
         </div>
       );
@@ -110,14 +121,17 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
 
   return (
     <>
-      <div className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer hover:bg-white/5 active:scale-[0.98] ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} onClick={() => setIsModalOpen(true)}>
+      <div 
+        className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer hover:bg-white/5 active:scale-[0.98] ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} 
+        onClick={() => setIsModalOpen(true)}
+      >
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
-            {/* Rank and Genre Select */}
+            {/* Header Row */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {renderRankBadge(currentRank)}
-                <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+                <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
                   {GENRES.map(g => (
                     <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}>
                       <g.icon size={14} />
@@ -132,28 +146,53 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
               )}
             </div>
             
-            {/* Title & Sparkle */}
-            <div className="flex items-center gap-2">
-              <input type="text" value={title || ''} onClick={e => e.stopPropagation()} onChange={handleTitleChange} placeholder="作品名を入力..." className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} style={{ color, fontSize: `${localFontSize}px` }} />
-              <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!title?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}>
+            {/* Title Row */}
+            <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+              <input 
+                type="text" 
+                value={localTitle} 
+                onClick={e => e.stopPropagation()} 
+                onChange={e => setLocalTitle(e.target.value)} 
+                onBlur={handleTitleSync}
+                onKeyDown={e => e.key === 'Enter' && handleTitleSync()}
+                placeholder="作品名を入力..." 
+                className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} 
+                style={{ color, fontSize: `${localFontSize}px` }} 
+              />
+              <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!localTitle?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}>
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
             </div>
 
-            {/* Author & Date */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Meta Row */}
+            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <User className="w-3.5 h-3.5 text-accent" />
-                <input type="text" value={author || ''} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { author: e.target.value })} placeholder="作者名" className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
+                <input 
+                  type="text" 
+                  value={localAuthor} 
+                  onClick={e => e.stopPropagation()} 
+                  onChange={e => setLocalAuthor(e.target.value)} 
+                  onBlur={handleAuthorSync}
+                  onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
+                  placeholder="作者名" 
+                  className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" 
+                />
               </div>
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <Calendar className="w-3.5 h-3.5 text-emerald-500" />
-                <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { createdAt: new Date(e.target.value).toISOString() })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
+                <input 
+                  type="date" 
+                  value={createdAt ? createdAt.split('T')[0] : ''} 
+                  onClick={e => e.stopPropagation()} 
+                  onChange={e => onUpdate(item.id, { createdAt: new Date(e.target.value).toISOString() })} 
+                  className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" 
+                />
               </div>
             </div>
 
-            {/* Rating & Views */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* Metrics Row */}
+            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Rating</span>
                 <div className="flex-1 flex justify-center"><ScoreRating rating={rating} onRatingChange={v => onUpdate(item.id, { rating: v })} /></div>
@@ -168,20 +207,28 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
               </div>
             </div>
 
-            {/* Typography Controls */}
-            <div className="flex items-center gap-4 bg-black/40 p-2.5 rounded-xl border border-white/5">
+            {/* Styling Row */}
+            <div className="flex items-center gap-4 bg-black/40 p-2.5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
               <div className="flex-1 flex items-center gap-3">
                 <Type className="w-4 h-4 text-slate-500" />
-                <input type="range" min="12" max="32" value={localFontSize} onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" />
+                <input 
+                  type="range" 
+                  min="12" 
+                  max="32" 
+                  value={localFontSize} 
+                  onClick={e => e.stopPropagation()}
+                  onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} 
+                  className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" 
+                />
               </div>
               <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
               <input type="color" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
             </div>
 
-            {/* Image Upload Area */}
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/40 group">
+            {/* Image Row */}
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/40 group" onClick={e => e.stopPropagation()}>
                {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-slate-800 gap-2"><ImageIcon className="w-8 h-8 opacity-20" /><span className="text-[9px] font-black tracking-widest opacity-20">NO IMAGE</span></div>}
-               <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all" onClick={e => e.stopPropagation()}>
+               <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all">
                   <div className="bg-accent text-black px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Update Image</div>
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                </label>
@@ -216,7 +263,11 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
           </div>
         )}
       </div>
-      <RankingItemDetailModal item={item} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <RankingItemDetailModal 
+        item={item} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </>
   );
 }
