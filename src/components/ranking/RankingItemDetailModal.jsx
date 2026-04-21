@@ -1,150 +1,187 @@
-import { useEffect } from 'react';
-import { X, Calendar, User, Eye, Clock, Crown, AlignLeft, Edit3, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Calendar, User, Eye, Clock, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight } from 'lucide-react';
 import ScoreRating from './ScoreRating';
+import { useStore } from '../../store/useStore';
 
-export default function RankingItemDetailModal({ item, isOpen, onClose, onEdit }) {
+export default function RankingItemDetailModal({ item, isOpen, onClose }) {
+  const isGlobalEditMode = useStore(state => state.isEditMode);
+  const setEditMode = useStore(state => state.setEditMode);
+  const rankings = useStore(state => state.rankings);
+  const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
+  const updateRankingItem = useStore(state => state.updateRankingItem);
+
+  const [isAddingToRanking, setIsAddingToRanking] = useState(false);
+  const [selectedRankingId, setSelectedRankingId] = useState('');
+  const [selectedRank, setSelectedRank] = useState(1);
+
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = 'auto';
+      setIsAddingToRanking(false);
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
-  if (!isOpen || !item) return null;
+  if (!isOpen) return null;
 
-  const { currentRank, previousRanks, title, color, fontSize, imageBase64, memo, createdAt, author, views, rating } = item;
-  
-  const historyText = previousRanks && previousRanks.length > 0 
-    ? [currentRank, ...previousRanks].slice(0, 5).map(r => `${r}位`).join(' ← ')
-    : null;
-    
-  const dateObj = createdAt ? new Date(createdAt) : null;
-  const formattedDate = (dateObj && !isNaN(dateObj.getTime())) ? dateObj.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }) : '未設定';
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId } = item;
+
+  const handleAddToRanking = () => {
+    if (!selectedRankingId) return;
+    const confirmMsg = `${selectedRank}位に挿入します。既存の作品は押し出されますがよろしいですか？`;
+    if (window.confirm(confirmMsg)) {
+      insertItemIntoRanking(selectedRankingId, item, parseInt(selectedRank));
+      setIsAddingToRanking(false);
+      onClose();
+    }
+  };
+
+  const handleLocalUpdate = (updates) => {
+    if (rankingId) {
+      updateRankingItem(rankingId, id, updates);
+    } else {
+      // For unranked items, we might need a separate action, 
+      // but let's assume for now updates are handled via RankingItem parent if in a list.
+    }
+  };
 
   return (
-    <>
-      <div 
-        className="fixed inset-0 bg-black/80 backdrop-blur-md z-[110] transition-opacity animate-in fade-in duration-300"
-        onClick={onClose}
-      />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose} />
       
-      <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
-        <div className="bg-surface/95 backdrop-blur-xl border border-white/10 w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl flex flex-col pointer-events-auto overflow-hidden animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-2xl bg-surface/80 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        
+        {/* Header with toggle */}
+        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
+          <div className="flex items-center gap-4">
+            <div 
+              onClick={() => setEditMode(!isGlobalEditMode)}
+              className="flex items-center gap-2 cursor-pointer group"
+            >
+              <span className={`text-[9px] font-black uppercase tracking-widest transition-colors ${isGlobalEditMode ? 'text-accent' : 'text-slate-500'}`}>
+                編集モード
+              </span>
+              <div className={`w-8 h-4 rounded-full p-0.5 transition-all duration-300 flex items-center ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
+                <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${isGlobalEditMode ? 'bg-accent translate-x-4' : 'bg-slate-600'}`} />
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
           
-          {/* Header */}
-          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-white/5 bg-black/20">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center border border-white/10 shadow-inner text-xl font-black text-white">
-                {currentRank}
+          {/* Main Content */}
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Image */}
+            <div className="w-full md:w-1/2 flex-shrink-0">
+              <div className="aspect-[3/4] rounded-2xl overflow-hidden border border-white/10 bg-black/40 shadow-inner relative group">
+                {imageBase64 ? (
+                  <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-700">
+                    <Edit3 className="w-12 h-12 opacity-20" />
+                  </div>
+                )}
+                {isSelected && (
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-emerald-500/80 backdrop-blur-md rounded-full text-[10px] font-black text-white tracking-[0.2em] shadow-lg flex items-center gap-1.5 border border-emerald-400/30">
+                    <CheckCircle2 className="w-3 h-3" /> 選出済み
+                  </div>
+                )}
               </div>
-              <h2 className="text-2xl sm:text-4xl font-bold tracking-wide" style={{ color: color || '#ffffff' }}>
-                {title || '未設定'}
-              </h2>
             </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={onEdit}
-                className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-full transition-colors text-slate-300 hover:text-white bg-white/5 text-sm font-medium border border-white/10"
-              >
-                <Edit3 className="w-4 h-4" />
-                <span className="hidden sm:inline">編集</span>
-              </button>
-              <button 
-                onClick={onClose}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-400 hover:text-white bg-white/5 border border-white/10"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
 
-          {/* Body */}
-          <div className="overflow-y-auto overflow-x-hidden flex-1 p-4 sm:p-6 space-y-6 custom-scrollbar">
-            
-            {/* Image Section */}
-            {imageBase64 && (
-              <div className="w-full rounded-2xl overflow-hidden shadow-lg border border-white/10 bg-black/40">
-                <img src={imageBase64} alt={title} className="w-full h-auto max-h-[40vh] object-contain" />
+            {/* Info */}
+            <div className="flex-1 space-y-6">
+              <div className="space-y-2">
+                {rankingId && currentRank && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 border border-accent/30 rounded-lg text-accent font-black font-mono text-sm">
+                    <Crown className="w-4 h-4" /> RANK {currentRank}
+                  </div>
+                )}
+                <h2 className="text-3xl font-black text-white leading-tight tracking-tight">{title || 'Untitled'}</h2>
+                {author && (
+                  <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-widest text-xs">
+                    <User className="w-3.5 h-3.5 text-accent" /> {author}
+                  </div>
+                )}
               </div>
-            )}
 
-            {/* Meta Data Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-black/30 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                <div className="p-3 bg-blue-500/20 rounded-xl text-blue-400">
-                  <User className="w-6 h-6" />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                  <p className="text-[10px] text-slate-500 font-black uppercase mb-1 flex items-center gap-1.5"><Star className="w-3 h-3" /> Score</p>
+                  <ScoreRating rating={rating} readOnly />
                 </div>
-                <div>
-                  <p className="text-xs text-slate-400 font-medium mb-1">制作者 / 著者</p>
-                  <p className="text-slate-200 font-semibold">{author || '不明'}</p>
+                <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                  <p className="text-[10px] text-slate-500 font-black uppercase mb-1 flex items-center gap-1.5"><Eye className="w-3 h-3" /> Views</p>
+                  <p className="text-lg font-black text-white font-mono">{views.toLocaleString()}</p>
                 </div>
               </div>
 
-              <div className="bg-black/30 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                <div className="p-3 bg-emerald-500/20 rounded-xl text-emerald-400">
-                  <Calendar className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 font-medium mb-1">作成日 / 公開日</p>
-                  <p className="text-slate-200 font-semibold">{formattedDate}</p>
-                </div>
-              </div>
-
-              <div className="bg-black/30 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                <div className="p-3 bg-purple-500/20 rounded-xl text-purple-400">
-                  <Eye className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-xs text-slate-400 font-medium mb-1">閲覧回数</p>
-                  <p className="text-slate-200 font-semibold font-mono text-lg">{views || 0} <span className="text-sm font-normal">回</span></p>
-                </div>
-              </div>
-
-              {historyText && (
-                <div className="bg-black/30 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                  <div className="p-3 bg-orange-500/20 rounded-xl text-orange-400">
-                    <Clock className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-medium mb-1">過去の順位変遷</p>
-                    <p className="text-slate-200 font-mono tracking-wider">{historyText}</p>
-                  </div>
-                </div>
-              )}
-
-              {rating > 0 && (
-                <div className="bg-black/30 p-4 rounded-2xl border border-white/5 flex items-center gap-4">
-                  <div className="p-3 bg-yellow-500/20 rounded-xl text-accent">
-                    <Star className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-400 font-medium mb-1">評価</p>
-                    <ScoreRating rating={rating} readOnly />
-                  </div>
+              {memo && (
+                <div className="space-y-2">
+                  <p className="text-[10px] text-slate-500 font-black uppercase flex items-center gap-1.5"><AlignLeft className="w-3 h-3" /> Memo</p>
+                  <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap bg-white/5 p-4 rounded-2xl border border-white/5">{memo}</p>
                 </div>
               )}
             </div>
-
-            {/* Memo Section */}
-            {memo && (
-              <div className="bg-black/20 p-5 rounded-2xl border border-white/5 shadow-inner">
-                <div className="flex items-center gap-2 mb-3 border-b border-white/10 pb-3">
-                  <AlignLeft className="w-5 h-5 text-accent" />
-                  <h3 className="font-semibold text-slate-200 tracking-wide">詳細メモ</h3>
-                </div>
-                <p className="text-slate-300 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
-                  {memo}
-                </p>
-              </div>
-            )}
-            
           </div>
+
+          {/* Add to Ranking UI */}
+          {!isSelected && !rankingId && (
+            <div className="border-t border-white/5 pt-8">
+              {!isAddingToRanking ? (
+                <button 
+                  onClick={() => setIsAddingToRanking(true)}
+                  className="w-full py-4 rounded-2xl bg-accent text-white font-black flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-xl shadow-accent/20"
+                >
+                  <ListPlus className="w-5 h-5" /> ランキングに入れる
+                </button>
+              ) : (
+                <div className="bg-white/5 p-6 rounded-3xl border border-accent/30 space-y-4 animate-in slide-in-from-bottom-4">
+                  <p className="text-sm font-bold text-white text-center mb-2">追加先のランキングを選択</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <select 
+                      value={selectedRankingId}
+                      onChange={(e) => setSelectedRankingId(e.target.value)}
+                      className="bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-accent outline-none appearance-none"
+                    >
+                      <option value="">ランキングを選択...</option>
+                      {rankings.map(r => (
+                        <option key={r.id} value={r.id}>{r.title}</option>
+                      ))}
+                    </select>
+                    <div className="relative">
+                      <input 
+                        type="number" 
+                        min="1" max="100"
+                        value={selectedRank}
+                        onChange={(e) => setSelectedRank(e.target.value)}
+                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-accent outline-none"
+                        placeholder="順位 (1-100)"
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-500 tracking-tighter">RANK</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-3 rounded-xl border border-white/10 text-slate-400 font-bold hover:bg-white/5 transition-colors">キャンセル</button>
+                    <button 
+                      onClick={handleAddToRanking}
+                      disabled={!selectedRankingId}
+                      className="flex-[2] py-3 rounded-xl bg-accent text-white font-black flex items-center justify-center gap-2 disabled:opacity-30"
+                    >
+                      決定して挿入 <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

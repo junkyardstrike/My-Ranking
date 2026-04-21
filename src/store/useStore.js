@@ -32,6 +32,7 @@ const saveData = async (key, value) => {
 };
 
 const translateToEnglish = async (text) => {
+  if (!text) return '';
   try {
     const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ja&tl=en&dt=t&q=${encodeURIComponent(text)}`);
     const data = await res.json();
@@ -46,78 +47,40 @@ const translateToEnglish = async (text) => {
 
 export const useStore = create((set, get) => ({
   isInitialized: false,
-  folders: [], // { id, name, parentId, coverImageBase64 }
-  rankings: [], // { id, folderId, title, items: [] } 
+  folders: [], 
+  rankings: [], 
+  unrankedItems: [], // New: Store for items not in any specific ranking yet
   isEditMode: false,
-  viewMode: 'list', // 'list' or 'grid'
+  viewMode: 'list', 
   currentFolderId: null,
 
   init: async () => {
     const folders = await loadData('folders', []);
     const rankings = await loadData('rankings', []);
-    const viewMode = await loadData('viewMode', 'list');
-    set({ folders, rankings, viewMode, isInitialized: true });
-    
-    // Auto translate in background for existing ones
-    setTimeout(async () => {
-      let foldersUpdated = false;
-      const newFolders = [...folders];
-      for (let i = 0; i < newFolders.length; i++) {
-        if (!newFolders[i].englishName && newFolders[i].name) {
-          const en = await translateToEnglish(newFolders[i].name);
-          if (en) {
-            newFolders[i] = { ...newFolders[i], englishName: en.toUpperCase() };
-            foldersUpdated = true;
-          }
-        }
-      }
-      if (foldersUpdated) {
-        set({ folders: newFolders });
-        saveData('folders', newFolders);
-      }
-
-      let rankingsUpdated = false;
-      const newRankings = [...rankings];
-      for (let i = 0; i < newRankings.length; i++) {
-        if (!newRankings[i].englishName && newRankings[i].title) {
-          const en = await translateToEnglish(newRankings[i].title);
-          if (en) {
-            newRankings[i] = { ...newRankings[i], englishName: en.toUpperCase() };
-            rankingsUpdated = true;
-          }
-        }
-      }
-      if (rankingsUpdated) {
-        set({ rankings: newRankings });
-        saveData('rankings', newRankings);
-      }
-    }, 1000);
+    const unrankedItems = await loadData('unrankedItems', []);
+    set({ folders, rankings, unrankedItems, isInitialized: true });
   },
 
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
-
   setEditMode: (mode) => set({ isEditMode: mode }),
   
-  setViewMode: (mode) => {
-    set({ viewMode: mode });
-    saveData('viewMode', mode);
+  // ALL Tab Data Helper: Returns all items from all rankings + unranked ones
+  getAllItems: () => {
+    const state = get();
+    const rankedItems = state.rankings.flatMap(r => 
+      (r.items || []).filter(item => item.title).map(item => ({ ...item, rankingId: r.id, isSelected: true }))
+    );
+    return [...rankedItems, ...state.unrankedItems.map(item => ({ ...item, isSelected: false }))];
   },
 
   addFolder: async (name, parentId = null) => {
     const id = generateId();
-    const newFolder = { 
-      id, 
-      name, 
-      englishName: '',
-      parentId,
-      coverImageBase64: null
-    };
+    const newFolder = { id, name, englishName: '', parentId, coverImageBase64: null };
     set((state) => {
       const folders = [...state.folders, newFolder];
       saveData('folders', folders);
       return { folders };
     });
-
     const englishName = await translateToEnglish(name);
     if (englishName) {
       set((state) => {
@@ -134,7 +97,6 @@ export const useStore = create((set, get) => ({
       saveData('folders', folders);
       return { folders };
     });
-
     if (updates.name) {
       const englishName = await translateToEnglish(updates.name);
       if (englishName) {
@@ -157,30 +119,15 @@ export const useStore = create((set, get) => ({
 
   addRanking: async (title, folderId = null, genre = 'other') => {
     const initialItems = Array.from({ length: 100 }, (_, i) => ({
-      id: generateId(),
-      currentRank: i + 1,
-      previousRanks: [],
-      title: '',
-      color: '#ffffff',
-      fontSize: 20, // Increased from 16
-      imageBase64: null,
-      memo: '',
-      createdAt: null,
-      author: '',
-      isBold: false,
-      views: 0,
-      rating: 0
+      id: generateId(), currentRank: i + 1, previousRanks: [], title: '', color: '#ffffff', fontSize: 20, imageBase64: null, memo: '', createdAt: null, author: '', isBold: false, views: 0, rating: 0
     }));
-    
     const id = generateId();
     const newRanking = { id, folderId, title, englishName: '', coverImageBase64: null, genre, items: initialItems };
-    
     set((state) => {
       const rankings = [...state.rankings, newRanking];
       saveData('rankings', rankings);
       return { rankings };
     });
-
     const englishName = await translateToEnglish(title);
     if (englishName) {
       set((state) => {
@@ -205,24 +152,11 @@ export const useStore = create((set, get) => ({
       saveData('rankings', rankings);
       return { rankings };
     });
-
-    if (updates.title) {
-      const englishName = await translateToEnglish(updates.title);
-      if (englishName) {
-        set((state) => {
-          const rankings = state.rankings.map(r => r.id === id ? { ...r, englishName: englishName.toUpperCase() } : r);
-          saveData('rankings', rankings);
-          return { rankings };
-        });
-      }
-    }
   },
 
   updateRankingItems: (rankingId, newItems) => {
     set((state) => {
-      const rankings = state.rankings.map(r => 
-        r.id === rankingId ? { ...r, items: newItems } : r
-      );
+      const rankings = state.rankings.map(r => r.id === rankingId ? { ...r, items: newItems } : r);
       saveData('rankings', rankings);
       return { rankings };
     });
@@ -232,43 +166,93 @@ export const useStore = create((set, get) => ({
     set((state) => {
       const rankings = state.rankings.map(r => {
         if (r.id !== rankingId) return r;
-        return {
-          ...r,
-          items: r.items.map(item => item.id === itemId ? { ...item, ...updates } : item)
-        };
+        return { ...r, items: r.items.map(item => item.id === itemId ? { ...item, ...updates } : item) };
       });
       saveData('rankings', rankings);
       return { rankings };
     });
   },
 
-  moveRanking: (rankingId, targetFolderId) => {
-    set((state) => {
+  // Record a standalone item (作品を記録)
+  recordItem: (data) => {
+    const newItem = {
+      id: generateId(),
+      title: data.title || '',
+      author: data.author || '',
+      memo: data.memo || '',
+      rating: data.rating || 0,
+      imageBase64: data.imageBase64 || null,
+      createdAt: new Date().toISOString(),
+      views: 0,
+      fontSize: 20,
+      color: '#ffffff',
+      isBold: false,
+      previousRanks: []
+    };
+    set(state => {
+      const unrankedItems = [newItem, ...state.unrankedItems];
+      saveData('unrankedItems', unrankedItems);
+      return { unrankedItems };
+    });
+    return newItem;
+  },
+
+  // Move an item into a ranking and push out existing ones
+  insertItemIntoRanking: (targetRankingId, itemToInsert, targetRank) => {
+    set(state => {
+      const ranking = state.rankings.find(r => r.id === targetRankingId);
+      if (!ranking) return state;
+
+      let newItems = [...ranking.items];
+      // Prepare the item for ranking
+      const itemToRank = { ...itemToInsert, currentRank: targetRank };
+      
+      // The push-out logic:
+      // 1. Remove the empty slot/old item at targetRank
+      // 2. Insert the new item
+      // 3. Re-index everything from that point onwards
+      const index = targetRank - 1;
+      
+      // Filter out this item if it was already in this ranking (to prevent duplicates)
+      newItems = newItems.filter(i => i.id !== itemToInsert.id);
+      
+      // Actually we want to keep the 100-item limit usually, 
+      // but let's just insert and shift.
+      newItems.splice(index, 0, itemToRank);
+      
+      // Re-calculate all ranks
+      const finalItems = newItems.map((item, i) => ({
+        ...item,
+        currentRank: i + 1
+      })).slice(0, 100); // Keep top 100
+
       const rankings = state.rankings.map(r => 
-        r.id === rankingId ? { ...r, folderId: targetFolderId === 'root' ? null : targetFolderId } : r
+        r.id === targetRankingId ? { ...r, items: finalItems } : r
       );
+
+      // Also remove from unranked if it was there
+      const unrankedItems = state.unrankedItems.filter(i => i.id !== itemToInsert.id);
+      
       saveData('rankings', rankings);
-      return { rankings };
+      saveData('unrankedItems', unrankedItems);
+      return { rankings, unrankedItems };
     });
   },
 
   importData: async (data) => {
-    if (!data.rankings || !data.folders) throw new Error('Invalid data format');
-    
-    set({ 
-      rankings: data.rankings, 
-      folders: data.folders,
-      isInitialized: true 
-    });
-    
-    await saveData('rankings', data.rankings);
-    await saveData('folders', data.folders);
+    const rankings = data.rankings || [];
+    const folders = data.folders || [];
+    const unrankedItems = data.unrankedItems || [];
+    set({ rankings, folders, unrankedItems, isInitialized: true });
+    await saveData('rankings', rankings);
+    await saveData('folders', folders);
+    await saveData('unrankedItems', unrankedItems);
     return true;
   },
 
   clearData: async () => {
     await localforage.clear();
-    set({ rankings: [], folders: [], currentFolderId: null });
+    set({ rankings: [], folders: [], unrankedItems: [], currentFolderId: null });
     return true;
   }
 }));
