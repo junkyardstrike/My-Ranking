@@ -6,11 +6,11 @@ import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
 
 const GENRES = [
-  { id: 'anime', label: 'アニメ', icon: Tv, emoji: '📺' },
-  { id: 'manga', label: '漫画', icon: BookOpen, emoji: '📖' },
-  { id: 'movie', label: '映画', icon: Film, emoji: '🎬' },
-  { id: 'drama', label: 'ドラマ', icon: Clapperboard, emoji: '🎭' },
-  { id: 'other', label: '他', icon: MoreHorizontal, emoji: '✨' },
+  { id: 'anime', label: 'アニメ', icon: Tv },
+  { id: 'manga', label: '漫画', icon: BookOpen },
+  { id: 'movie', label: '映画', icon: Film },
+  { id: 'drama', label: 'ドラマ', icon: Clapperboard },
+  { id: 'other', label: '他', icon: MoreHorizontal },
 ];
 
 const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
@@ -84,14 +84,26 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
     const size = isCollapsed ? "w-8 h-8" : "w-10 h-10";
     let bgClass = "bg-black/40 text-slate-500 border-white/5";
     let icon = null;
+    
+    // Ranked badges
     if (rank === 1) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-[0_0_10px_rgba(253,224,71,0.3)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
     else if (rank === 2) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-[0_0_8px_rgba(148,163,184,0.2)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
     else if (rank === 3) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-[0_0_8px_rgba(251,146,60,0.2)]"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
     
+    // Genre Badge if unranked
+    if (!rank) {
+      const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;
+      return (
+        <div className={`flex-shrink-0 flex items-center justify-center bg-white/5 text-accent rounded-lg border border-white/5 transition-all duration-300 ${size}`}>
+          <GenreIcon size={isCollapsed ? 12 : 16} />
+        </div>
+      );
+    }
+
     return (
       <div className={`flex-shrink-0 flex flex-col items-center justify-center font-bold font-mono rounded-lg border backdrop-blur-md transition-all duration-300 ${size} ${bgClass}`}>
         {icon}
-        <span className={`drop-shadow-sm leading-none ${isCollapsed ? 'text-xs' : 'text-sm'}`}>{rank || (GENRES.find(g => g.id === effectiveGenre)?.emoji || '✨')}</span>
+        <span className={`drop-shadow-sm leading-none ${isCollapsed ? 'text-xs' : 'text-sm'}`}>{rank}</span>
       </div>
     );
   };
@@ -101,13 +113,13 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
       <div className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col ${!isEditMode ? 'cursor-pointer hover:bg-white/5 active:scale-[0.98]' : ''} ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} onClick={() => !isEditMode && setIsModalOpen(true)}>
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
-            {/* Rank and Drag Handle */}
+            {/* Rank and Genre Select */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {renderRankBadge(currentRank)}
-                <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5 overflow-x-auto no-scrollbar">
+                <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
                   {GENRES.map(g => (
-                    <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30' : 'text-slate-600 hover:text-slate-400'}`}>
+                    <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}>
                       <g.icon size={14} />
                     </button>
                   ))}
@@ -120,19 +132,19 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
               )}
             </div>
             
-            {/* Title and Sparkle */}
+            {/* Title & Sparkle */}
             <div className="flex items-center gap-2">
               <input type="text" value={title || ''} onChange={handleTitleChange} placeholder="作品名を入力..." className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} style={{ color, fontSize: `${localFontSize}px` }} />
-              <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!title?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent shadow-accent/20'}`}>
+              <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!title?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}>
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
             </div>
 
-            {/* Author and Metadata (Dates, Views) */}
+            {/* Author & Date */}
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <User className="w-3.5 h-3.5 text-accent" />
-                <input type="text" value={author || ''} onChange={e => onUpdate(item.id, { author: e.target.value })} placeholder="作者名" className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full placeholder:text-slate-700" />
+                <input type="text" value={author || ''} onChange={e => onUpdate(item.id, { author: e.target.value })} placeholder="作者名" className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" />
               </div>
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <Calendar className="w-3.5 h-3.5 text-emerald-500" />
@@ -140,7 +152,7 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
               </div>
             </div>
 
-            {/* Rating and Views */}
+            {/* Rating & Views */}
             <div className="grid grid-cols-2 gap-3">
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Rating</span>
@@ -156,28 +168,28 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
               </div>
             </div>
 
-            {/* Font Control and Bold */}
+            {/* Typography Controls */}
             <div className="flex items-center gap-4 bg-black/40 p-2.5 rounded-xl border border-white/5">
               <div className="flex-1 flex items-center gap-3">
                 <Type className="w-4 h-4 text-slate-500" />
-                <input type="range" min="12" max="32" value={localFontSize} onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none cursor-pointer" />
+                <input type="range" min="12" max="32" value={localFontSize} onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(item.id, { fontSize: v }); }} className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" />
               </div>
-              <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
-              <input type="color" value={color} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer rounded overflow-hidden" />
+              <button onClick={(e) => { e.stopPropagation(); onUpdate(item.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-500 border-white/10'}`}>BOLD</button>
+              <input type="color" value={color} onChange={e => onUpdate(item.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
             </div>
 
             {/* Image Upload Area */}
-            <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/40 group shadow-inner">
-               {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-slate-800 gap-2"><ImageIcon className="w-8 h-8 opacity-20" /><span className="text-[10px] font-black tracking-widest opacity-20 uppercase">No Image</span></div>}
-               <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-300" onClick={e => e.stopPropagation()}>
-                  <div className="bg-accent text-black px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl transform scale-90 group-hover:scale-100 transition-transform">Update Image</div>
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/40 group">
+               {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-slate-800 gap-2"><ImageIcon className="w-8 h-8 opacity-20" /><span className="text-[9px] font-black tracking-widest opacity-20">NO IMAGE</span></div>}
+               <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all" onClick={e => e.stopPropagation()}>
+                  <div className="bg-accent text-black px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Update Image</div>
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                </label>
             </div>
           </div>
         ) : (
-          <div className={`flex flex-row items-stretch ${isCollapsed ? 'min-h-[50px]' : 'min-h-[100px]'}`}>
-            <div className={`flex-1 flex flex-row min-w-0 gap-4 ${isCollapsed ? 'p-2.5 items-center' : 'p-4'}`}>
+          <div className={`flex flex-row items-stretch ${isCollapsed ? 'min-h-[52px]' : 'min-h-[104px]'}`}>
+            <div className={`flex-1 flex flex-row min-w-0 gap-4 ${isCollapsed ? 'p-3 items-center' : 'p-4'}`}>
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: isCollapsed ? '14px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
@@ -195,12 +207,12 @@ export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdat
             </div>
             {!isCollapsed && imageBase64 && (
               <div className="flex-shrink-0 p-3 flex items-center">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black rotate-1 hover:rotate-0 transition-transform duration-500">
-                  <img src={imageBase64} alt={title} className="w-full h-full object-cover scale-105" />
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black">
+                  <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
                 </div>
               </div>
             )}
-            <div className="flex items-center pr-2 text-slate-800"><ChevronRight size={16} /></div>
+            <div className="flex items-center pr-3 text-slate-800"><ChevronRight size={16} /></div>
           </div>
         )}
       </div>

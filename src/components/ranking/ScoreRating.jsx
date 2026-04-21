@@ -18,7 +18,7 @@ export default function ScoreRating({ rating = 0, onRatingChange, readOnly = fal
           className={`transition-all duration-200 ${readOnly ? 'cursor-default' : 'hover:scale-125 cursor-pointer'}`}
         >
           <Star
-            size={11} // Slightly smaller to ensure fit
+            size={14} // Slightly larger for better visibility in vertical layout
             className={`${
               star <= rating
                 ? 'fill-accent text-accent shadow-accent/50 drop-shadow-[0_0_2px_rgba(212,175,55,0.8)]'

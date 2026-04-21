@@ -4,12 +4,12 @@ import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, MoreHorizontal, Hash } from 'lucide-react';
 
 const GENRE_FILTERS = [
-  { id: 'all', label: 'すべて', emoji: '🌟' },
-  { id: 'anime', label: 'アニメ', emoji: '📺' },
-  { id: 'manga', label: '漫画', emoji: '📖' },
-  { id: 'movie', label: '映画', emoji: '🎬' },
-  { id: 'drama', label: 'ドラマ', emoji: '🎭' },
-  { id: 'other', label: 'その他', emoji: '✨' },
+  { id: 'all', label: 'すべて', icon: Hash },
+  { id: 'anime', label: 'アニメ', icon: Tv },
+  { id: 'manga', label: '漫画', icon: BookOpen },
+  { id: 'movie', label: '映画', icon: Film },
+  { id: 'drama', label: 'ドラマ', icon: Clapperboard },
+  { id: 'other', label: '他', icon: MoreHorizontal },
 ];
 
 export default function AllRankingsView() {
@@ -42,10 +42,9 @@ export default function AllRankingsView() {
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">全作品マスターリスト</p>
           </div>
           <div className="text-right">
-            <div className="inline-flex items-center gap-2 bg-accent/20 px-4 py-2 rounded-2xl border border-accent/30 shadow-[0_0_15px_rgba(212,175,55,0.15)]">
-              <Hash className="w-4 h-4 text-accent" />
-              <span className="text-xl font-black text-white font-mono leading-none">{allItems.length}</span>
-              <span className="text-[9px] font-black text-accent uppercase tracking-widest ml-1">Items</span>
+            <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
+              <span className="text-xs font-black text-slate-400">総作品数</span>
+              <span className="text-2xl font-black text-accent font-mono leading-none">{allItems.length}</span>
             </div>
           </div>
         </div>
@@ -59,25 +58,28 @@ export default function AllRankingsView() {
               placeholder="作品名・著者名で検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-accent transition-all placeholder:text-slate-800"
+              className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-accent transition-all placeholder:text-slate-800 font-bold"
             />
           </div>
 
           <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar px-1">
-            {GENRE_FILTERS.map(filter => (
-              <button
-                key={filter.id}
-                onClick={() => setSelectedGenre(filter.id)}
-                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all text-xs font-black uppercase tracking-tighter ${
-                  selectedGenre === filter.id 
-                    ? 'bg-white text-black border-white shadow-lg' 
-                    : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'
-                }`}
-              >
-                <span>{filter.emoji}</span>
-                {filter.label}
-              </button>
-            ))}
+            {GENRE_FILTERS.map(filter => {
+              const Icon = filter.icon;
+              return (
+                <button
+                  key={filter.id}
+                  onClick={() => setSelectedGenre(filter.id)}
+                  className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all text-[11px] font-black uppercase tracking-tighter ${
+                    selectedGenre === filter.id 
+                      ? 'bg-accent text-black border-accent shadow-lg shadow-accent/20' 
+                      : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'
+                  }`}
+                >
+                  <Icon size={14} />
+                  {filter.label}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
