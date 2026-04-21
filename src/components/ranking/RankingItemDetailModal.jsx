@@ -13,36 +13,41 @@ const GENRE_MAP = {
   other: { label: '他', icon: MoreHorizontal },
 };
 
-export default function RankingItemDetailModal({ item, isOpen, onClose }) {
+export default function RankingItemDetailModal({ item: propItem, isOpen, onClose }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItem = useStore(state => state.updateItem);
 
+  const liveItem = useStore(state => {
+    const allRanked = (state.rankings || []).flatMap(r => r.items || []);
+    const allUnranked = state.unrankedItems || [];
+    return [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
+  }) || propItem;
+
   const [isAddingToRanking, setIsAddingToRanking] = useState(false);
   const [selectedRankingId, setSelectedRankingId] = useState('');
   const [selectedRank, setSelectedRank] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
 
-  // Local state for title to fix IME duplication bug
-  const [localTitle, setLocalTitle] = useState(item?.title || '');
-  const [localAuthor, setLocalAuthor] = useState(item?.author || '');
+  const [localTitle, setLocalTitle] = useState(liveItem?.title || '');
+  const [localAuthor, setLocalAuthor] = useState(liveItem?.author || '');
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      setLocalTitle(item?.title || '');
-      setLocalAuthor(item?.author || '');
+      setLocalTitle(liveItem?.title || '');
+      setLocalAuthor(liveItem?.author || '');
     } else {
       document.body.style.overflow = 'auto';
       setIsAddingToRanking(false);
     }
-  }, [isOpen, item]);
+  }, [isOpen, liveItem?.id]);
 
-  if (!isOpen || !item) return null;
+  if (!isOpen || !liveItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'other', isBold = false, color = '#ffffff', fontSize = 20 } = item;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'other', isBold = false, color = '#ffffff', fontSize = 20 } = liveItem;
 
   const handleUpdate = (updates) => {
     updateItem(id, updates);

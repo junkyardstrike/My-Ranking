@@ -33,12 +33,19 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed = false, rankingId }) {
+export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed = false, rankingId }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = item;
+  // Subscribe to live store updates for this specific item
+  const liveItem = useStore(state => {
+    const allRanked = (state.rankings || []).flatMap(r => r.items || []);
+    const allUnranked = state.unrankedItems || [];
+    return [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
+  }) || propItem;
+
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = liveItem;
   const effectiveGenre = itemGenre || propGenre || 'other';
 
   // Local states to fix IME bug for lists

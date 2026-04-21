@@ -54,9 +54,11 @@ function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
 export default function RankingList({ ranking, isCollapsed = false, isEditMode = false, onSave }) {
   const updateItem = useStore(state => state.updateItem);
   const [items, setItems] = useState(ranking.items);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     setItems(ranking.items);
+    setHasChanges(false);
   }, [ranking.items]);
 
   const sensors = useSensors(
@@ -72,19 +74,26 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
       const newIndex = items.findIndex(i => i.id === over.id);
       const newItems = arrayMove(items, oldIndex, newIndex);
       
-      // Auto-save rank positions
+      // Auto-rank positions
       const updatedWithRanks = newItems.map((item, index) => ({
         ...item,
         currentRank: index + 1
       }));
       
       setItems(updatedWithRanks);
-      if (onSave) onSave(updatedWithRanks);
+      setHasChanges(true);
     }
   };
 
   const handleLocalUpdate = (id, updates) => {
     updateItem(id, updates);
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    if (onSave) onSave(items);
+    setHasChanges(false);
+    alert('ランキングの変更を保存しました。');
   };
 
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
@@ -99,21 +108,35 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-        <div className={`space-y-1 ${isCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
-          {visibleItems.map(item => (
-            <SortableItem 
-              key={item.id} 
-              item={item} 
-              isEditMode={isEditMode}
-              isCollapsed={isCollapsed}
-              rankingId={ranking.id}
-              onUpdate={handleLocalUpdate}
-            />
-          ))}
+    <div className="relative">
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+          <div className={`space-y-1 ${isCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
+            {visibleItems.map(item => (
+              <SortableItem 
+                key={item.id} 
+                item={item} 
+                isEditMode={isEditMode}
+                isCollapsed={isCollapsed}
+                rankingId={ranking.id}
+                onUpdate={handleLocalUpdate}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      {isEditMode && hasChanges && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-10 fade-in duration-300">
+          <button 
+            onClick={handleSave}
+            className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            変更を保存
+          </button>
         </div>
-      </SortableContext>
-    </DndContext>
+      )}
+    </div>
   );
 }
