@@ -109,7 +109,7 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           {/* Hero Image Section */}
-          <div className="relative w-full aspect-video sm:aspect-[21/9] bg-black group z-0">
+          <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
              {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
                 <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-500 backdrop-blur-sm">
@@ -124,14 +124,14 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                    }} />
                 </label>
              )}
-             {/* Gradient for title contrast - deeper and taller */}
-             <div className="absolute bottom-0 left-0 right-0 h-80 bg-gradient-to-t from-surface/100 via-surface/80 to-transparent" />
+             {/* Gradient for title contrast - adjusted for better overlap */}
+             <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-surface/100 via-surface/40 to-transparent" />
           </div>
 
-          {/* Content Area - Adjusted overlap for title */}
-          <div className="px-6 pb-12 sm:px-12 -mt-20 relative z-10 space-y-12">
-            {/* 1. Title (Perfectly overlapping image bottom) */}
-            <div className="space-y-4">
+          {/* Content Area - Adjusted overlap and tight spacing */}
+          <div className="px-6 pb-12 sm:px-12 -mt-16 relative z-10 space-y-4">
+            {/* 1. Title (Overlapping image bottom) */}
+            <div className="mb-2">
                {isGlobalEditMode ? (
                  <div className="flex items-center gap-3">
                     <input 
@@ -140,25 +140,25 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                       onChange={e => setLocalTitle(e.target.value)} 
                       onBlur={handleTitleSync}
                       onKeyDown={e => e.key === 'Enter' && handleTitleSync()}
-                      className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-4xl sm:text-6xl font-black italic tracking-tighter pb-2" 
+                      className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-3xl sm:text-5xl font-black italic tracking-tighter pb-1" 
                       placeholder="作品名..." 
                     />
-                    <button onClick={handleAutoFetch} disabled={isFetching} className="p-4 rounded-2xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20">
-                       {isFetching ? <Loader size={24} className="animate-spin" /> : <Sparkles size={24} />}
+                    <button onClick={handleAutoFetch} disabled={isFetching} className="p-3 rounded-xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20">
+                       {isFetching ? <Loader size={20} className="animate-spin" /> : <Sparkles size={20} />}
                     </button>
                  </div>
                ) : (
-                 <h2 className="text-5xl sm:text-7xl font-black text-white leading-[1.05] tracking-tighter italic" style={{ color, textShadow: '0 15px 45px rgba(0,0,0,0.9)' }}>{title || 'Untitled'}</h2>
+                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>{title || 'Untitled'}</h2>
                )}
             </div>
 
-            {/* 2. Meta Info (Pushed down for clarity) */}
-            <div className="space-y-8 pt-4">
+            {/* 2. Meta Info (Tight layout) */}
+            <div className="flex flex-col gap-3">
                {/* Rank & Genre Row */}
-               <div className="flex flex-wrap items-center gap-4">
-                  {rankingId && <div className="px-6 py-3 bg-accent text-black font-black text-xs uppercase tracking-widest rounded-xl shadow-xl shadow-accent/30 italic flex items-center gap-3"><Crown size={18} />Rank {currentRank}</div>}
+               <div className="flex flex-wrap items-center gap-3">
+                  {rankingId && <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2"><Crown size={14} />Rank {currentRank}</div>}
                   
-                  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 flex items-center gap-0.5">
+                  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 flex items-center gap-0.5">
                      {isGlobalEditMode ? (
                         Object.entries(GENRE_MAP).map(([key, info]) => {
                            const Icon = info.icon;
@@ -167,26 +167,26 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                              <button 
                                key={key} 
                                onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                               className={`flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-lg' : 'text-slate-600 hover:text-slate-400'}`}
+                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm' : 'text-slate-600 hover:text-slate-400'}`}
                              >
-                                <Icon size={18} />
-                                {isSelectedGenre && <span className="text-[11px] font-black uppercase tracking-[0.1em]">{info.label}</span>}
+                                <Icon size={14} />
+                                {isSelectedGenre && <span className="text-[9px] font-black uppercase tracking-widest">{info.label}</span>}
                              </button>
                            );
                         })
                      ) : (
-                        <div className="flex items-center gap-3 px-6 py-2.5 text-accent">
-                           <GenreIcon size={20} />
-                           <span className="text-[11px] font-black uppercase tracking-[0.2em]">{genreInfo.label}</span>
+                        <div className="flex items-center gap-2 px-4 py-1.5 text-accent">
+                           <GenreIcon size={16} />
+                           <span className="text-[9px] font-black uppercase tracking-widest">{genreInfo.label}</span>
                         </div>
                      )}
                   </div>
                </div>
 
-               {/* Author & Date Row */}
-               <div className="flex flex-wrap items-center gap-12 pl-2">
-                  <div className="flex items-center gap-4">
-                     <User size={22} className="text-accent" />
+               {/* Author & Date Row (Tightened) */}
+               <div className="flex flex-wrap items-center gap-6 pl-1">
+                  <div className="flex items-center gap-2">
+                     <User size={16} className="text-accent/60" />
                      {isGlobalEditMode ? (
                         <input 
                           type="text" 
@@ -194,19 +194,19 @@ export default function RankingItemDetailModal({ item, isOpen, onClose }) {
                           onChange={e => setLocalAuthor(e.target.value)} 
                           onBlur={handleAuthorSync}
                           onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
-                          className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-bold text-white outline-none focus:border-accent w-[200px]" 
+                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-accent w-[160px]" 
                           placeholder="作者名" 
                         />
                      ) : (
-                        <span className="text-slate-400 font-black uppercase tracking-[0.4em] text-[13px]">{author || 'UNKNOWN AUTHOR'}</span>
+                        <span className="text-slate-500 font-black uppercase tracking-[0.2em] text-[10px]">{author || 'AUTHOR'}</span>
                      )}
                   </div>
-                  <div className="flex items-center gap-4">
-                     <Calendar size={22} className="text-emerald-500" />
+                  <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+                     <Calendar size={16} className="text-emerald-500/60" />
                      {isGlobalEditMode ? (
-                        <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white outline-none focus:border-accent" />
+                        <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
                      ) : (
-                        <span className="text-slate-500 font-bold text-xs uppercase tracking-[0.2em]">{createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}</span>
+                        <span className="text-slate-500 font-bold text-[10px] tracking-widest">{createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}</span>
                      )}
                   </div>
                </div>
