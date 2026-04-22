@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2 } from 'lucide-react';
+import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -34,7 +34,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate }) {
+export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate, onMove }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
@@ -215,16 +215,31 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           <Crown size={14} /> Rank {currentRank}
                         </div>
                         {isGlobalEditMode && (
-                          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
-                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Change to</span>
-                             <input 
-                               type="number" 
-                               min="1" 
-                               max="100"
-                               value={currentRank}
-                               onChange={(e) => moveItemToRank(rankingId, id, parseInt(e.target.value))}
-                               className="w-12 bg-transparent border-none outline-none text-white font-black text-sm text-center"
-                             />
+                          <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-0.5">
+                             <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 const nextRank = Math.max(1, currentRank - 1);
+                                 if (onMove) onMove(id, nextRank);
+                                 else moveItemToRank(rankingId, id, nextRank);
+                               }}
+                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+                             >
+                               <Minus size={14} />
+                             </button>
+                             <div className="w-10 text-center text-white font-black text-sm">{currentRank}</div>
+                             <button 
+                               onClick={(e) => { 
+                                 e.stopPropagation(); 
+                                 const nextRank = Math.min(100, currentRank + 1);
+                                 if (onMove) onMove(id, nextRank);
+                                 else moveItemToRank(rankingId, id, nextRank);
+                               }}
+                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+                             >
+                               <Plus size={14} />
+                             </button>
+                             <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest px-2">Pos</span>
                           </div>
                         )}
                       </div>

@@ -34,7 +34,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false }) {
+export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
@@ -167,9 +167,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         }`} 
         onClick={() => setIsModalOpen(true)}
       >
-        {/* Rainbow glow effect for rank 1 - Brighter and more vivid */}
+        {/* Gold glow effect for rank 1 - Premium Gold */}
         {currentRank === 1 && (
-          <div className="absolute -inset-[1.5px] bg-gradient-to-r from-[#FF0000] via-[#FF8000] via-[#FFFF00] via-[#00FF00] via-[#00FFFF] via-[#0000FF] via-[#8000FF] to-[#FF0000] rounded-2xl -z-10 animate-rainbow-slow blur-[5px] opacity-100 saturate-[1.8] brightness-[1.2]" />
+          <div className="absolute -inset-[1.5px] bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600 rounded-2xl -z-10 animate-pulse blur-[8px] opacity-60" />
         )}
         
         {isEditMode ? (
@@ -360,6 +360,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onUpdate={onUpdate}
+        onMove={onMove}
       />
     </>
   );

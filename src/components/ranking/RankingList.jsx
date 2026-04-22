@@ -6,13 +6,8 @@ import {
   MouseSensor, 
   TouchSensor, 
   useSensor, 
-  useSensors,
-  PointerSensor
+  useSensors 
 } from '@dnd-kit/core';
-import { 
-  restrictToVerticalAxis,
-  restrictToWindowEdges
-} from '@dnd-kit/modifiers';
 import { 
   arrayMove, 
   SortableContext, 
@@ -24,7 +19,7 @@ import { CSS } from '@dnd-kit/utilities';
 import RankingItem from './RankingItem';
 import { useStore } from '../../store/useStore';
 
-function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId, onUpdate }) {
+function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId, onUpdate, onMove }) {
   const {
     attributes,
     listeners,
@@ -35,8 +30,8 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
   } = useSortable({ id: item.id, disabled: !isEditMode && !isReorderMode });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
-    transition: transition || (isDragging ? 'none' : 'transform 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22)'),
+    transform: CSS.Transform.toString(transform),
+    transition,
     zIndex: isDragging ? 50 : 1,
     position: 'relative',
     opacity: isDragging ? 0.9 : 1,
@@ -52,6 +47,7 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
         rankingId={rankingId}
         dragHandleProps={(isEditMode || isReorderMode) ? {...attributes, ...listeners} : null}
         onUpdate={onUpdate}
+        onMove={onMove}
         genre={item.genre || 'music'}
       />
     </div>
@@ -99,6 +95,21 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     setHasChanges(true);
   };
 
+  const handleLocalMove = (id, targetRank) => {
+    const itemToMove = items.find(i => i.id === id);
+    if (!itemToMove) return;
+    const otherItems = items.filter(i => i.id !== id);
+    const newIndex = Math.max(0, Math.min(targetRank - 1, items.length - 1));
+    const newItems = [...otherItems];
+    newItems.splice(newIndex, 0, { ...itemToMove, currentRank: targetRank });
+    const updatedWithRanks = newItems.map((item, index) => ({
+      ...item,
+      currentRank: index + 1
+    }));
+    setItems(updatedWithRanks);
+    setHasChanges(true);
+  };
+
   const handleSave = () => {
     if (onSave) onSave(items);
     useStore.getState().captureRankHistory(ranking.id);
@@ -120,12 +131,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   return (
     <div className="relative">
-      <DndContext 
-        sensors={sensors} 
-        collisionDetection={closestCenter} 
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-      >
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
             {visibleItems.map(item => (
@@ -137,6 +143,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
                 isCollapsed={isActuallyCollapsed}
                 rankingId={ranking.id}
                 onUpdate={handleLocalUpdate}
+                onMove={handleLocalMove}
               />
             ))}
           </div>
