@@ -236,7 +236,7 @@ export default function StatsView() {
           <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
             <span className="text-sm font-black text-slate-400">総作品数</span>
             <span className="text-3xl font-black text-accent font-mono leading-none">
-              {stats.totalCount}
+              <Counter value={stats.totalCount} />
             </span>
           </div>
         </div>
@@ -260,7 +260,7 @@ export default function StatsView() {
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
                   <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
-                    {stats.lifetimeStats.totalHours}
+                    <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
@@ -348,7 +348,7 @@ export default function StatsView() {
                   <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
                     殿堂入り 
                     <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
-                      (現在{stats.hallOfFame.length}作品)
+                      (現在<Counter value={stats.hallOfFame.length} />作品)
                     </span>
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
@@ -477,7 +477,7 @@ export default function StatsView() {
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-black text-white italic font-mono leading-none">
-                  {stats.totalCount}
+                  <Counter value={stats.totalCount} />
                 </span>
                 <span className="text-[11px] font-black text-accent/80 italic">作品</span>
               </div>

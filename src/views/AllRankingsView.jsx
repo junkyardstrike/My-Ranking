@@ -104,7 +104,7 @@ export default function AllRankingsView() {
             <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
               <span className="text-xs font-black text-slate-400">総作品数</span>
               <span className="text-2xl font-black text-accent font-mono leading-none">
-                <Counter value={allItems.length} />
+                {allItems.length}
               </span>
             </div>
           </div>
