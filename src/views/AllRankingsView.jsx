@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import HeaderWalker from '../components/common/HeaderWalker';
+import PixelItem from '../components/common/PixelItem';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -100,10 +100,10 @@ export default function AllRankingsView() {
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)]">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)] pr-6">
               Records
             </h1>
-            <HeaderWalker className="mb-1" />
+            <PixelItem type="grimoire" size={40} className="mb-1" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">

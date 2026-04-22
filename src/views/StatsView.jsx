@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import PixelWalker from '../components/common/PixelWalker';
-import HeaderWalker from '../components/common/HeaderWalker';
+import PixelItem from '../components/common/PixelItem';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
   BarChart, Bar, XAxis, YAxis, CartesianGrid
@@ -233,10 +233,10 @@ export default function StatsView() {
       <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-emerald-100 via-emerald-400 to-emerald-700 drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)]">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-emerald-100 via-emerald-400 to-emerald-700 drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)] pr-6">
               Stats
             </h1>
-            <HeaderWalker className="mb-1" />
+            <PixelItem type="potion" size={40} className="mb-1" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">

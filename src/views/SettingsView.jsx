@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import HeaderWalker from '../components/common/HeaderWalker';
+import PixelItem from '../components/common/PixelItem';
 
 export default function SettingsView() {
   const rankings = useStore(state => state.rankings) || [];
@@ -79,10 +79,10 @@ export default function SettingsView() {
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-purple-100 via-purple-400 to-purple-700 drop-shadow-[0_15px_30px_rgba(168,85,247,0.4)]">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-purple-100 via-purple-400 to-purple-700 drop-shadow-[0_15px_30px_rgba(168,85,247,0.4)] pr-6">
               Settings
             </h1>
-            <HeaderWalker className="mb-1" />
+            <PixelItem type="key" size={40} className="mb-1" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-purple-500 via-purple-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(168,85,247,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
