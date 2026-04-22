@@ -360,13 +360,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            {(genre === 'anime' || genre === 'drama') && (
                              <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400">話数</label>
-                                <input type="number" min="1" value={episodes} onChange={e => handleUpdate({ episodes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
+                                <input type="number" min="1" value={episodes === 0 ? '' : episodes} onChange={e => handleUpdate({ episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ episodes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
                              </div>
                            )}
                            {genre === 'manga' && (
                              <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400">巻数</label>
-                                <input type="number" min="1" value={volumes} onChange={e => handleUpdate({ volumes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
+                                <input type="number" min="1" value={volumes === 0 ? '' : volumes} onChange={e => handleUpdate({ volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ volumes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
                              </div>
                            )}
                         </div>
