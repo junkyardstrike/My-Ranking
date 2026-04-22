@@ -1,9 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
+import { Trophy, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
 import { useCallback } from 'react';
 
 const TABS = [
-  { id: 'home',     icon: Home,        label: 'HOME',    path: '/' },
+  { id: 'home',     icon: Trophy,      label: 'RANKING', path: '/' },
   { id: 'all',      icon: Archive,     label: 'RECORDS', path: '/all' },
   { id: 'stats',    icon: BarChart3,   label: 'STATS',   path: '/stats' },
   { id: 'settings', icon: Settings,    label: 'SETTINGS',path: '/settings' },
