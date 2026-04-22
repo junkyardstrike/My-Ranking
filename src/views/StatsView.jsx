@@ -279,9 +279,9 @@ export default function StatsView() {
                     <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
                     <div className="flex items-baseline gap-2">
                       <span className="text-xs font-black text-slate-400">約</span>
-                      <span className="text-2xl font-black text-white font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
+                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
                       <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">日</span>
-                      <span className="text-2xl font-black text-white font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
+                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
                       <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">時間</span>
                     </div>
                   </div>
