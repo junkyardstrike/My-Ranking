@@ -145,24 +145,29 @@ export default function StatsView() {
       const g = item.genre || 'other';
       const views = Number(item.views || 0);
       
-      const isAutoCalculatedGenre = ['manga', 'anime', 'drama'].includes(g);
-      let durationPerView = 0;
-      if (!isAutoCalculatedGenre && item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) {
-        durationPerView = Number(item.duration);
-      } else {
-        const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : null;
+      const baseDuration = (item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) ? Number(item.duration) : null;
+      let unitDuration = baseDuration;
+      if (unitDuration === null) {
         switch (g) {
-          case 'anime': durationPerView = (episodes !== null ? episodes : 1) * 20; break;
-          case 'drama': durationPerView = (episodes !== null ? episodes : 1) * 40; break;
-          case 'movie': durationPerView = 120; break;
-          case 'music': durationPerView = 3; break;
-          case 'manga': 
-            const volumes = (item.volumes !== undefined && item.volumes !== null && item.volumes !== '') ? Number(item.volumes) : 1;
-            durationPerView = 30 * volumes; 
-            break;
-          default: durationPerView = 0; break;
+          case 'anime': unitDuration = 20; break;
+          case 'drama': unitDuration = 40; break;
+          case 'movie': unitDuration = 120; break;
+          case 'music': unitDuration = 3; break;
+          case 'manga': unitDuration = 30; break;
+          default: unitDuration = 0; break;
         }
       }
+
+      let totalDurationPerView = unitDuration;
+      if (g === 'manga') {
+        const volumes = (item.volumes !== undefined && item.volumes !== null && item.volumes !== '') ? Number(item.volumes) : 1;
+        totalDurationPerView = unitDuration * volumes;
+      } else if (g === 'anime' || g === 'drama') {
+        const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : 1;
+        totalDurationPerView = unitDuration * episodes;
+      }
+
+      const durationPerView = totalDurationPerView; // For clarity in the existing loop structure
       
       const itemTotalMinutes = durationPerView * views;
       if (itemTotalMinutes > 0) {

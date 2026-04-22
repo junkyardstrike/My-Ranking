@@ -65,18 +65,24 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
   const effectiveGenre = rawGenre === 'other' ? 'music' : rawGenre;
 
-  const isAutoCalculatedGenre = ['manga', 'anime', 'drama'].includes(effectiveGenre);
-  let calculatedDuration = (!isAutoCalculatedGenre && duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
-  if (calculatedDuration === null) {
+  const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
+  let unitDuration = baseDuration;
+  if (unitDuration === null) {
     switch (effectiveGenre) {
-      case 'anime': calculatedDuration = (episodes || 1) * 20; break;
-      case 'drama': calculatedDuration = (episodes || 1) * 40; break;
-      case 'movie': calculatedDuration = 120; break;
-      case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = (volumes || 1) * 30; break;
-      default: calculatedDuration = 0; break;
+      case 'anime': unitDuration = 20; break;
+      case 'drama': unitDuration = 40; break;
+      case 'movie': unitDuration = 120; break;
+      case 'music': unitDuration = 3; break;
+      case 'manga': unitDuration = 30; break;
+      default: unitDuration = 0; break;
     }
   }
+
+  let totalDurationPerView = unitDuration;
+  if (effectiveGenre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
+  else if (effectiveGenre === 'anime' || effectiveGenre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
+
+  const totalLifetimeDuration = totalDurationPerView * (views || 1);
 
   // Local states to fix IME bug for lists
   const [localTitle, setLocalTitle] = useState(title || '');
@@ -381,7 +387,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     {(views > 0 || calculatedDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
                         {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
-                        {calculatedDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{calculatedDuration * (views || 1)}m</span>}
+                        {totalLifetimeDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{totalLifetimeDuration}m</span>}
                         {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-400"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                         
                         {/* Rank history in expanded view (Forced New Line) */}

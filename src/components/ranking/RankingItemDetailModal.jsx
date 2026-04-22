@@ -78,17 +78,24 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = liveItem;
 
-  let calculatedDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
-  if (calculatedDuration === null) {
+  const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
+  let unitDuration = baseDuration;
+  if (unitDuration === null) {
     switch (genre) {
-      case 'anime': calculatedDuration = episodes * 20; break;
-      case 'drama': calculatedDuration = episodes * 40; break;
-      case 'movie': calculatedDuration = 120; break;
-      case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = (volumes || 1) * 30; break;
-      default: calculatedDuration = 0; break;
+      case 'anime': unitDuration = 20; break;
+      case 'drama': unitDuration = 40; break;
+      case 'movie': unitDuration = 120; break;
+      case 'music': unitDuration = 3; break;
+      case 'manga': unitDuration = 30; break;
+      default: unitDuration = 0; break;
     }
   }
+
+  let totalDurationPerView = unitDuration;
+  if (genre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
+  else if (genre === 'anime' || genre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
+
+  const totalLifetimeDuration = totalDurationPerView * (views || 1);
   const handleUpdate = (updates) => {
     if (onUpdate) {
       onUpdate(id, updates);
@@ -342,12 +349,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      {!isGlobalEditMode && (
                         <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
-                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration * (views || 1)}</p>
+                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration}</p>
                            <p className="text-[8px] text-slate-500 font-bold text-center">
                              {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                               `(${genre === 'manga' ? '30' : (genre === 'anime' ? '20' : '40')}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'}) × ${(views || 1)}回`
+                               `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${(views || 1)}回`
                              ) : (
-                               `${calculatedDuration}分 × ${(views || 1)}回`
+                               `${unitDuration}分 × ${(views || 1)}回`
                              )}
                            </p>
                         </div>
@@ -361,8 +368,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-400">所要時間 (分/回)</label>
-                              <input type="number" min="0" value={calculatedDuration || ''} onChange={e => handleUpdate({ duration: parseInt(e.target.value) || 0 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="自動計算" />
+                              <label className="text-[10px] font-bold text-slate-400">
+                                {genre === 'movie' ? '所要時間 (分)' : '1話/1巻あたりの時間 (分)'}
+                              </label>
+                              <input 
+                                type="number" 
+                                min="0" 
+                                value={baseDuration === null ? '' : baseDuration} 
+                                onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : parseInt(e.target.value) })} 
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" 
+                                placeholder={unitDuration.toString()} 
+                              />
                            </div>
                            {(genre === 'anime' || genre === 'drama') && (
                              <div className="space-y-1">
