@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus } from 'lucide-react';
+import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -327,6 +327,26 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                        )}
                      </div>
                   </div>
+
+                  {isGlobalEditMode && (
+                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                           <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> TIME & EPISODES</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div className="space-y-1">
+                              <label className="text-[10px] font-bold text-slate-400">所要時間 (分/回)</label>
+                              <input type="number" min="0" value={liveItem.duration || ''} onChange={e => handleUpdate({ duration: parseInt(e.target.value) || 0 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="自動計算" />
+                           </div>
+                           {(genre === 'anime' || genre === 'drama') && (
+                             <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400">話数</label>
+                                <input type="number" min="1" value={liveItem.episodes || ''} onChange={e => handleUpdate({ episodes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
+                             </div>
+                           )}
+                        </div>
+                     </div>
+                  )}
 
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">

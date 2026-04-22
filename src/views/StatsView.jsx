@@ -14,9 +14,11 @@ import {
   Hash,
   Eye,
   Target,
-  LayoutGrid
+  LayoutGrid,
+  Clock
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
+import PixelWalker from '../components/common/PixelWalker';
 
 const GENRE_LABELS = {
   anime: 'アニメ',
@@ -131,12 +133,62 @@ export default function StatsView() {
       })
       .sort((a, b) => b.avg - a.avg);
 
+    // 5. Lifetime Counter
+    const genreLifetime = {};
+    let totalMinutes = 0;
+    let hasHallOfFameItem = false;
+
+    allItems.forEach(item => {
+      const g = item.genre || 'other';
+      const views = Number(item.views || 0);
+      
+      let durationPerView = 0;
+      if (item.duration !== undefined && item.duration !== null && item.duration !== '') {
+        durationPerView = Number(item.duration);
+      } else {
+        const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : null;
+        switch (g) {
+          case 'anime': durationPerView = (episodes !== null ? episodes : 12) * 20; break;
+          case 'drama': durationPerView = (episodes !== null ? episodes : 10) * 40; break;
+          case 'movie': durationPerView = 120; break;
+          case 'music': durationPerView = 3; break;
+          case 'manga': durationPerView = 30; break;
+          default: durationPerView = 0; break;
+        }
+      }
+      
+      const itemTotalMinutes = durationPerView * views;
+      if (itemTotalMinutes > 0) {
+        totalMinutes += itemTotalMinutes;
+        genreLifetime[g] = (genreLifetime[g] || 0) + itemTotalMinutes;
+        
+        if (Number(item.rating || 0) >= 95 && views >= 5) {
+          hasHallOfFameItem = true;
+        }
+      }
+    });
+
+    const lifetimeStats = {
+      totalMinutes,
+      totalHours: Math.floor(totalMinutes / 60),
+      days: Math.floor(totalMinutes / (60 * 24)),
+      remainingHours: Math.floor((totalMinutes % (60 * 24)) / 60),
+      hasHallOfFameItem,
+      genreLifetime: Object.entries(genreLifetime).map(([genre, mins]) => ({
+        id: genre,
+        name: GENRE_LABELS[genre] || genre,
+        hours: Math.floor(mins / 60),
+        color: GENRE_COLORS[genre] || GENRE_COLORS.other,
+      })).sort((a, b) => b.hours - a.hours)
+    };
+
     return {
       totalCount: allItems.length,
       genreData,
       scoreBins,
       hallOfFame,
-      genreAverages
+      genreAverages,
+      lifetimeStats
     };
   }, [rankings, unrankedItems, getAllItems]);
 
@@ -161,6 +213,60 @@ export default function StatsView() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 0. Lifetime Counter */}
+        <section className={`md:col-span-2 relative bg-black/60 backdrop-blur-2xl border ${stats.lifetimeStats.hasHallOfFameItem ? 'border-yellow-500/40 shadow-[0_0_30px_rgba(234,179,8,0.2)]' : 'border-white/5'} rounded-[32px] p-6 overflow-hidden`}>
+          {stats.lifetimeStats.hasHallOfFameItem && (
+            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/20 via-transparent to-transparent pointer-events-none" />
+          )}
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            {/* Left: Pixel Walker & Total */}
+            <div className="flex-1 flex flex-col items-center justify-center text-center">
+              <PixelWalker className="mb-2" />
+              <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-1">Lifetime Spent</p>
+              <div className="flex items-baseline gap-2 justify-center">
+                <span className="text-5xl md:text-6xl font-black text-white font-mono tracking-tighter drop-shadow-lg">
+                  <Counter value={stats.lifetimeStats.totalHours} />
+                </span>
+                <span className="text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
+              </div>
+              {stats.lifetimeStats.days > 0 && (
+                <div className="mt-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full inline-flex items-center gap-2">
+                  <span className="text-xs font-black text-slate-300">約</span>
+                  <span className="text-sm font-black text-white font-mono">{stats.lifetimeStats.days}</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">日</span>
+                  <span className="text-sm font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">時間</span>
+                </div>
+              )}
+            </div>
+
+            {/* Right: Genre Breakdown */}
+            <div className="w-full md:w-[280px] flex-shrink-0">
+               <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2 border-b border-white/10 pb-2">
+                 <Clock size={12} /> By Genre
+               </h3>
+               <div className="space-y-2 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
+                 {stats.lifetimeStats.genreLifetime.map(g => (
+                   <div key={g.id} className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: g.color }} />
+                        <span className="text-xs font-bold text-slate-300 truncate">{g.name}</span>
+                      </div>
+                      <div className="text-right flex-shrink-0 pl-2 flex items-baseline gap-1">
+                        <span className="text-sm font-black text-white font-mono">{g.hours}</span>
+                        <span className="text-[9px] font-black text-slate-500">h</span>
+                      </div>
+                   </div>
+                 ))}
+                 {stats.lifetimeStats.genreLifetime.length === 0 && (
+                    <p className="text-xs text-slate-600 text-center py-4 font-bold">データがありません</p>
+                 )}
+               </div>
+            </div>
+          </div>
+        </section>
+
         {/* 1. Genre Ratio Chart */}
         <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
           <div className="flex items-center justify-between mt-4">
