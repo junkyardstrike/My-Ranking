@@ -220,54 +220,59 @@ export default function StatsView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 0. Lifetime Counter */}
-        <section className={`md:col-span-2 relative ${stats.lifetimeStats.hasHallOfFameItem ? 'border border-yellow-500/40 shadow-[0_0_30px_rgba(234,179,8,0.2)] rounded-[32px] overflow-hidden bg-black/40' : ''} py-4`}>
+        <section className={`md:col-span-2 relative py-4 ${stats.lifetimeStats.hasHallOfFameItem ? 'rounded-[32px] overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.15)]' : ''}`}>
           {stats.lifetimeStats.hasHallOfFameItem && (
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/20 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none" />
           )}
           
-          <div className="relative z-10 flex flex-col md:flex-row gap-8">
+          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
             {/* Left: Pixel Walker & Total */}
-            <div className="flex-1 flex flex-col items-center justify-center text-center">
-              <PixelWalker className="mb-4" />
-              <h2 className="text-xl md:text-2xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計消費時間</h2>
-              <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
-              
-              <div className="flex items-baseline gap-2 justify-center">
-                <span className="text-6xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl">
-                  <Counter value={stats.lifetimeStats.totalHours} />
-                </span>
-                <span className="text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
-              </div>
-              
-              {stats.lifetimeStats.days > 0 && (
-                <div className="mt-4 bg-white/5 border border-white/10 px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
-                  <span className="text-xs font-black text-slate-300">約</span>
-                  <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.days}</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">日</span>
-                  <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">時間</span>
+            <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-center sm:text-left">
+              <PixelWalker className="mb-2 sm:mb-0" />
+              <div className="flex flex-col items-center sm:items-start">
+                <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計消費時間</h2>
+                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
+                
+                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
+                  <span className="text-6xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl">
+                    <Counter value={stats.lifetimeStats.totalHours} />
+                  </span>
+                  <span className="text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
                 </div>
-              )}
+                
+                {stats.lifetimeStats.days > 0 && (
+                  <div className="mt-4 bg-white/5 border border-white/10 px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
+                    <span className="text-xs font-black text-slate-300">約</span>
+                    <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.days}</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">日</span>
+                    <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">時間</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Right: Genre Breakdown */}
             <div className="w-full md:w-[320px] flex-shrink-0">
                <div className="grid grid-cols-2 gap-3 max-h-[220px] overflow-y-auto custom-scrollbar pr-2 pt-2">
                  {stats.lifetimeStats.genreLifetime.map(g => (
-                   <div key={g.id} className="relative h-16 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-2 bg-black/40">
+                   <div key={g.id} className="relative h-20 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-2.5 bg-black/40">
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
                       )}
-                      <div className="relative z-10 flex items-center gap-1.5 mb-1">
-                        <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
-                        <span className="text-[10px] font-bold text-slate-300 truncate drop-shadow-md uppercase tracking-wider">{g.name}</span>
+                      <div className="relative z-10 flex flex-col justify-start">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <div className="w-2 h-2 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
+                          <span className="text-sm font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
+                        </div>
+                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-3.5 leading-none">{g.id}</span>
                       </div>
                       <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-lg font-black text-white font-mono drop-shadow-md leading-none">{g.hours}</span>
-                        <span className="text-[9px] font-black text-slate-400 drop-shadow-md">時間</span>
+                        <span className="text-xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
+                        <span className="text-[10px] font-black text-accent/80 drop-shadow-md">時間</span>
                       </div>
                    </div>
                  ))}
@@ -328,7 +333,7 @@ export default function StatsView() {
                   <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
                 </div>
                 <div className="text-right flex-shrink-0">
-                   <span className="text-xs font-black text-white font-mono">{genre.value}<span className="text-[10px] text-slate-500 ml-1">{genre.unit}</span></span>
+                   <span className="text-xs font-black text-white font-mono">{genre.value}<span className="text-[10px] text-slate-500 ml-1">作品</span></span>
                 </div>
               </div>
             ))}
@@ -390,8 +395,8 @@ export default function StatsView() {
                   <Trophy className="w-5 h-5 text-yellow-500" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter italic flex items-center gap-2">
-                    Hall of Fame <span className="text-[10px] text-yellow-700 not-italic font-bold tracking-widest ml-1">/ 殿堂入り</span>
+                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter flex items-center gap-2">
+                    殿堂入り <span className="text-[10px] text-yellow-700 font-bold tracking-widest ml-1 italic">/ Hall of Fame</span>
                   </h2>
                   <p className="text-[10px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
                 </div>
