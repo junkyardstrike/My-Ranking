@@ -266,10 +266,12 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             </div>
 
             {/* Metrics Row */}
-            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
-                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Rating</span>
-                <div className="flex-1 flex justify-center"><ScoreRating rating={rating} onRatingChange={v => onUpdate(propItem.id, { rating: v })} /></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
+              <div className="space-y-3 text-center flex-1 bg-black/40 p-2.5 rounded-xl border border-white/5">
+                <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
+                <div className="flex justify-center">
+                   <ScoreRating rating={rating} onRatingChange={v => onUpdate(propItem.id, { rating: v })} />
+                </div>
               </div>
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                  <Eye className="w-3.5 h-3.5 text-blue-500" />

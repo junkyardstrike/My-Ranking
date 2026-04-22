@@ -1,38 +1,47 @@
-import { Star } from 'lucide-react';
+import { Star, Target } from 'lucide-react';
 
 export default function ScoreRating({ rating = 0, onRatingChange, readOnly = false }) {
-  // 10-point scale (0 to 10), split into 2 rows of 5
-  const row1 = [1, 2, 3, 4, 5];
-  const row2 = [6, 7, 8, 9, 10];
-
-  const renderStar = (star) => (
-    <button
-      key={star}
-      type="button"
-      disabled={readOnly}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (!readOnly && onRatingChange) onRatingChange(star);
-      }}
-      className={`transition-all duration-200 ${readOnly ? 'cursor-default' : 'hover:scale-125 cursor-pointer'}`}
-    >
-      <Star
-        size={13}
-        className={`${star <= rating
-            ? 'fill-accent text-accent shadow-accent/50 drop-shadow-[0_0_2px_rgba(212,175,55,0.8)]'
-            : 'text-slate-800'
-          }`}
-      />
-    </button>
-  );
+  // 100-point scale
+  
+  if (readOnly) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1.5 w-16 bg-white/5 rounded-full overflow-hidden border border-white/5">
+          <div 
+            className="h-full bg-accent transition-all duration-1000 shadow-[0_0_8px_rgba(212,175,55,0.4)]" 
+            style={{ width: `${rating}%` }}
+          />
+        </div>
+        <span className="text-[10px] font-black text-accent font-mono leading-none">{rating}</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="flex items-center gap-1.5">
-        {row1.map(renderStar)}
+    <div className="flex items-center gap-3 bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 group hover:border-accent/30 transition-all">
+      <Target size={14} className="text-accent/50 group-hover:text-accent transition-colors" />
+      <div className="flex items-center gap-2">
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={rating}
+          onClick={e => e.stopPropagation()}
+          onChange={(e) => {
+            e.stopPropagation();
+            const val = Math.max(0, Math.min(100, parseInt(e.target.value) || 0));
+            if (onRatingChange) onRatingChange(val);
+          }}
+          className="w-12 bg-transparent border-none outline-none text-white font-black text-sm font-mono text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">pts</span>
       </div>
-      <div className="flex items-center gap-1.5">
-        {row2.map(renderStar)}
+      <div className="w-px h-4 bg-white/10 mx-1" />
+      <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden w-16">
+        <div 
+          className="h-full bg-accent transition-all duration-300" 
+          style={{ width: `${rating}%` }}
+        />
       </div>
     </div>
   );

@@ -307,12 +307,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
                   <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 flex items-center justify-around shadow-lg">
-                     <div className="space-y-2 text-center">
+                      <div className="space-y-3 text-center flex-1">
                         <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
-                        <div className="flex justify-center scale-90 origin-center">
+                        <div className="flex justify-center">
                            <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                         </div>
-                     </div>
+                      </div>
                      
                      <div className="w-px h-10 bg-white/10" />
 
