@@ -269,7 +269,6 @@ export default function StatsView() {
                  {stats.lifetimeStats.genreLifetime.map(g => (
                    <button 
                      key={g.id} 
-                     onTouchStart={() => navigate('/all', { state: { filterGenre: g.id } })}
                      onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 md:hover:border-accent/50 md:hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] text-left w-full block"
                      style={{ WebkitTapHighlightColor: 'transparent' }}
