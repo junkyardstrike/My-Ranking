@@ -340,7 +340,7 @@ export default function StatsView() {
         </section>
 
         {/* 3. Hall of Fame - Open Design (No Box) */}
-        <section className="md:col-span-2 relative group py-12 premium-section-animate" style={{ animationDelay: '200ms' }}>
+        <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
           {/* Animated Golden Aura */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
           
