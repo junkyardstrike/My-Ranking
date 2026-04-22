@@ -249,7 +249,7 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-emerald-400 font-mono tracking-tighter drop-shadow-xl truncate">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-emerald-600 font-mono tracking-tighter drop-shadow-xl truncate">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
@@ -316,36 +316,28 @@ export default function StatsView() {
               <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
             </div>
 
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="relative">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
+              <div className="flex items-center gap-6">
+                <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
                   <div className="relative p-4 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-2xl shadow-2xl">
                     <Trophy className="w-8 h-8 text-yellow-950" />
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center gap-3 drop-shadow-sm">
+                  <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
                     殿堂入り 
+                    <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
+                      (現在{stats.hallOfFame.length}作品)
+                    </span>
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
-                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-1 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
+                  <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-2.5 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
                     95点以上 × 5回以上の鑑賞
                   </p>
                 </div>
-              </div>
-
-              <div className="flex items-center gap-4 bg-yellow-500/10 px-6 py-3 rounded-2xl border border-yellow-500/20 backdrop-blur-sm self-start md:self-auto">
-                <div className="text-right">
-                  <p className="text-sm font-black text-yellow-500 uppercase tracking-tighter leading-none mb-1">殿堂入り数</p>
-                  <p className="text-[8px] font-bold text-yellow-600/40 uppercase tracking-[0.2em] leading-none">Inducted Masters</p>
-                  <p className="text-3xl font-black text-yellow-500 font-mono leading-none mt-1.5">
-                    <Counter value={stats.hallOfFame.length} />
-                  </p>
-                </div>
-                <Crown className="w-6 h-6 text-yellow-500/50" />
               </div>
             </div>
 
@@ -386,25 +378,28 @@ export default function StatsView() {
 
                       <div className="min-w-0 flex-1">
                         <div className="mb-2">
-                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md">{item.title}</h3>
+                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md pr-12">{item.title}</h3>
                         </div>
 
-                        <div className="flex items-center gap-x-4 gap-y-2 flex-wrap">
-                          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/10 rounded-lg border border-yellow-500/20 shadow-inner shrink-0">
-                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
-                            <span className="text-sm font-black text-yellow-400 font-mono">{item.rating}</span>
+                        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
+                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                            <span className="text-base font-black text-yellow-400 font-mono">{item.rating}</span>
                           </div>
                           
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <Eye className="w-3.5 h-3.5 text-yellow-600/60" />
-                            <span className="text-[10px] font-black text-yellow-600/80 font-mono">{item.views}回</span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <Eye className="w-4 h-4 text-yellow-600/60" />
+                            <span className="text-sm font-black text-yellow-600/80 font-mono">{item.views}回</span>
                           </div>
-
-                          <span className="text-[8px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-md border border-yellow-500/10 shrink-0">
-                            {GENRE_LABELS[item.genre] || 'OTHER'}
-                          </span>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Diagonal Genre Ribbon */}
+                    <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none">
+                       <div className="absolute top-0 right-0 bg-yellow-500/20 text-yellow-500 text-[8px] font-black uppercase tracking-[0.1em] py-1 px-8 translate-x-[30%] translate-y-[30%] rotate-45 border-b border-yellow-500/30 backdrop-blur-sm shadow-xl whitespace-nowrap">
+                          {GENRE_LABELS[item.genre] || 'OTHER'}
+                       </div>
                     </div>
                   </div>
                 ))}
