@@ -225,38 +225,43 @@ export default function StatsView() {
             <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none" />
           )}
           
-          <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-            {/* Left: Pixel Walker & Total */}
-            <div className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-center sm:text-left">
-              <PixelWalker className="mb-2 sm:mb-0" />
-              <div className="flex flex-col items-center sm:items-start">
+          <div className="relative z-10 flex flex-col gap-8">
+            {/* Top: Pixel Walker & Total */}
+            <div className="flex flex-row items-center justify-between w-full px-2 sm:px-8">
+              {/* Left: Pixel Walker */}
+              <div className="flex-shrink-0">
+                 <PixelWalker className="transform scale-[1.2] origin-left" />
+              </div>
+
+              {/* Right: Total Time */}
+              <div className="flex flex-col items-end text-right">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計消費時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
-                <div className="flex items-baseline gap-2 justify-center sm:justify-start">
-                  <span className="text-6xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl">
+                <div className="flex items-baseline gap-2 justify-end">
+                  <span className="text-5xl sm:text-6xl md:text-8xl font-black text-white font-mono tracking-tighter drop-shadow-xl">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
-                  <span className="text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
+                  <span className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-4 bg-white/5 border border-white/10 px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
+                  <div className="mt-4 bg-white/5 border border-white/10 px-4 sm:px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
                     <span className="text-xs font-black text-slate-300">約</span>
-                    <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.days}</span>
+                    <span className="text-sm sm:text-base font-black text-white font-mono">{stats.lifetimeStats.days}</span>
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">日</span>
-                    <span className="text-base font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
+                    <span className="text-sm sm:text-base font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">時間</span>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Right: Genre Breakdown */}
-            <div className="w-full md:w-[320px] flex-shrink-0">
-               <div className="grid grid-cols-2 gap-3 max-h-[220px] overflow-y-auto custom-scrollbar pr-2 pt-2">
+            {/* Bottom: Genre Breakdown */}
+            <div className="w-full">
+               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
                  {stats.lifetimeStats.genreLifetime.map(g => (
-                   <div key={g.id} className="relative h-20 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-2.5 bg-black/40">
+                   <div key={g.id} className="relative h-24 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3 bg-black/40">
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
@@ -264,20 +269,20 @@ export default function StatsView() {
                         </div>
                       )}
                       <div className="relative z-10 flex flex-col justify-start">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <div className="w-2 h-2 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
-                          <span className="text-sm font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
+                          <span className="text-base font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
                         </div>
-                        <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-3.5 leading-none">{g.id}</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-4 leading-none">{g.id}</span>
                       </div>
                       <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
-                        <span className="text-[10px] font-black text-accent/80 drop-shadow-md">時間</span>
+                        <span className="text-2xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
+                        <span className="text-xs font-black text-accent/80 drop-shadow-md">時間</span>
                       </div>
                    </div>
                  ))}
                  {stats.lifetimeStats.genreLifetime.length === 0 && (
-                    <p className="text-xs text-slate-600 text-center py-4 font-bold col-span-2">データがありません</p>
+                    <p className="text-xs text-slate-600 text-center py-4 font-bold col-span-2 md:col-span-3">データがありません</p>
                  )}
                </div>
             </div>
