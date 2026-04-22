@@ -223,9 +223,9 @@ export default function StatsView() {
         <section className="md:col-span-2 relative py-4">
           <div className="relative z-10 flex flex-col gap-8">
             {/* Top: Pixel Walker & Total */}
-            <div className="flex flex-row items-center justify-center gap-8 sm:gap-16 lg:gap-32 w-full px-2 sm:px-8">
+            <div className="flex flex-row items-center justify-center gap-6 sm:gap-16 lg:gap-32 w-full px-2 sm:px-8">
               {/* Left: Pixel Walker */}
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 ml-4 sm:ml-8">
                  <PixelWalker className="transform scale-[1.2] origin-center" />
               </div>
 
@@ -289,7 +289,7 @@ export default function StatsView() {
         </section>
 
         {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 backdrop-blur-md border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
+        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
@@ -345,7 +345,7 @@ export default function StatsView() {
         </section>
 
         {/* 2. Score Distribution */}
-        <section className="bg-black/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6 shadow-2xl">
+        <section className="bg-black/40 border border-white/5 rounded-[32px] p-6 shadow-2xl">
           <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
@@ -392,7 +392,7 @@ export default function StatsView() {
         {/* 3. Hall of Fame */}
         <section className="md:col-span-2 relative">
           <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
-          <div className="relative bg-black/60 backdrop-blur-md border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
+          <div className="relative bg-black/60 border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">

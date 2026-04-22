@@ -24,65 +24,65 @@ const PixelWalker = ({ className = "" }) => {
         className={`w-full h-full transition-transform duration-100 ${frame === 1 ? '-translate-y-1' : ''}`}
         style={{ shapeRendering: 'crispEdges' }}
       >
-        {/* Hair / Hat (Colorful Cyberpunk style) */}
-        <rect x="5" y="1" width="6" height="2" fill="#0ea5e9" />
-        <rect x="4" y="2" width="1" height="2" fill="#0ea5e9" />
-        <rect x="11" y="2" width="1" height="2" fill="#0ea5e9" />
-        <rect x="5" y="0" width="2" height="1" fill="#ec4899" />
-        <rect x="9" y="0" width="2" height="1" fill="#ec4899" />
+        {/* Hair / Hat (Luxury Gold & Neon) */}
+        <rect x="5" y="1" width="6" height="2" fill="#fbbf24" />
+        <rect x="4" y="2" width="1" height="2" fill="#fbbf24" />
+        <rect x="11" y="2" width="1" height="2" fill="#fbbf24" />
+        <rect x="5" y="0" width="2" height="1" fill="#f59e0b" />
+        <rect x="9" y="0" width="2" height="1" fill="#f59e0b" />
 
         {/* Head/Face */}
-        <rect x="5" y="3" width="6" height="4" fill="#fde047" />
+        <rect x="5" y="3" width="6" height="4" fill="#fef3c7" />
         
         {/* Cyber Visor / Eyes */}
         <rect x="5" y="4" width="7" height="2" fill="#1e293b" />
-        <rect x="6" y="4" width="5" height="1" fill="#ec4899" />
+        <rect x="6" y="4" width="5" height="1" fill="#38bdf8" />
 
         {/* Body/Jacket */}
-        <rect x="5" y="7" width="6" height="5" fill="#7c3aed" />
+        <rect x="5" y="7" width="6" height="5" fill="#fcd34d" />
         
         {/* Accent on Jacket */}
-        <rect x="7" y="8" width="2" height="4" fill="#0ea5e9" />
+        <rect x="7" y="8" width="2" height="4" fill="#ffffff" />
 
         {/* Left Arm */}
-        <rect x="4" y="7" width="1" height="4" fill="#7c3aed" />
+        <rect x="4" y="7" width="1" height="4" fill="#fcd34d" />
         {frame === 0 ? (
-          <rect x="4" y="11" width="1" height="1" fill="#fde047" /> // Hand down
+          <rect x="4" y="11" width="1" height="1" fill="#fef3c7" /> // Hand down
         ) : (
-          <rect x="3" y="10" width="1" height="1" fill="#fde047" /> // Hand up
+          <rect x="3" y="10" width="1" height="1" fill="#fef3c7" /> // Hand up
         )}
 
         {/* Right Arm */}
-        <rect x="11" y="7" width="1" height="4" fill="#7c3aed" />
+        <rect x="11" y="7" width="1" height="4" fill="#fcd34d" />
         {frame === 0 ? (
-          <rect x="11" y="11" width="1" height="1" fill="#fde047" /> // Hand down
+          <rect x="11" y="11" width="1" height="1" fill="#fef3c7" /> // Hand down
         ) : (
-          <rect x="12" y="10" width="1" height="1" fill="#fde047" /> // Hand up
+          <rect x="12" y="10" width="1" height="1" fill="#fef3c7" /> // Hand up
         )}
 
         {/* Left Leg */}
         {frame === 0 ? (
           <>
-            <rect x="5" y="12" width="2" height="3" fill="#10b981" />
-            <rect x="4" y="14" width="2" height="1" fill="#f87171" /> {/* Shoe */}
+            <rect x="5" y="12" width="2" height="3" fill="#6b21a8" />
+            <rect x="4" y="14" width="2" height="1" fill="#a855f7" /> {/* Shoe */}
           </>
         ) : (
           <>
-            <rect x="6" y="12" width="2" height="2" fill="#10b981" />
-            <rect x="7" y="13" width="2" height="1" fill="#f87171" /> {/* Shoe lifted */}
+            <rect x="6" y="12" width="2" height="2" fill="#6b21a8" />
+            <rect x="7" y="13" width="2" height="1" fill="#a855f7" /> {/* Shoe lifted */}
           </>
         )}
 
         {/* Right Leg */}
         {frame === 0 ? (
           <>
-            <rect x="9" y="12" width="2" height="2" fill="#10b981" />
-            <rect x="8" y="13" width="2" height="1" fill="#f87171" /> {/* Shoe lifted */}
+            <rect x="9" y="12" width="2" height="2" fill="#6b21a8" />
+            <rect x="8" y="13" width="2" height="1" fill="#a855f7" /> {/* Shoe lifted */}
           </>
         ) : (
           <>
-            <rect x="9" y="12" width="2" height="3" fill="#10b981" />
-            <rect x="9" y="14" width="2" height="1" fill="#f87171" /> {/* Shoe */}
+            <rect x="9" y="12" width="2" height="3" fill="#6b21a8" />
+            <rect x="9" y="14" width="2" height="1" fill="#a855f7" /> {/* Shoe */}
           </>
         )}
       </svg>

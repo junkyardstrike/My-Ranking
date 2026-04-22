@@ -399,8 +399,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               </div>
             </div>
             {!localIsCollapsed && imageBase64 && (
-              <div className="flex-shrink-0 p-2 pr-3 flex items-center">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
+              <div className="flex-shrink-0 p-1.5 pl-0 flex items-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                   <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
                 </div>
               </div>
