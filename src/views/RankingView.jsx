@@ -36,18 +36,19 @@ export default function RankingView() {
 
   return (
     <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
-      <div className="mb-6">
-        <div className="flex items-end justify-between px-1 mb-6">
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{ranking.title}</h1>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{ranking.englishName || 'RANKING SELECTION'}</p>
-          </div>
+      <div className="relative mb-6">
+        <div className="flex flex-col items-center text-center px-1 mb-6 py-2">
+          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">{ranking.title}</h1>
+          <p className="text-[11px] text-yellow-500/60 font-black uppercase tracking-[0.4em] mt-2 italic">{ranking.englishName || 'RANKING SELECTION ARCHIVE'}</p>
+        </div>
+
+        <div className="absolute left-0 top-0">
           <button 
             onClick={() => navigate(ranking.folderId ? `/folder/${ranking.folderId}` : '/')}
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-white/10 shadow-sm"
+            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Back</span>
+            <ArrowLeft className="w-4 h-4 text-accent" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
           </button>
         </div>
 
