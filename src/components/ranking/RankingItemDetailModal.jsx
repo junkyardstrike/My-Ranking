@@ -157,9 +157,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-black/98 backdrop-blur-3xl" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={onClose} />
       
-      <div className="relative w-full max-w-5xl bg-surface/98 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
+      <div className="relative w-full max-w-5xl bg-[#0c0a10]/95 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
+        <div className="absolute inset-0 z-[-1] opacity-30" style={{ 
+          backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(124,58,237,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(212,175,55,0.2) 0%, transparent 50%)'
+        }} />
         
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-30">
           <div className="flex items-center gap-4">

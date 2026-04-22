@@ -39,9 +39,11 @@ function ActionButtons({ id, name, type }) {
   const handleDelete = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm(`本当に「${name}」を削除しますか？\n※この操作は元に戻せません。`)) {
-      if (type === 'folder') deleteFolder(id);
-      else deleteRanking(id);
+    if (confirm(`本当に「${name}」を削除しますか？`)) {
+      if (confirm(`【最終確認】\n「${name}」を完全に削除します。この操作は取り消せません。本当によろしいですか？`)) {
+        if (type === 'folder') deleteFolder(id);
+        else deleteRanking(id);
+      }
     }
   };
 

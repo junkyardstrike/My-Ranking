@@ -207,6 +207,14 @@ export default function SettingsView() {
           </div>
 
           <div className="p-5 space-y-6">
+            <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
+              <p className="text-xs text-accent font-bold mb-1 flex items-center gap-2">
+                <Sparkles size={14} /> 投資時間の精密計算について
+              </p>
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                STATSタブでの累計視聴時間の算出に使用される設定です。個々の作品詳細で「所要時間」が未入力の場合、ここで設定した時間がデフォルト値として適用されます。アニメや漫画等の連載形式は「設定時間 × 話数/巻数」で算出されます。
+              </p>
+            </div>
             {/* View Count Toggle */}
             <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
               <div className="flex items-center gap-3">
