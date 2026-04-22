@@ -93,5 +93,5 @@
 }
 
 .animate-line-run {
-  animation: lineRun 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: lineRun 0.3s cubic-bezier(0.1, 1, 0.2, 1) forwards;
 }

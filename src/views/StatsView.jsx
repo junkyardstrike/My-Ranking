@@ -25,7 +25,6 @@ import {
   History
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import PixelWalker from '../components/common/PixelWalker';
 
 const GENRE_LABELS = {
   anime: 'アニメ',
@@ -257,381 +256,238 @@ export default function StatsView() {
               <Counter value={stats.totalCount} />
             </span>
           </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[9px] font-bold text-emerald-500/60 uppercase tracking-[0.2em]">Real-time Analysis</span>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 0. Lifetime Counter */}
-        <section className="md:col-span-2 relative py-4 premium-section-animate" style={{ animationDelay: '100ms' }}>
-          <div className="relative z-10 flex flex-col gap-8">
-            {/* Top: Pixel Walker & Total */}
-            <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
-              {/* Left: Pixel Walker */}
-              <div className="flex-shrink-0 ml-8 sm:ml-16">
-                 <PixelWalker className="transform scale-[1.2] origin-center translate-y-3" />
-              </div>
-
-              {/* Right: Total Time */}
-              <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
-                <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
-                
-                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
-                    <Counter value={stats.lifetimeStats.totalHours} />
-                  </span>
-                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
-                </div>
-                
-                <div className="flex flex-col items-center sm:items-end gap-1.5 mt-4">
-                  <p className="text-[10px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right">
-                    ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
-                  </p>
-                  <p className="text-[9px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
-                    デフォルト設定：アニメ20分 / ドラマ40分 / 映画120分 / 音楽3分 / マンガ30分(1巻)
-                  </p>
-                </div>
-                
-                {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-                    <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xs font-black text-cyan-500">約</span>
-                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
-                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">日</span>
-                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
-                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">時間</span>
-                    </div>
-                  </div>
-                )}
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Genre Pie Chart */}
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md premium-section-animate" style={{ animationDelay: '100ms' }}>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-emerald-500/20 rounded-xl">
+              <PieIcon className="w-5 h-5 text-emerald-400" />
             </div>
-
-            {/* Bottom: Genre Breakdown */}
-            <div className="w-full mt-2">
-               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                 {stats.lifetimeStats.genreLifetime.map(g => (
-                    <div 
-                      key={g.id} 
-                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 text-left w-full"
-                    >
-                      {g.bgImage && (
-                        <div className="absolute inset-0 z-0 opacity-30 transition-opacity duration-500">
-                           <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                        </div>
-                      )}
-                      <div className="relative z-10 flex flex-col justify-start">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
-                          <span className="text-xl font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
-                        </div>
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest pl-5 leading-none">{g.id}</span>
-                      </div>
-                      <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-4xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
-                        <span className="text-sm font-black text-accent/80 drop-shadow-md">時間</span>
-                      </div>
-                    </div>
-                  ))}
-                 {stats.lifetimeStats.genreLifetime.length === 0 && (
-                    <p className="text-xs text-slate-600 text-center py-4 font-bold col-span-2 md:col-span-3">データがありません</p>
-                 )}
-               </div>
-            </div>
+            <h2 className="text-lg font-black text-white uppercase tracking-wider italic">ジャンル分布</h2>
           </div>
-        </section>
-
-        {/* 3. Hall of Fame - Open Design (No Box) */}
-        <section className="md:col-span-2 relative group py-12 premium-section-animate" style={{ animationDelay: '200ms' }}>
-          {/* Animated Golden Aura */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
-          
-          <div className="relative z-10">
-            {/* Background Sparkles Effect */}
-            <div className="absolute -top-10 -right-10 opacity-5">
-              <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
-            </div>
-
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
-                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-2xl border border-yellow-200/50">
-                    <Award className="w-8 h-8 text-yellow-950" />
-                  </div>
-                </div>
-                <div>
-                  <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
-                    殿堂入り 
-                    <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
-                      (現在<Counter value={stats.hallOfFame.length} />作品)
-                    </span>
-                    <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
-                  </h2>
-                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    ９５点以上の評価点かつ５回以上の閲覧実績が達成された作品
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {stats.hallOfFame.length === 0 ? (
-              <div className="py-16 text-center border-2 border-dashed border-yellow-500/10 rounded-[32px] bg-yellow-500/5">
-                <div className="relative inline-block mb-4">
-                  <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-black text-slate-900/40">?</span>
-                  </div>
-                </div>
-                <p className="text-sm font-black text-slate-600 uppercase tracking-[0.4em] italic">Legend Awaited</p>
-                <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {stats.hallOfFame.map((item, idx) => (
-                  <div 
-                    key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
-                    style={{ animationDelay: `${250 + (idx * 50)}ms` }}
-                  >
-                    {/* Card Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
-                    
-                    <div className="flex items-center gap-5 relative z-10">
-                      <div className="relative shrink-0">
-                        <div className="absolute -inset-1 bg-yellow-500/20 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-500/30 shadow-xl bg-black relative">
-                          {item.imageBase64 ? (
-                            <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Target className="w-6 h-6 text-yellow-500/20" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2">
-                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md pr-12">{item.title}</h3>
-                        </div>
-
-                        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-base font-black text-yellow-400 font-mono italic">{item.rating}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 shrink-0">
-                            <Eye className="w-4 h-4 text-yellow-600/60" />
-                            <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
-                          </div>
-                        </div>
-
-                        {/* Ranking Evolution Trend */}
-                        {item.previousRanks && item.previousRanks.length > 0 && (
-                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-yellow-500/10">
-                            <History className="w-3 h-3 text-yellow-500/40" />
-                            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                              {item.previousRanks.slice(-3).map((hist, hIdx) => (
-                                <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
-                                  {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
-                                </span>
-                              ))}
-                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">現在</span>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Diagonal Genre Ribbon - Enlarged Text */}
-                    <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
-                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[13px] font-black uppercase tracking-[0.1em] py-2 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
-                          {GENRE_LABELS[item.genre] || 'OTHER'}
-                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* DASHBOARD DIVIDER */}
-        <div className="md:col-span-2 mt-8 mb-4">
-          <div className="flex items-center gap-4">
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
-            <div className="flex flex-col items-center">
-              <p className="text-[10px] font-black text-accent uppercase tracking-[0.4em] italic mb-1">Dashboard</p>
-              <h2 className="text-xl font-black text-white/40 uppercase tracking-tighter italic">ダッシュボード</h2>
-            </div>
-            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
-          </div>
-        </div>
-
-        {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group premium-section-animate" style={{ animationDelay: '400ms' }}>
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
-                <PieIcon className="w-4 h-4 text-violet-400" />
-              </div>
-              <div>
-                <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="h-40 relative pointer-events-none">
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={stats.genreData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={65}
-                  paddingAngle={4}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
                   dataKey="value"
-                  stroke="none"
+                  animationBegin={200}
+                  animationDuration={1500}
                 >
                   {stats.genreData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} className="drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]" />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
+                <RechartsTooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.8)', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    fontSize: '12px'
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-white italic font-mono leading-none">
-                  <Counter value={stats.totalCount} />
-                </span>
-                <span className="text-[11px] font-black text-accent/80 italic">作品</span>
-              </div>
-            </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {stats.genreData.map((genre) => (
-              <div key={genre.name} className="flex items-center justify-between p-2 bg-white/5 rounded-xl border border-white/5">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: genre.color }} />
-                  <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            {stats.genreData.map((item) => (
+              <div key={item.id} className="flex items-center justify-between p-2 rounded-xl bg-white/5 border border-white/5">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="text-[10px] font-bold text-slate-300">{item.name}</span>
                 </div>
-                <div className="text-right flex-shrink-0">
-                   <span className="text-xs font-black text-white font-mono">{genre.value}<span className="text-[10px] text-slate-500 ml-1">作品</span></span>
-                </div>
+                <span className="text-xs font-black text-white">{item.value}<span className="text-[9px] ml-0.5 text-slate-500">{item.unit}</span></span>
               </div>
             ))}
           </div>
-        </section>
+        </div>
 
-        {/* 2. Score Distribution */}
-        <section className="bg-white/5 rounded-[40px] p-6 border border-white/5 shadow-2xl premium-section-animate" style={{ animationDelay: '300ms' }}>
-          <div className="flex items-start justify-between mb-8">
-            <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
+        {/* Score Distribution */}
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-6 backdrop-blur-md premium-section-animate" style={{ animationDelay: '200ms' }}>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-blue-500/20 rounded-xl">
+              <BarChart3 className="w-5 h-5 text-blue-400" />
             </div>
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Score Distribution</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">スコア分布</p>
-            </div>
+            <h2 className="text-lg font-black text-white uppercase tracking-wider italic">スコア分布</h2>
           </div>
-
-          <div className="h-40 mb-4 pointer-events-none">
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.scoreBins}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
                 <XAxis 
                   dataKey="range" 
-                  stroke="#475569" 
-                  fontSize={8} 
-                  fontWeight="bold" 
                   axisLine={false} 
-                  tickLine={false}
+                  tickLine={false} 
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
                 />
-                <YAxis hide />
-                <Bar dataKey="count" fill="#D4AF37" radius={[4, 4, 0, 0]} barSize={20} />
+                <YAxis 
+                  axisLine={false} 
+                  tickLine={false} 
+                  tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
+                />
+                <RechartsTooltip 
+                  cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(0,0,0,0.8)', 
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px'
+                  }}
+                />
+                <Bar 
+                  dataKey="count" 
+                  fill="#10b981" 
+                  radius={[4, 4, 0, 0]} 
+                  animationBegin={400}
+                >
+                  {stats.scoreBins.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={index === 0 ? '#fbbf24' : index === 1 ? '#10b981' : '#3b82f6'} 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-             {stats.scoreBins.map(bin => (
-               <div key={bin.range} className="flex items-center gap-2">
-                  <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
-                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent transition-all duration-1000" 
-                      style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
-                    />
-                  </div>
-                  <span className="w-10 text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
-               </div>
-             ))}
-          </div>
-        </section>
-
-
-        {/* 4. Genre Average Ranking */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl md:col-span-2 premium-section-animate" style={{ animationDelay: '600ms' }}>
-          <div className="flex items-center gap-2 mb-6">
-            <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20">
-              <Star className="w-4 h-4 text-blue-400" />
+          <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/5">
+            <div className="flex items-center gap-2 mb-2">
+              <Trophy className="w-4 h-4 text-yellow-500" />
+              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">殿堂入り作品数</span>
             </div>
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Performance</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別平均スコア</p>
+            <div className="text-2xl font-black text-white">
+              {stats.hallOfFame.length} <span className="text-xs text-slate-500 font-normal">items in Hall of Fame</span>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {stats.genreAverages.map((genre, index) => (
-              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-36 flex flex-col justify-between shadow-lg">
-                {/* Random Genre Overlay Image */}
-                {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-25 md:group-hover:opacity-40 transition-opacity duration-700">
-                    <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                  </div>
-                )}
-                
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-black text-accent uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
-                    <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.8)]" style={{ backgroundColor: genre.color }} />
-                  </div>
-                  <h3 className="text-lg font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
+      {/* Lifetime Counter */}
+      <div className="mt-8 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md premium-section-animate" style={{ animationDelay: '300ms' }}>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-yellow-500/20 rounded-xl">
+                <Clock className="w-5 h-5 text-yellow-400" />
+              </div>
+              <h2 className="text-xl font-black text-white uppercase tracking-wider italic">LIFETIME WATCHED</h2>
+            </div>
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest ml-11">累計視聴時間の解析</p>
+          </div>
+          
+          <div className="flex flex-col items-end gap-2">
+            <div className="text-4xl sm:text-6xl font-black text-white font-mono tracking-tighter flex items-baseline gap-2">
+              <Counter value={stats.lifetimeStats.days} />
+              <span className="text-lg text-yellow-500 uppercase italic">Days</span>
+              <Counter value={stats.lifetimeStats.remainingHours} />
+              <span className="text-lg text-yellow-500 uppercase italic">Hours</span>
+            </div>
+            <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Total: {stats.lifetimeStats.totalHours.toLocaleString()} Hours</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.lifetimeStats.genreLifetime.map((item, idx) => (
+            <div 
+              key={item.id} 
+              className="group relative overflow-hidden rounded-2xl bg-black/40 border border-white/5 p-4 transition-all duration-500 hover:border-white/20 hover:-translate-y-1"
+            >
+              {item.bgImage && (
+                <div className="absolute inset-0 z-0 opacity-20 grayscale group-hover:grayscale-0 transition-all duration-700">
+                  <img src={item.bgImage} alt="" className="w-full h-full object-cover scale-110 group-hover:scale-100" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
-
-                <div className="relative z-10 flex items-end justify-between">
-                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">Average</p>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1.5 mt-0.5">平均点</p>
-                    <p className="text-4xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-sm ml-0.5 italic">点</span></p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Count</p>
-                    <p className="text-base font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[10px] ml-1 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
-                  </div>
+              )}
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: item.color }} />
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{item.name}</span>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-black text-white font-mono leading-none">
+                    <Counter value={item.hours} />
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase">hrs</span>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-          <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
-            <Info className="w-3.5 h-3.5 text-accent opacity-60" />
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-              ※平均スコアは統計上の理由により、小数点以下を切り上げて表示しています
+      {/* Hall of Fame Highlights */}
+      <div className="mt-8 bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-md premium-section-animate" style={{ animationDelay: '400ms' }}>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-yellow-500/20 rounded-xl">
+              <Award className="w-5 h-5 text-yellow-400" />
+            </div>
+            <h2 className="text-xl font-black text-white uppercase tracking-wider italic">HALL OF FAME</h2>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/10 rounded-full border border-yellow-500/20">
+            <Crown className="w-3 h-3 text-yellow-500" />
+            <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">Premium Selection</span>
+          </div>
+        </div>
+
+        <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
+          {stats.hallOfFame.length > 0 ? (
+            stats.hallOfFame.map((item, idx) => (
+              <div 
+                key={item.id} 
+                className="flex-shrink-0 w-40 group relative overflow-hidden rounded-2xl bg-black/40 border border-yellow-500/20 p-3 transition-all duration-500 hover:border-yellow-500/50"
+              >
+                <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3 relative">
+                  {item.imageBase64 ? (
+                    <img src={item.imageBase64} alt={item.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  ) : (
+                    <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                      <Star className="w-8 h-8 text-slate-700" />
+                    </div>
+                  )}
+                  <div className="absolute top-2 right-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded-md border border-yellow-500/30">
+                    <span className="text-[10px] font-black text-yellow-400">{item.rating}</span>
+                  </div>
+                </div>
+                <h3 className="text-xs font-black text-white line-clamp-1 group-hover:text-yellow-400 transition-colors">{item.title}</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <Eye className="w-2.5 h-2.5 text-slate-500" />
+                  <span className="text-[9px] font-bold text-slate-500">{item.views} Views</span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="w-full py-12 flex flex-col items-center justify-center bg-black/20 rounded-2xl border border-dashed border-white/10">
+              <Award className="w-12 h-12 text-slate-700 mb-4 opacity-20" />
+              <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">No Hall of Fame yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-12 flex justify-center pb-8 border-t border-white/5 pt-8">
+        <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center gap-4 px-6 py-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm max-w-lg">
+            <Info className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-wider">
+              <span className="text-emerald-400">殿堂入りの条件:</span> 95点以上の評価点かつ5回以上の閲覧実績が達成された作品。
             </p>
           </div>
-        </section>
+          <PixelWalker size={48} />
+        </div>
       </div>
     </div>
   );
