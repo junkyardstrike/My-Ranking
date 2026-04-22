@@ -260,7 +260,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      )}
                   </div>
                 </div>
-               </div>
 
                <div className="flex flex-wrap items-center gap-6 pl-1">
                   <div className="flex items-center gap-2">
