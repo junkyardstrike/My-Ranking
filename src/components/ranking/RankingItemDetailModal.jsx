@@ -341,8 +341,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
                      {!isGlobalEditMode && (
                         <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 所要時間(分) / TIME</p>
-                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration}</p>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
+                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration * (views || 1)}</p>
+                           <p className="text-[8px] text-slate-500 font-bold text-center">{calculatedDuration}分 × {views || 1}回</p>
                         </div>
                      )}
                   </div>
