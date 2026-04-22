@@ -99,14 +99,14 @@ export default function AllRankingsView() {
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
           <div className="relative inline-block">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-white/30 drop-shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-200 via-blue-500 to-blue-700 drop-shadow-[0_10px_20px_rgba(59,130,246,0.3)]">
               Records
             </h1>
-            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-accent via-accent/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
             <span className="w-8 h-px bg-slate-800" />
-            Master List
+            作品マスターリスト
           </p>
         </div>
 
