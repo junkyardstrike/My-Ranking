@@ -76,8 +76,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   if (!isOpen || !liveItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1 } = liveItem;
 
+  let calculatedDuration = duration;
+  if (!calculatedDuration) {
+    switch (genre) {
+      case 'anime': calculatedDuration = episodes * 20; break;
+      case 'drama': calculatedDuration = episodes * 40; break;
+      case 'movie': calculatedDuration = 120; break;
+      case 'music': calculatedDuration = 3; break;
+      case 'manga': calculatedDuration = 30; break;
+      default: calculatedDuration = 0; break;
+    }
+  }
   const handleUpdate = (updates) => {
     if (onUpdate) {
       onUpdate(id, updates);
@@ -306,7 +317,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
-                  <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 gap-4 shadow-lg items-center">
+                  <div className={`bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid ${isGlobalEditMode ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} gap-4 shadow-lg items-center`}>
                      <div className="space-y-3 text-center">
                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
                        <div className="flex justify-center w-full">
@@ -326,6 +337,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
                        )}
                      </div>
+                     {!isGlobalEditMode && (
+                        <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
+                           <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> TIME(m)</p>
+                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration}</p>
+                        </div>
+                     )}
                   </div>
 
                   {isGlobalEditMode && (
@@ -336,7 +353,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-1">
                               <label className="text-[10px] font-bold text-slate-400">所要時間 (分/回)</label>
-                              <input type="number" min="0" value={liveItem.duration || ''} onChange={e => handleUpdate({ duration: parseInt(e.target.value) || 0 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="自動計算" />
+                              <input type="number" min="0" value={calculatedDuration || ''} onChange={e => handleUpdate({ duration: parseInt(e.target.value) || 0 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="自動計算" />
                            </div>
                            {(genre === 'anime' || genre === 'drama') && (
                              <div className="space-y-1">

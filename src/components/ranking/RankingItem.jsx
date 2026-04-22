@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
-import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -58,11 +58,23 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     rankingTitle: propItem.rankingTitle || liveItemFromStore.rankingTitle
   } : propItem;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [] } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1 } = liveItem;
   
   // Safe genre fallback: ensure 'other' is mapped to 'music'
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
   const effectiveGenre = rawGenre === 'other' ? 'music' : rawGenre;
+
+  let calculatedDuration = duration;
+  if (!calculatedDuration) {
+    switch (effectiveGenre) {
+      case 'anime': calculatedDuration = episodes * 20; break;
+      case 'drama': calculatedDuration = episodes * 40; break;
+      case 'movie': calculatedDuration = 120; break;
+      case 'music': calculatedDuration = 3; break;
+      case 'manga': calculatedDuration = 30; break;
+      default: calculatedDuration = 0; break;
+    }
+  }
 
   // Local states to fix IME bug for lists
   const [localTitle, setLocalTitle] = useState(title || '');
@@ -283,6 +295,22 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               </div>
             </div>
 
+            {/* Time & Episodes Row */}
+            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
+               <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+                 <Clock className="w-3.5 h-3.5 text-purple-500" />
+                 <input type="number" min="0" value={calculatedDuration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="自動計算" />
+                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">分</span>
+               </div>
+               {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
+                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+                   <Tv className="w-3.5 h-3.5 text-slate-500" />
+                   <input type="number" min="1" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: parseInt(e.target.value) || 1 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
+                   <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">話</span>
+                 </div>
+               )}
+            </div>
+
             {/* Styling Row */}
             <div className="flex items-center gap-4 bg-black/40 p-2.5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
               <div className="flex-1 flex items-center gap-3">
@@ -344,6 +372,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       </div>
                     )}
                     {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
+                    {calculatedDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{calculatedDuration}m</span>}
                     {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                     
                     {/* Rank history in expanded view */}
