@@ -71,7 +71,27 @@ const getFolderCoverImage = (folder, rankings) => {
   return null;
 };
 
-function DroppableFolder({ folder, rankings }) {
+const getRecursiveItemCount = (folderId, allFolders, allRankings) => {
+  let count = 0;
+  
+  // 1. Count items in rankings directly in this folder
+  const folderRankings = allRankings.filter(r => r.folderId === folderId);
+  folderRankings.forEach(r => {
+    // Only count items that have a title or an image (valid works)
+    const validItems = (r.items || []).filter(item => item.title?.trim() || item.imageBase64);
+    count += validItems.length;
+  });
+  
+  // 2. Recursively count items in sub-folders
+  const subFolders = allFolders.filter(f => f.parentId === folderId);
+  subFolders.forEach(sf => {
+    count += getRecursiveItemCount(sf.id, allFolders, allRankings);
+  });
+  
+  return count;
+};
+
+function DroppableFolder({ folder, folders, rankings }) {
   const isEditMode = useStore(state => state.isEditMode);
   const updateFolder = useStore(state => state.updateFolder);
 
@@ -95,8 +115,7 @@ function DroppableFolder({ folder, rankings }) {
     }
   };
 
-  const folderRankings = rankings.filter(r => r.folderId === folder.id);
-  const totalItems = folderRankings.reduce((sum, r) => sum + (r.items?.length || 0), 0);
+  const totalItems = getRecursiveItemCount(folder.id, folders, rankings);
   const coverImage = getFolderCoverImage(folder, rankings);
 
   const style = transform ? {
@@ -325,7 +344,7 @@ export default function FolderView() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {childFolders.map((folder, idx) => (
                 <div key={folder.id} className="premium-card-animate" style={{ animationDelay: `${idx * 60}ms` }}>
-                  <DroppableFolder folder={folder} rankings={rankings} />
+                  <DroppableFolder folder={folder} folders={folders} rankings={rankings} />
                 </div>
               ))}
             </div>
