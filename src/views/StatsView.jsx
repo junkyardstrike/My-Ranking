@@ -368,40 +368,40 @@ export default function StatsView() {
                     {/* Card Shine Effect */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
                     
-                    <div className="flex items-center gap-4 relative z-10">
+                    <div className="flex items-center gap-6 relative z-10">
                       <div className="relative shrink-0">
                         <div className="absolute -inset-1 bg-yellow-500/30 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                        <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-yellow-500/40 shadow-2xl bg-black relative">
+                        <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-yellow-500/40 shadow-2xl bg-black relative">
                           {item.imageBase64 ? (
                             <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Target className="w-6 h-6 text-yellow-500/20" />
+                              <Target className="w-8 h-8 text-yellow-500/20" />
                             </div>
                           )}
-                          <div className="absolute top-1 right-1">
-                             <Crown className="w-3 h-3 text-yellow-400 drop-shadow-md" />
+                          <div className="absolute top-2 right-2">
+                             <Crown className="w-4 h-4 text-yellow-400 drop-shadow-md" />
                           </div>
                         </div>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-black text-white text-sm truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors">{item.title}</h3>
-                        <div className="flex items-center gap-3 mt-2">
-                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-yellow-500/20 rounded-lg border border-yellow-500/30 shadow-inner">
-                            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                            <span className="text-[11px] font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                        <h3 className="font-black text-white text-lg sm:text-xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight">{item.title}</h3>
+                        <div className="flex items-center gap-4 mt-3">
+                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-xl border border-yellow-500/30 shadow-inner">
+                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                            <span className="text-sm font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <Eye className="w-3 h-3 text-yellow-600/80" />
-                            <span className="text-[10px] font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
+                          <div className="flex items-center gap-2">
+                            <Eye className="w-4 h-4 text-yellow-600/80" />
+                            <span className="text-xs font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
                           </div>
                         </div>
-                        <div className="mt-2.5 flex items-center justify-between">
-                           <span className="text-[8px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-full border border-yellow-500/10">
+                        <div className="mt-4 flex items-center justify-between">
+                           <span className="text-[10px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-3 py-1 rounded-full border border-yellow-500/10">
                              {GENRE_LABELS[item.genre] || 'OTHER'}
                            </span>
-                           <span className="text-[8px] font-bold text-slate-500 font-mono">#{idx + 1}</span>
+                           <span className="text-[10px] font-bold text-slate-500 font-mono">RANK #{idx + 1}</span>
                         </div>
                       </div>
                     </div>
@@ -447,9 +447,12 @@ export default function StatsView() {
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <span className="text-xl font-black text-white italic font-mono leading-none">
-                <Counter value={stats.totalCount} />
-              </span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-white italic font-mono leading-none">
+                  <Counter value={stats.totalCount} />
+                </span>
+                <span className="text-[10px] font-black text-slate-400">作品</span>
+              </div>
             </div>
           </div>
 
