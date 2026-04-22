@@ -229,7 +229,7 @@ export default function StatsView() {
     <div className="animate-in fade-in duration-700 space-y-4 pb-32">
       <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1">
+          <div className="relative flex items-center gap-3">
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-emerald-200 via-emerald-500 to-emerald-700 drop-shadow-[0_10px_20px_rgba(16,185,129,0.3)]">
               Stats
             </h1>

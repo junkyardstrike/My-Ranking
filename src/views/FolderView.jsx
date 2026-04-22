@@ -319,7 +319,7 @@ export default function FolderView() {
       `}</style>
       <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1">
+          <div className="relative flex items-center gap-3">
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-700 drop-shadow-[0_10px_20px_rgba(212,175,55,0.3)]">
               {isRoot ? 'Ranking' : currentFolder?.name}
             </h1>
