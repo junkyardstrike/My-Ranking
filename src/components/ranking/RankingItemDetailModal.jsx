@@ -43,14 +43,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const moveItemToRank = useStore(state => state.moveItemToRank);
 
   const itemFromStore = useStore(useCallback(state => {
-    const allItems = [
-      ...(state.rankings || []).flatMap(r => r.items || []),
-      ...(state.unrankedItems || [])
-    ];
-    return allItems.find(i => i.id === propItem?.id);
+    const allRanked = (state.rankings || []).flatMap(r => r.items || []);
+    const allUnranked = state.unrankedItems || [];
+    return [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
   }, [propItem?.id]));
 
-  const liveItem = itemFromStore || propItem;
+  const liveItem = itemFromStore ? {
+    ...itemFromStore,
+    isSelected: propItem?.isSelected || itemFromStore.isSelected,
+    rankingId: propItem?.rankingId || itemFromStore.rankingId,
+    rankingTitle: propItem?.rankingTitle || itemFromStore.rankingTitle
+  } : propItem;
 
   const [isAddingToRanking, setIsAddingToRanking] = useState(false);
   const [selectedRankingId, setSelectedRankingId] = useState('');
@@ -322,24 +325,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                </div>
             </div>
 
-            {/* LIVE CALCULATION BANNER - VERY PROMINENT */}
-            {isGlobalEditMode && (
-              <div className="bg-accent/10 border-2 border-accent/40 p-5 rounded-[28px] shadow-[0_0_30px_rgba(212,175,55,0.15)] animate-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} /> リアルタイム計算結果 / LIVE TOTAL</p>
-                    <p className="text-[11px] text-slate-300 font-mono italic">
-                       {unitDuration}m × {genre === 'manga' ? (volumes || 1) + '巻' : (genre === 'anime' || genre === 'drama' ? (episodes || 1) + '話' : '1')} × {views}回
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-4xl font-black text-white font-mono tracking-tighter italic drop-shadow-lg">{totalLifetimeDuration.toLocaleString()}</span>
-                    <span className="text-xs font-black text-accent ml-1 italic uppercase">min</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
                   <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-4 shadow-lg items-center">
@@ -363,14 +348,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                        )}
                      </div>
 
-                     <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-1 col-span-2 md:col-span-1 pt-4 md:pt-0 bg-white/5 rounded-2xl py-2">
-                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
-                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration.toLocaleString()}</p>
+                     <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
+                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration}</p>
                         <p className="text-[8px] text-slate-500 font-bold text-center">
                           {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                            `${unitDuration}m × ${genre === 'manga' ? (volumes || 1) + 'v' : (episodes || 1) + 'h'} × ${views}v`
+                            `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${views}回`
                           ) : (
-                            `${unitDuration}m × ${views}v`
+                            `${unitDuration}分 × ${views}回`
                           )}
                         </p>
                      </div>
@@ -453,6 +438,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                        )}
                     </div>
                   )}
+                   {liveItem.previousRanks && liveItem.previousRanks.length > 0 && (
+                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-3 shadow-lg">
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><History size={12} /> 順位履歴 / RANK HISTORY</p>
+                        <div className="flex flex-wrap gap-2">
+                           {liveItem.previousRanks.map((h, i) => (
+                             <div key={i} className="flex flex-col items-center bg-black/40 px-3 py-1.5 rounded-xl border border-white/5">
+                                <span className="text-[10px] font-black text-accent italic">{h.rank}位</span>
+                                <span className="text-[8px] text-slate-300 font-bold">{new Date(h.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}</span>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+                   )}
                </div>
 
                <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
