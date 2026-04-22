@@ -324,9 +324,9 @@ export default function FolderView() {
             </h1>
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
           </div>
-          <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
-            <span className="w-8 h-px bg-slate-800" />
+          <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
             {isRoot ? 'ランキング・アーカイブ' : `フォルダ: ${currentFolder?.name}`}
+            <span className="w-12 h-px bg-slate-800" />
           </p>
         </div>
 
