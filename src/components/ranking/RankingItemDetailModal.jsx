@@ -306,27 +306,25 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
-                  <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 flex items-center justify-around shadow-lg">
-                      <div className="space-y-3 text-center flex-1">
-                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
-                        <div className="flex justify-center">
-                           <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
-                        </div>
-                      </div>
+                  <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 gap-4 shadow-lg items-center">
+                     <div className="space-y-3 text-center">
+                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
+                       <div className="flex justify-center w-full">
+                          <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
+                       </div>
+                     </div>
                      
-                     <div className="w-px h-10 bg-white/10" />
-
-                     <div className="space-y-2 text-center">
-                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> VIEWS</p>
-                        {isGlobalEditMode ? (
-                           <div className="flex items-center gap-4 justify-center">
-                              <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-8 h-8 bg-white/5 rounded-lg border border-white/10 text-white text-lg font-bold hover:bg-white/10 transition-all">-</button>
-                              <span className="text-center font-mono font-black text-2xl tracking-tighter w-12">{views}</span>
-                              <button onClick={() => handleUpdate({ views: views + 1 })} className="w-8 h-8 bg-white/5 rounded-lg border border-white/10 text-white text-lg font-bold hover:bg-white/10 transition-all">+</button>
-                           </div>
-                        ) : (
-                           <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
-                        )}
+                     <div className="flex flex-col items-center border-l border-white/10 space-y-2">
+                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> VIEWS</p>
+                       {isGlobalEditMode ? (
+                          <div className="flex items-center gap-2 justify-center w-full">
+                             <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">-</button>
+                             <span className="text-center font-mono font-black text-xl tracking-tighter w-8">{views}</span>
+                             <button onClick={() => handleUpdate({ views: views + 1 })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">+</button>
+                          </div>
+                       ) : (
+                          <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
+                       )}
                      </div>
                   </div>
 
