@@ -339,7 +339,7 @@ export default function StatsView() {
 
               <div className="flex items-center gap-4 bg-yellow-500/10 px-6 py-3 rounded-2xl border border-yellow-500/20 backdrop-blur-sm self-start md:self-auto">
                 <div className="text-right">
-                  <p className="text-[9px] font-black text-yellow-600/60 uppercase tracking-widest leading-none">Inducted Masters</p>
+                  <p className="text-[9px] font-black text-yellow-600/60 uppercase tracking-widest leading-none">Inducted Masters / 殿堂入り数</p>
                   <p className="text-3xl font-black text-yellow-500 font-mono leading-none mt-1">
                     <Counter value={stats.hallOfFame.length} />
                   </p>
@@ -384,25 +384,24 @@ export default function StatsView() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="mb-2">
                           <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md">{item.title}</h3>
-                          <span className="text-[10px] font-bold text-slate-500 font-mono italic shrink-0">#0{idx + 1}</span>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-base font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                        <div className="flex items-center gap-x-4 gap-y-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/10 rounded-lg border border-yellow-500/20 shadow-inner shrink-0">
+                            <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                            <span className="text-sm font-black text-yellow-400 font-mono">{item.rating}</span>
                           </div>
-                          <div className="flex items-center gap-4 overflow-hidden">
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <Eye className="w-4 h-4 text-yellow-600/60" />
-                              <span className="text-xs font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
-                            </div>
-                            <span className="text-[9px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-lg border border-yellow-500/10 truncate">
-                              {GENRE_LABELS[item.genre] || 'OTHER'}
-                            </span>
+                          
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Eye className="w-3.5 h-3.5 text-yellow-600/60" />
+                            <span className="text-[10px] font-black text-yellow-600/80 font-mono">{item.views}回</span>
                           </div>
+
+                          <span className="text-[8px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-md border border-yellow-500/10 shrink-0">
+                            {GENRE_LABELS[item.genre] || 'OTHER'}
+                          </span>
                         </div>
                       </div>
                     </div>
