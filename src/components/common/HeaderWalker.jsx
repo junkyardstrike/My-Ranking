@@ -1,79 +1,93 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const HeaderWalker = ({ className = "" }) => {
-  return (
-    <div className={`relative flex items-end justify-center ${className} mb-[-2px] overflow-visible`} style={{ width: '100px', height: '64px' }}>
-      {/* RPG Field Path (Grass/Stone hints) */}
-      <div className="absolute bottom-1 left-0 right-0 h-[3px] bg-slate-800/30 rounded-full">
-        <div className="absolute inset-0 animate-[path_2s_linear_infinite] bg-[length:20px_100%] bg-gradient-to-r from-transparent via-slate-600/20 to-transparent" />
-      </div>
-      
-      {/* The DQ-style Hero Character */}
-      <div className="relative animate-[walk_8s_linear_infinite] flex flex-col items-center">
-        {/* Character Group with Bobbing */}
-        <div className="relative animate-[dq_bob_0.5s_step-end_infinite]">
-          
-          {/* Red Cape (Flares slightly) */}
-          <div className="absolute top-3 -left-3 w-4 h-6 bg-red-600 rounded-sm origin-right animate-[cape_0.5s_step-end_infinite]" />
-          
-          {/* Sword on Back (Legendary Sword) */}
-          <div className="absolute top-1 -left-1 w-1.5 h-8 bg-slate-400 border-x border-slate-600 rotate-12 -z-10">
-            {/* Hilt */}
-            <div className="absolute -top-1 -left-1 w-3.5 h-1.5 bg-yellow-500 rounded-full" />
-          </div>
+  const [frame, setFrame] = useState(0);
 
-          {/* Main Body (Blue Armor/Tunic) */}
-          <div className="w-6 h-8 bg-blue-600 rounded-sm relative border-x border-blue-800 shadow-[0_5px_15px_rgba(37,99,235,0.3)]">
-            {/* Belt/Detail */}
-            <div className="absolute top-5 left-0 right-0 h-1 bg-yellow-500/50" />
-          </div>
-          
-          {/* Head (Helmet/Hero Face) */}
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-5 h-5 bg-[#ffe4e1] rounded-sm border-x border-[#ffc0cb]">
-            {/* Hero Helmet (Blue with gold hint) */}
-            <div className="absolute -top-1 -left-1 -right-1 h-3 bg-blue-700 rounded-t-sm">
-              <div className="absolute top-0 left-0 w-1 h-1 bg-yellow-400" />
-              <div className="absolute top-0 right-0 w-1 h-1 bg-yellow-400" />
-            </div>
-            {/* Eye (Facing forward) */}
-            <div className="absolute top-2 right-1 w-1 h-1 bg-black rounded-full" />
-          </div>
+  // 2-frame walking animation at RPG speed
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setFrame((prev) => (prev === 0 ? 1 : 0));
+    }, 250);
+    return () => clearInterval(timer);
+  }, []);
 
-          {/* Arms (Swinging) */}
-          <div className="absolute top-3 -right-1.5 w-2.5 h-4 bg-blue-500 border-r border-blue-700 rounded-full origin-top animate-[dq_arm_0.5s_step-end_infinite]" />
-        </div>
+  // Character Color Palette
+  const C = {
+    blue: "#2563eb",   // Armor
+    blue_d: "#1e3a8a", // Shadow
+    red: "#dc2626",    // Cape
+    gold: "#fbbf24",   // Helmet/Sword
+    skin: "#ffedd5",   // Face
+    black: "#000000",  // Eye
+    silver: "#cbd5e1", // Sword blade
+    ground: "#334155"  // Road
+  };
+
+  // Rendering the pixel hero (16x16 grid)
+  const renderHero = () => {
+    return (
+      <g transform={frame === 1 ? 'translate(0, -1)' : ''}>
+        {/* Cape (Red) */}
+        <rect x="3" y="6" width="6" height="7" fill={C.red} />
+        {frame === 1 && <rect x="2" y="7" width="1" height="5" fill={C.red} />}
         
-        {/* Legs (Classic 2-frame RPG walk) */}
-        <div className="flex gap-1 -mt-[1px]">
-          <div className="w-2.5 h-3 bg-blue-900 animate-[dq_leg_0.5s_step-end_infinite]" />
-          <div className="w-2.5 h-3 bg-blue-900 animate-[dq_leg_0.5s_step-end_infinite_reverse]" />
-        </div>
+        {/* Sword on Back */}
+        <rect x="4" y="4" width="2" height="2" fill={C.gold} />
+        <rect x="3" y="3" width="4" height="1" fill={C.gold} />
+        <rect x="4" y="2" width="2" height="1" fill={C.silver} />
+
+        {/* Body (Blue Armor) */}
+        <rect x="5" y="6" width="6" height="7" fill={C.blue} />
+        <rect x="6" y="9" width="4" height="1" fill={C.gold} opacity="0.5" />
+        
+        {/* Head */}
+        <rect x="6" y="2" width="5" height="5" fill={C.skin} />
+        {/* Helmet */}
+        <rect x="5" y="1" width="7" height="3" fill={C.blue} />
+        <rect x="5" y="1" width="1" height="1" fill={C.gold} />
+        <rect x="11" y="1" width="1" height="1" fill={C.gold} />
+        {/* Eye */}
+        <rect x="9" y="4" width="1" height="1" fill={C.black} />
+
+        {/* Arms */}
+        <rect x="10" y="7" width="2" height="4" fill={C.blue} />
+        
+        {/* Legs (2-frame logic) */}
+        {frame === 0 ? (
+          <>
+            <rect x="5" y="13" width="2" height="2" fill={C.blue_d} />
+            <rect x="9" y="13" width="2" height="2" fill={C.blue_d} />
+          </>
+        ) : (
+          <>
+            <rect x="6" y="12" width="2" height="2" fill={C.blue_d} />
+            <rect x="8" y="12" width="2" height="2" fill={C.blue_d} />
+          </>
+        )}
+      </g>
+    );
+  };
+
+  return (
+    <div className={`relative ${className} flex items-end overflow-visible`} style={{ width: '80px', height: '64px' }}>
+      {/* The Road */}
+      <div className="absolute bottom-1 left-0 right-0 h-[2px] bg-slate-800/40" />
+      
+      {/* Animated Hero Container */}
+      <div className="relative animate-[walk_8s_linear_infinite] w-12 h-12">
+        <svg 
+          viewBox="0 0 16 16" 
+          className="w-full h-full drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" 
+          style={{ shapeRendering: 'crispEdges' }}
+        >
+          {renderHero()}
+        </svg>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes walk {
-          0% { transform: translateX(-60px); }
-          100% { transform: translateX(60px); }
-        }
-        @keyframes dq_bob {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-2px); }
-        }
-        @keyframes dq_arm {
-          0%, 100% { transform: rotate(-15deg) translateY(0); }
-          50% { transform: rotate(15deg) translateY(-1px); }
-        }
-        @keyframes dq_leg {
-          0%, 100% { transform: scaleY(1); opacity: 1; }
-          50% { transform: scaleY(0.7); opacity: 0.7; }
-        }
-        @keyframes cape {
-          0%, 100% { transform: scaleX(1) skewY(0deg); }
-          50% { transform: scaleX(1.2) skewY(-5deg); }
-        }
-        @keyframes path {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(20px); }
+          0% { transform: translateX(-40px); }
+          100% { transform: translateX(40px); }
         }
       `}} />
     </div>
