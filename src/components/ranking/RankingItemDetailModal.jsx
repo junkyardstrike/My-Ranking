@@ -139,7 +139,24 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     try {
       const result = await fetchMetadata(localTitle.trim(), genre);
       if (result) {
-        handleUpdate({ memo: result.memo, author: result.author || author });
+        const updates = { memo: result.memo, author: result.author || author };
+        
+        // Automatic extraction for volumes/episodes
+        if (result.memo) {
+          if (genre === 'manga') {
+            const volMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || result.memo.match(/全(\d+)巻/) || result.memo.match(/(\d+)巻/);
+            if (volMatch && volMatch[1]) {
+              updates.volumes = parseInt(volMatch[1]);
+            }
+          } else if (genre === 'anime' || genre === 'drama') {
+            const epMatch = result.memo.match(/EPISODES:\s*(\d+)話/i) || result.memo.match(/全(\d+)話/) || result.memo.match(/(\d+)話/);
+            if (epMatch && epMatch[1]) {
+              updates.episodes = parseInt(epMatch[1]);
+            }
+          }
+        }
+        
+        handleUpdate(updates);
         if (result.author) setLocalAuthor(result.author);
       }
     } catch (e) { console.error(e); }
