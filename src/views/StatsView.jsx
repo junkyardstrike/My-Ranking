@@ -304,63 +304,105 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame */}
-        <section className="md:col-span-2 relative">
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
-          <div className="relative bg-black/60 border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
+        {/* 3. Hall of Fame - Luxurious Redesign */}
+        <section className="md:col-span-2 relative group">
+          {/* Animated Golden Aura */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 via-yellow-200 to-yellow-600 rounded-[40px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
+          
+          <div className="relative bg-black/80 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-[38px] p-8 shadow-[0_0_50px_rgba(212,175,55,0.15)] overflow-hidden">
+            {/* Background Sparkles Effect */}
+            <div className="absolute top-0 right-0 p-4 opacity-10">
+              <Sparkles className="w-32 h-32 text-yellow-500 animate-spin-slow" />
+            </div>
+
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 relative z-10">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
+                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-2xl shadow-2xl">
+                    <Trophy className="w-8 h-8 text-yellow-950" />
+                  </div>
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter flex items-center gap-2">
-                    殿堂入り <span className="text-[10px] text-yellow-700 font-bold tracking-widest ml-1 italic">/ Hall of Fame</span>
+                  <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center gap-3 drop-shadow-sm">
+                    殿堂入り 
+                    <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
-                  <p className="text-[10px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
+                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-1 italic">The Golden Archive / Hall of Fame</p>
+                  <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
+                    95点以上 × 5回以上の鑑賞
+                  </p>
                 </div>
               </div>
-              <div className="bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-2">
-                <span className="text-[10px] font-black text-yellow-600 uppercase">Inductees</span>
-                <span className="text-xl font-black text-yellow-500 font-mono leading-none">
-                  <Counter value={stats.hallOfFame.length} />
-                </span>
+
+              <div className="flex items-center gap-4 bg-yellow-500/10 px-6 py-3 rounded-2xl border border-yellow-500/20 backdrop-blur-sm self-start md:self-auto">
+                <div className="text-right">
+                  <p className="text-[9px] font-black text-yellow-600/60 uppercase tracking-widest leading-none">Inducted Masters</p>
+                  <p className="text-3xl font-black text-yellow-500 font-mono leading-none mt-1">
+                    <Counter value={stats.hallOfFame.length} />
+                  </p>
+                </div>
+                <Crown className="w-6 h-6 text-yellow-500/50" />
               </div>
             </div>
 
             {stats.hallOfFame.length === 0 ? (
-              <div className="py-8 text-center border border-dashed border-white/5 rounded-[24px]">
-                <Star className="w-8 h-8 text-slate-800 mx-auto mb-2 opacity-20" />
-                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic leading-none">Legend Awaited</p>
-                <p className="text-[8px] text-slate-700 font-bold mt-1 uppercase">NO INDUCTEES YET</p>
+              <div className="py-16 text-center border-2 border-dashed border-yellow-500/10 rounded-[32px] bg-yellow-500/5">
+                <div className="relative inline-block mb-4">
+                  <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-black text-slate-900/40">?</span>
+                  </div>
+                </div>
+                <p className="text-sm font-black text-slate-600 uppercase tracking-[0.4em] italic">Legend Awaited</p>
+                <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {stats.hallOfFame.map(item => (
-                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group md:hover:bg-yellow-500/10 transition-all duration-500">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden border border-yellow-500/20 shadow-lg flex-shrink-0">
-                      {item.imageBase64 ? (
-                        <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-black/40 flex items-center justify-center">
-                          <Target className="w-4 h-4 text-yellow-500/30" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {stats.hallOfFame.map((item, idx) => (
+                  <div 
+                    key={item.id} 
+                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-4 rounded-[28px] overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:border-yellow-400/50"
+                  >
+                    {/* Card Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
+                    
+                    <div className="flex items-center gap-4 relative z-10">
+                      <div className="relative shrink-0">
+                        <div className="absolute -inset-1 bg-yellow-500/30 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
+                        <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-yellow-500/40 shadow-2xl bg-black relative">
+                          {item.imageBase64 ? (
+                            <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Target className="w-6 h-6 text-yellow-500/20" />
+                            </div>
+                          )}
+                          <div className="absolute top-1 right-1">
+                             <Crown className="w-3 h-3 text-yellow-400 drop-shadow-md" />
+                          </div>
                         </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-black text-white text-xs truncate uppercase italic tracking-tight">{item.title}</h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex items-center gap-0.5">
-                          <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                          <span className="text-[10px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-black text-white text-sm truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors">{item.title}</h3>
+                        <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-yellow-500/20 rounded-lg border border-yellow-500/30 shadow-inner">
+                            <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
+                            <span className="text-[11px] font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Eye className="w-3 h-3 text-yellow-600/80" />
+                            <span className="text-[10px] font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-0.5">
-                          <Eye className="w-2.5 h-2.5 text-yellow-600" />
-                          <span className="text-[10px] font-black text-yellow-600 font-mono leading-none">{item.views}</span>
+                        <div className="mt-2.5 flex items-center justify-between">
+                           <span className="text-[8px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-full border border-yellow-500/10">
+                             {GENRE_LABELS[item.genre] || 'OTHER'}
+                           </span>
+                           <span className="text-[8px] font-bold text-slate-500 font-mono">#{idx + 1}</span>
                         </div>
-                        <span className="text-[8px] font-black text-slate-500 uppercase ml-auto px-1.5 py-0.5 bg-black/40 rounded-full border border-white/5">
-                          {GENRE_LABELS[item.genre] || 'OTHER'}
-                        </span>
                       </div>
                     </div>
                   </div>
