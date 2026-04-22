@@ -177,7 +177,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       <div 
         className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
           currentRank === 1 
-            ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/20 via-black/80 to-black/90 shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-[1.01]' 
+            ? 'border-yellow-500/40 bg-gradient-to-br from-yellow-900/40 via-black/95 to-black shadow-[0_25px_60px_rgba(0,0,0,0.6)] scale-[1.02]' 
             : currentRank === 2
             ? 'border-slate-400/30 bg-gradient-to-br from-slate-400/15 via-black/80 to-black/90 hover:from-slate-400/25 hover:border-slate-400/50 shadow-xl'
             : currentRank === 3
@@ -351,7 +351,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex items-center gap-2">
-                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
+                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
                   {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                     <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
                       <History size={8} className="text-slate-500" />
