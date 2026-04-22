@@ -19,7 +19,7 @@ export default function SettingsView() {
   const totalItems = totalItemsInRankings + unrankedItems.length;
 
   const handleExport = () => {
-    const data = { rankings, folders, exportedAt: new Date().toISOString() };
+    const data = { rankings, folders, unrankedItems, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
