@@ -136,20 +136,20 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   return (
     <div className="relative" key={locationKey}>
       <style>{`
-        @keyframes extremeEntry {
+        @keyframes premiumEntry {
           0% {
             opacity: 0;
-            transform: translateY(50px) scale(0.5) rotate(-5deg);
-            filter: blur(20px);
+            transform: translateY(40px) scale(0.9);
+            filter: blur(15px) brightness(0.5);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1) rotate(0deg);
-            filter: blur(0);
+            transform: translateY(0) scale(1);
+            filter: blur(0) brightness(1);
           }
         }
-        .extreme-item-animate {
-          animation: extremeEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+        .premium-item-animate {
+          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
       `}</style>
@@ -160,8 +160,8 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
             {visibleItems.map((item, idx) => (
               <div 
                 key={item.id}
-                className="extreme-item-animate"
-                style={{ animationDelay: `${idx * 80}ms` }}
+                className="premium-item-animate"
+                style={{ animationDelay: `${idx * 60}ms` }}
               >
                 <SortableItem 
                   item={item} 

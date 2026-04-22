@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Folder, ListOrdered, GripVertical, Image as ImageIcon, Trash2, Edit2, ArrowLeft } from 'lucide-react';
 import { useEffect } from 'react';
@@ -254,6 +254,7 @@ function DraggableRanking({ ranking }) {
 export default function FolderView() {
   const { folderId } = useParams();
   const navigate = useNavigate();
+  const { key: locationKey } = useLocation();
   const folders = useStore(state => state.folders);
   const rankings = useStore(state => state.rankings);
   const setCurrentFolderId = useStore(state => state.setCurrentFolderId);
@@ -270,7 +271,25 @@ export default function FolderView() {
   const currentFolder = folders.find(f => f.id === currentFolderId);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 pt-0 pb-20">
+    <div className="space-y-6 pt-0 pb-20" key={locationKey}>
+      <style>{`
+        @keyframes premiumEntry {
+          0% {
+            opacity: 0;
+            transform: translateY(40px) scale(0.9);
+            filter: blur(15px) brightness(0.5);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0) brightness(1);
+          }
+        }
+        .premium-card-animate {
+          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+      `}</style>
       <div className="flex items-end justify-between px-1 mb-2">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Ranking' : currentFolder?.name}</h1>
@@ -297,8 +316,10 @@ export default function FolderView() {
         <div className="px-0">
           {childFolders.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {childFolders.map(folder => (
-                <DroppableFolder key={folder.id} folder={folder} rankings={rankings} />
+              {childFolders.map((folder, idx) => (
+                <div key={folder.id} className="premium-card-animate" style={{ animationDelay: `${idx * 60}ms` }}>
+                  <DroppableFolder folder={folder} rankings={rankings} />
+                </div>
               ))}
             </div>
           )}
@@ -309,8 +330,10 @@ export default function FolderView() {
 
           {childRankings.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {childRankings.map(ranking => (
-                <DraggableRanking key={ranking.id} ranking={ranking} />
+              {childRankings.map((ranking, idx) => (
+                <div key={ranking.id} className="premium-card-animate" style={{ animationDelay: `${(childFolders.length + idx) * 60}ms` }}>
+                  <DraggableRanking ranking={ranking} />
+                </div>
               ))}
             </div>
           )}
