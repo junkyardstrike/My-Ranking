@@ -385,7 +385,7 @@ export default function FolderView() {
                   Ranking
                 </h1>
                 <PixelItem type="sword" size={40} className="mb-1" />
-                <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
+                <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)] animate-line-run" style={{ animationDelay: '0.4s' }} />
               </div>
               <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
                 ランキング・アーカイブ

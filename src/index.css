@@ -86,3 +86,12 @@
   -webkit-background-clip: text !important;
   background-clip: text !important;
 }
+
+@keyframes lineRun {
+  0% { width: 0; opacity: 0; transform: translateX(-10px); }
+  100% { width: 96px; opacity: 1; transform: translateX(0); }
+}
+
+.animate-line-run {
+  animation: lineRun 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
