@@ -249,7 +249,7 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-emerald-600 font-mono tracking-tighter drop-shadow-xl truncate">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
@@ -395,9 +395,9 @@ export default function StatsView() {
                       </div>
                     </div>
 
-                    {/* Diagonal Genre Ribbon */}
-                    <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden pointer-events-none">
-                       <div className="absolute top-0 right-0 bg-yellow-500/20 text-yellow-500 text-[8px] font-black uppercase tracking-[0.1em] py-1 px-8 translate-x-[30%] translate-y-[30%] rotate-45 border-b border-yellow-500/30 backdrop-blur-sm shadow-xl whitespace-nowrap">
+                    {/* Diagonal Genre Ribbon - Enlarged */}
+                    <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
+                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
                           {GENRE_LABELS[item.genre] || 'OTHER'}
                        </div>
                     </div>
