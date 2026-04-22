@@ -375,8 +375,8 @@ export default function FolderView() {
           opacity: 0;
         }
       `}</style>
-      <div className="relative flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
-        <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center flex-1' : ''}`}>
+      <div className="relative flex flex-col mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
+        <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center w-full' : ''}`}>
           {isRoot ? (
             <div className="flex flex-col gap-1">
               <div className="relative flex items-center gap-1 overflow-visible">
@@ -392,14 +392,14 @@ export default function FolderView() {
               </p>
             </div>
           ) : (
-            <>
-              <h1 className="text-3xl sm:text-4xl font-black text-white italic tracking-tighter drop-shadow-lg">
+            <div className="py-2">
+              <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
                 {currentFolder?.name}
               </h1>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">
-                Folder: {currentFolder?.englishName || 'COLLECTION'}
+              <p className="text-[11px] text-yellow-500/60 font-black uppercase tracking-[0.4em] mt-2 italic">
+                {currentFolder?.englishName || 'COLLECTION ARCHIVE'}
               </p>
-            </>
+            </div>
           )}
         </div>
 
