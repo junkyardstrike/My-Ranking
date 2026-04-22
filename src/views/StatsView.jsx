@@ -79,27 +79,27 @@ export default function StatsView() {
 
     // 2. Score Distribution
     const scoreBins = [
-      { range: '100', min: 100, max: 100, count: 0 },
-      { range: '90s', min: 90, max: 99, count: 0 },
-      { range: '80s', min: 80, max: 89, count: 0 },
-      { range: '70s', min: 70, max: 79, count: 0 },
-      { range: '60s', min: 60, max: 69, count: 0 },
-      { range: '<60', min: 0, max: 59, count: 0 },
+      { range: '100点', min: 100, max: 100, count: 0 },
+      { range: '90点台', min: 90, max: 99, count: 0 },
+      { range: '80点台', min: 80, max: 89, count: 0 },
+      { range: '70点台', min: 70, max: 79, count: 0 },
+      { range: '60点台', min: 60, max: 69, count: 0 },
+      { range: '60点以下', min: 0, max: 59, count: 0 },
     ];
     
     allItems.forEach(item => {
-      if (item.rating > 0) {
-        const bin = scoreBins.find(b => item.rating >= b.min && item.rating <= b.max);
+      const r = Number(item.rating || 0);
+      if (r > 0) {
+        const bin = scoreBins.find(b => r >= b.min && r <= b.max);
         if (bin) bin.count++;
       }
     });
 
-    // 3. Hall of Fame (Robust check with loose equality and type coercion)
+    // 3. Hall of Fame (>= 95 points & >= 5 views)
     const hallOfFame = allItems.filter(item => {
       const r = Number(item.rating || 0);
       const v = Number(item.views || 0);
-      // Ensure we catch both string and number, and handle potential float precision
-      return Math.round(r) >= 100 && v >= 5;
+      return r >= 95 && v >= 5;
     });
 
     // 4. Genre Average Scores
@@ -142,7 +142,7 @@ export default function StatsView() {
   return (
     <div className="animate-in fade-in duration-700 space-y-4 pb-12">
       {/* Header */}
-      <div className="flex items-end justify-between px-1 mb-2">
+      <div className="flex items-end justify-between px-1">
         <div>
           <h1 className="text-2xl font-black text-white tracking-tighter uppercase italic flex items-center gap-2">
             <TrendingUp className="text-accent" size={20} />
@@ -157,8 +157,8 @@ export default function StatsView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl relative overflow-hidden group">
-          <div className="flex items-center justify-between mb-6">
+        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] px-6 py-4 shadow-2xl relative overflow-hidden group">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
                 <PieIcon className="w-4 h-4 text-violet-400" />
@@ -170,7 +170,7 @@ export default function StatsView() {
             </div>
           </div>
           
-          <div className="h-48 relative">
+          <div className="h-44 relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -194,8 +194,8 @@ export default function StatsView() {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1">Total</span>
-              <span className="text-xl font-black text-white italic font-mono">{stats.totalCount}</span>
+              <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
+              <span className="text-xl font-black text-white italic font-mono leading-none">{stats.totalCount}</span>
             </div>
           </div>
 
@@ -250,7 +250,7 @@ export default function StatsView() {
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
              {stats.scoreBins.map(bin => (
                <div key={bin.range} className="flex items-center gap-2">
-                  <span className="w-6 text-[8px] font-black text-slate-500 font-mono">{bin.range}</span>
+                  <span className="w-12 text-[8px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
                   <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-accent transition-all duration-1000" 
@@ -267,7 +267,7 @@ export default function StatsView() {
         <section className="md:col-span-2 relative">
           <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
           <div className="relative bg-black/60 backdrop-blur-2xl border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
                   <Trophy className="w-5 h-5 text-yellow-500" />
@@ -276,6 +276,7 @@ export default function StatsView() {
                   <h2 className="text-base font-black text-yellow-500 uppercase tracking-tighter italic flex items-center gap-2">
                     Hall of Fame <span className="text-[8px] text-yellow-700 not-italic font-bold tracking-widest ml-1">/ 殿堂入り</span>
                   </h2>
+                  <p className="text-[8px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
                 </div>
               </div>
               <div className="bg-yellow-500/10 px-3 py-1 rounded-xl border border-yellow-500/20 flex items-center gap-2">
@@ -288,7 +289,7 @@ export default function StatsView() {
               <div className="py-8 text-center border border-dashed border-white/5 rounded-[24px]">
                 <Star className="w-8 h-8 text-slate-800 mx-auto mb-2 opacity-20" />
                 <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic leading-none">Legend Awaited</p>
-                <p className="text-[8px] text-slate-700 font-bold mt-1 uppercase">100点 & 5回以上の鑑賞で殿堂入り</p>
+                <p className="text-[8px] text-slate-700 font-bold mt-1 uppercase">NO INDUCTEES YET</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -308,7 +309,7 @@ export default function StatsView() {
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex items-center gap-0.5">
                           <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                          <span className="text-[9px] font-black text-yellow-500 font-mono leading-none">100</span>
+                          <span className="text-[9px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
                         </div>
                         <div className="flex items-center gap-0.5">
                           <Eye className="w-2 h-2 text-yellow-600" />
@@ -340,7 +341,7 @@ export default function StatsView() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {stats.genreAverages.map((genre, index) => (
-              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-28 flex flex-col justify-between">
+              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-32 flex flex-col justify-between shadow-lg">
                 {/* Random Genre Overlay Image */}
                 {genre.bgImage && (
                   <div className="absolute inset-0 z-0 opacity-25 group-hover:opacity-40 transition-opacity duration-700">
@@ -351,20 +352,20 @@ export default function StatsView() {
                 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest leading-none">Rank {index + 1}</span>
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: genre.color }} />
+                    <span className="text-[9px] font-black text-accent uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
+                    <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]" style={{ backgroundColor: genre.color }} />
                   </div>
-                  <h3 className="text-xs font-black text-white uppercase italic tracking-tighter truncate">{genre.name}</h3>
+                  <h3 className="text-sm font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
                 </div>
 
                 <div className="relative z-10 flex items-end justify-between">
                   <div>
-                    <p className="text-[7px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Average</p>
-                    <p className="text-xl font-black text-accent font-mono leading-none tracking-tighter">{genre.avg}</p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Average</p>
+                    <p className="text-2xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[7px] font-black text-slate-600 uppercase tracking-widest leading-none mb-1">Count</p>
-                    <p className="text-[10px] font-black text-slate-400 font-mono leading-none">{genre.count}<span className="text-[7px] ml-0.5">{GENRE_UNITS[genre.id] || '作品'}</span></p>
+                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Count</p>
+                    <p className="text-xs font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[8px] ml-0.5 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
                   </div>
                 </div>
               </div>
