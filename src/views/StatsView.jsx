@@ -104,11 +104,20 @@ export default function StatsView() {
     });
 
     // 3. Hall of Fame (>= 95 points & >= 5 views)
-    const hallOfFame = allItems.filter(item => {
-      const r = Number(item.rating || 0);
-      const v = Number(item.views || 0);
-      return r >= 95 && v >= 5;
-    });
+    const hallOfFame = allItems
+      .filter(item => {
+        const r = Number(item.rating || 0);
+        const v = Number(item.views || 0);
+        return r >= 95 && v >= 5;
+      })
+      .sort((a, b) => {
+        const rA = Number(a.rating || 0);
+        const rB = Number(b.rating || 0);
+        if (rB !== rA) return rB - rA;
+        const vA = Number(a.views || 0);
+        const vB = Number(b.views || 0);
+        return vB - vA;
+      });
 
     // 4. Genre Average Scores
     const genreScores = {};
@@ -255,15 +264,25 @@ export default function StatsView() {
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <p className="text-[9px] text-slate-500 font-bold mt-2 tracking-widest">※(各作品の(所要時間×話数/巻数) × 閲覧・視聴回数) を合算</p>
+                <div className="flex flex-col items-center sm:items-end gap-1 mt-4">
+                  <p className="text-[10px] text-slate-500 font-bold tracking-tighter leading-tight text-center sm:text-right">
+                    ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
+                  </p>
+                  <p className="text-[8px] text-slate-600 font-medium tracking-tight text-center sm:text-right">
+                    デフォルト設定：アニメ20分 / ドラマ40分 / 映画120分 / 音楽3分 / マンガ30分(1巻)
+                  </p>
+                </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-4 bg-white/5 border border-white/10 px-4 sm:px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
-                    <span className="text-xs font-black text-slate-300">約</span>
-                    <span className="text-sm sm:text-base font-black text-white font-mono">{stats.lifetimeStats.days}</span>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">日</span>
-                    <span className="text-sm sm:text-base font-black text-white font-mono">{stats.lifetimeStats.remainingHours}</span>
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">時間</span>
+                  <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                    <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs font-black text-slate-400">約</span>
+                      <span className="text-2xl font-black text-white font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
+                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">日</span>
+                      <span className="text-2xl font-black text-white font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
+                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">時間</span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -320,8 +339,8 @@ export default function StatsView() {
               <div className="flex items-center gap-6">
                 <div className="relative shrink-0">
                   <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
-                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-2xl shadow-2xl">
-                    <Trophy className="w-8 h-8 text-yellow-950" />
+                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-2xl border border-yellow-200/50">
+                    <Award className="w-8 h-8 text-yellow-950" />
                   </div>
                 </div>
                 <div>
