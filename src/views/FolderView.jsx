@@ -18,7 +18,7 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import PixelItem from '../components/common/PixelItem';
+import PixelWalker from '../components/common/PixelWalker';
 
 function ActionButtons({ id, name, type }) {
   const updateFolder = useStore(state => state.updateFolder);
@@ -380,10 +380,10 @@ export default function FolderView() {
           {isRoot ? (
             <div className="flex flex-col gap-1">
               <div className="relative flex items-center gap-1 overflow-visible">
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-100 via-yellow-400 to-yellow-700 drop-shadow-[0_15px_30px_rgba(212,175,55,0.4)] pr-6">
+                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-100 via-yellow-400 to-yellow-700 drop-shadow-[0_15px_30px_rgba(212,175,55,0.4)]">
                   Ranking
                 </h1>
-                <PixelItem type="sword" size={40} className="mb-1" />
+                <PixelWalker size={36} className="mb-2" />
                 <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)]" />
               </div>
               <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">

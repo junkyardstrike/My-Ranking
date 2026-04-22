@@ -179,9 +179,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
           currentRank === 1 
             ? 'border-yellow-300 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-600 shadow-[0_30px_70px_rgba(212,175,55,0.6)] scale-[1.03]' 
             : currentRank === 2
-            ? 'border-slate-400/30 bg-gradient-to-br from-slate-400/15 via-black/80 to-black/90 hover:from-slate-400/25 hover:border-slate-400/50 shadow-xl'
+            ? 'border-slate-400/50 bg-gradient-to-br from-slate-400/30 via-black/80 to-black/90 hover:from-slate-400/10 hover:border-slate-400/30 shadow-xl'
             : currentRank === 3
-            ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/15 via-black/80 to-black/90 hover:from-orange-500/25 hover:border-orange-500/50 shadow-lg'
+            ? 'border-orange-500/50 bg-gradient-to-br from-orange-500/30 via-black/80 to-black/90 hover:from-orange-500/10 hover:border-orange-500/30 shadow-lg'
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
         }`} 
         onClick={() => setIsModalOpen(true)}
