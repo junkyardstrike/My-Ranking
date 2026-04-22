@@ -278,7 +278,7 @@ export default function StatsView() {
                   <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
                     <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-xs font-black text-accent">約</span>
+                      <span className="text-xs font-black text-cyan-500">約</span>
                       <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
                       <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">日</span>
                       <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
