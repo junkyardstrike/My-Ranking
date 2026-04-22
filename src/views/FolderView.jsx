@@ -437,7 +437,7 @@ export default function FolderView() {
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {childFolders.map((folder, idx) => (
-                    <div key={folder.id} className="premium-card-animate" style={{ animationDelay: `${idx * 60}ms` }}>
+                    <div key={folder.id} className="premium-item-animate" style={{ animationDelay: `${idx * 60}ms` }}>
                       <SortableFolder folder={folder} folders={folders} rankings={rankings} />
                     </div>
                   ))}
@@ -456,7 +456,7 @@ export default function FolderView() {
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {childRankings.map((ranking, idx) => (
-                    <div key={ranking.id} className="premium-card-animate" style={{ animationDelay: `${(childFolders.length + idx) * 60}ms` }}>
+                    <div key={ranking.id} className="premium-item-animate" style={{ animationDelay: `${(childFolders.length + idx) * 60}ms` }}>
                       <SortableRanking ranking={ranking} />
                     </div>
                   ))}

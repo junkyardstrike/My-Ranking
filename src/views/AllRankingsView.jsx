@@ -53,15 +53,16 @@ export default function AllRankingsView() {
         return matchesSearch && matchesGenre;
       })
       .sort((a, b) => {
-        // 1. Ranking status (Unranked: 0, Ranked: 1)
-        const aStatus = a.rankingId ? 1 : 0;
-        const bStatus = b.rankingId ? 1 : 0;
+        // ABSOLUTE Priority: Unranked (Status 0) vs Ranked (Status 1)
+        // An item is 'Ranked' if it has a rankingId OR it has a currentRank within a ranking
+        const aIsRanked = !!(a.rankingId || (typeof a.currentRank === 'number' && a.currentRank > 0));
+        const bIsRanked = !!(b.rankingId || (typeof b.currentRank === 'number' && b.currentRank > 0));
         
-        if (aStatus !== bStatus) {
-          return aStatus - bStatus; // 0 (unranked) comes before 1 (ranked)
+        if (aIsRanked !== bIsRanked) {
+          return aIsRanked ? 1 : -1; // Unranked (-1) ALWAYS at the top
         }
 
-        // 2. Group by genre within the status groups
+        // 2. Group by genre
         const aGenre = a.genre || 'other';
         const bGenre = b.genre || 'other';
         if (aGenre !== bGenre) {
@@ -69,13 +70,13 @@ export default function AllRankingsView() {
         }
 
         // 3. Sorting within the groups
-        if (aStatus === 0) {
-          // Unranked: newest added first
+        if (!aIsRanked) {
+          // Unranked: newest added first (createdAt DESC)
           const timeA = new Date(a.createdAt || 0).getTime();
           const timeB = new Date(b.createdAt || 0).getTime();
           return timeB - timeA;
         } else {
-          // Ranked: by their current rank position
+          // Ranked: by their position in the ranking (1, 2, 3...)
           const rankA = a.currentRank || 999;
           const rankB = b.currentRank || 999;
           return rankA - rankB;
@@ -106,24 +107,6 @@ export default function AllRankingsView() {
 
   return (
     <div className="pt-2 sm:pt-4 pb-32" key={locationKey}>
-      <style>{`
-        @keyframes premiumEntry {
-          0% {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            filter: blur(15px) brightness(0.5);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0) brightness(1);
-          }
-        }
-        .premium-item-animate {
-          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          opacity: 0;
-        }
-      `}</style>
       <div className="space-y-6">
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
