@@ -145,15 +145,15 @@ export default function StatsView() {
       {/* Header */}
       <div className="flex items-end justify-between px-1 mb-2">
         <div>
-          <h1 className="text-2xl font-black text-white tracking-tighter uppercase italic flex items-center gap-2">
-            <TrendingUp className="text-accent" size={20} />
-            Stats <span className="text-[10px] text-slate-500 not-italic ml-2 tracking-widest font-bold">/ 統計データ</span>
+          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic flex items-center gap-2">
+            <TrendingUp className="text-accent" size={24} />
+            Stats <span className="text-xs text-slate-500 not-italic ml-2 tracking-widest font-bold">/ 統計データ</span>
           </h1>
         </div>
         <div className="text-right">
           <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
-            <span className="text-xs font-black text-slate-400">総作品数</span>
-            <span className="text-2xl font-black text-accent font-mono leading-none">
+            <span className="text-sm font-black text-slate-400">総作品数</span>
+            <span className="text-3xl font-black text-accent font-mono leading-none">
               <Counter value={stats.totalCount} />
             </span>
           </div>
@@ -169,8 +169,8 @@ export default function StatsView() {
                 <PieIcon className="w-4 h-4 text-violet-400" />
               </div>
               <div>
-                <h2 className="text-xs font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
-                <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
+                <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
               </div>
             </div>
           </div>
@@ -207,10 +207,10 @@ export default function StatsView() {
               <div key={genre.name} className="flex items-center justify-between p-2 bg-white/5 rounded-xl border border-white/5">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: genre.color }} />
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
+                  <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
                 </div>
                 <div className="text-right flex-shrink-0">
-                   <span className="text-[10px] font-black text-white font-mono">{genre.value}<span className="text-[8px] text-slate-500 ml-0.5">{genre.unit}</span></span>
+                   <span className="text-xs font-black text-white font-mono">{genre.value}<span className="text-[10px] text-slate-500 ml-1">{genre.unit}</span></span>
                 </div>
               </div>
             ))}
@@ -224,8 +224,8 @@ export default function StatsView() {
               <BarChart3 className="w-4 h-4 text-emerald-400" />
             </div>
             <div>
-              <h2 className="text-xs font-black text-white uppercase tracking-widest italic">Score Distribution</h2>
-              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">スコア分布</p>
+              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Score Distribution</h2>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">スコア分布</p>
             </div>
           </div>
 
@@ -249,14 +249,14 @@ export default function StatsView() {
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
              {stats.scoreBins.map(bin => (
                <div key={bin.range} className="flex items-center gap-2">
-                  <span className="w-12 text-[8px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
-                  <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                  <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
+                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-accent transition-all duration-1000" 
                       style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
                     />
                   </div>
-                  <span className="w-8 text-[8px] font-black text-white text-right font-mono">{bin.count}<span className="text-[7px] text-slate-600 ml-0.5">作品</span></span>
+                  <span className="w-10 text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
                </div>
              ))}
           </div>
@@ -272,15 +272,15 @@ export default function StatsView() {
                   <Trophy className="w-5 h-5 text-yellow-500" />
                 </div>
                 <div>
-                  <h2 className="text-base font-black text-yellow-500 uppercase tracking-tighter italic flex items-center gap-2">
-                    Hall of Fame <span className="text-[8px] text-yellow-700 not-italic font-bold tracking-widest ml-1">/ 殿堂入り</span>
+                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter italic flex items-center gap-2">
+                    Hall of Fame <span className="text-[10px] text-yellow-700 not-italic font-bold tracking-widest ml-1">/ 殿堂入り</span>
                   </h2>
-                  <p className="text-[8px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
+                  <p className="text-[10px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
                 </div>
               </div>
-              <div className="bg-yellow-500/10 px-3 py-1 rounded-xl border border-yellow-500/20 flex items-center gap-2">
-                <span className="text-[8px] font-black text-yellow-600 uppercase">Inductees</span>
-                <span className="text-lg font-black text-yellow-500 font-mono leading-none">
+              <div className="bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-2">
+                <span className="text-[10px] font-black text-yellow-600 uppercase">Inductees</span>
+                <span className="text-xl font-black text-yellow-500 font-mono leading-none">
                   <Counter value={stats.hallOfFame.length} />
                 </span>
               </div>
@@ -306,17 +306,17 @@ export default function StatsView() {
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-black text-white text-[11px] truncate uppercase italic tracking-tight">{item.title}</h3>
+                      <h3 className="font-black text-white text-xs truncate uppercase italic tracking-tight">{item.title}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex items-center gap-0.5">
-                          <Star className="w-2 h-2 text-yellow-500 fill-yellow-500" />
-                          <span className="text-[9px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
+                          <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                          <span className="text-[10px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
                         </div>
                         <div className="flex items-center gap-0.5">
-                          <Eye className="w-2 h-2 text-yellow-600" />
-                          <span className="text-[9px] font-black text-yellow-600 font-mono leading-none">{item.views}</span>
+                          <Eye className="w-2.5 h-2.5 text-yellow-600" />
+                          <span className="text-[10px] font-black text-yellow-600 font-mono leading-none">{item.views}</span>
                         </div>
-                        <span className="text-[7px] font-black text-slate-500 uppercase ml-auto px-1.5 py-0.5 bg-black/40 rounded-full border border-white/5">
+                        <span className="text-[8px] font-black text-slate-500 uppercase ml-auto px-1.5 py-0.5 bg-black/40 rounded-full border border-white/5">
                           {GENRE_LABELS[item.genre] || 'OTHER'}
                         </span>
                       </div>
@@ -335,8 +335,8 @@ export default function StatsView() {
               <Star className="w-4 h-4 text-blue-400" />
             </div>
             <div>
-              <h2 className="text-xs font-black text-white uppercase tracking-widest italic">Genre Performance</h2>
-              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別平均スコア</p>
+              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Performance</h2>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別平均スコア</p>
             </div>
           </div>
 
@@ -353,21 +353,21 @@ export default function StatsView() {
                 
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[11px] font-black text-accent uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
+                    <span className="text-xs font-black text-accent uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
                     <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.8)]" style={{ backgroundColor: genre.color }} />
                   </div>
-                  <h3 className="text-base font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
+                  <h3 className="text-lg font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
                 </div>
 
                 <div className="relative z-10 flex items-end justify-between">
                   <div>
-                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">Average</p>
-                    <p className="text-[7px] text-slate-500 font-bold uppercase tracking-widest mb-1">平均点</p>
-                    <p className="text-3xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-xs ml-0.5 italic">点</span></p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">Average</p>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1.5 mt-0.5">平均点</p>
+                    <p className="text-4xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-sm ml-0.5 italic">点</span></p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Count</p>
-                    <p className="text-sm font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[9px] ml-0.5 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Count</p>
+                    <p className="text-base font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[10px] ml-1 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
                   </div>
                 </div>
               </div>
