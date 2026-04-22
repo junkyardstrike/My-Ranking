@@ -274,11 +274,23 @@ export default function StatsView() {
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
                    <button 
-                     key={g.id} 
-                     onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
-                     className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 md:hover:border-accent/50 md:hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] text-left w-full block"
-                     style={{ WebkitTapHighlightColor: 'transparent' }}
-                   >
+                      key={g.id} 
+                      onTouchStart={(e) => {
+                        touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                      }}
+                      onTouchEnd={(e) => {
+                        if (!touchStartPos.current) return;
+                        const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartPos.current.x);
+                        const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartPos.current.y);
+                        if (deltaX < 30 && deltaY < 30) {
+                          navigate('/all', { state: { filterGenre: g.id } });
+                        }
+                        touchStartPos.current = null;
+                      }}
+                      onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
+                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 md:hover:border-accent/50 md:hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] text-left w-full block"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                    >
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 md:group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
