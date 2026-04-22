@@ -29,9 +29,13 @@ export default function AllRankingsView() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isReorderMode = useStore(state => state.isReorderMode);
 
-  // Auto-collapse when reorder mode is turned on
+  // Auto-collapse when reorder mode is on, auto-expand when off
   useEffect(() => {
-    if (isReorderMode) setIsCollapsed(true);
+    if (isReorderMode) {
+      setIsCollapsed(true);
+    } else {
+      setIsCollapsed(false);
+    }
   }, [isReorderMode]);
   
   const filteredItems = useMemo(() => {
