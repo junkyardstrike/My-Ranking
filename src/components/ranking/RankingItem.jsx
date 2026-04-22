@@ -187,7 +187,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 </div>
               </div>
               {(dragHandleProps || isReorderMode) && (
-                <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-600 hover:text-accent bg-white/5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
+                <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all">
                   <GripVertical className="w-5 h-5" />
                 </div>
               )}
@@ -336,8 +336,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               {(isReorderMode || dragHandleProps) && !isEditMode && (
                 <div 
                   {...dragHandleProps} 
-                  className="p-2 cursor-grab text-slate-700 hover:text-accent transition-colors"
-                  onClick={e => e.stopPropagation()}
+                  className="p-2 cursor-grab text-slate-700 hover:text-accent transition-colors active:scale-90"
                 >
                   <GripVertical size={16} />
                 </div>

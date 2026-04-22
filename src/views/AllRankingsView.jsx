@@ -17,6 +17,7 @@ export default function AllRankingsView() {
   const getAllItems = useStore(state => state.getAllItems);
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
+  const moveItemToRank = useStore(state => state.moveItemToRank);
   const allItems = getAllItems();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,6 +48,14 @@ export default function AllRankingsView() {
   const handleUpdate = (id, updates) => {
     updateItem(id, updates);
     setHasChanges(true);
+  };
+
+  const handleMove = (id, targetRank) => {
+    const item = allItems.find(i => i.id === id);
+    if (item && item.rankingId) {
+      moveItemToRank(item.rankingId, id, targetRank);
+      setHasChanges(true);
+    }
   };
 
   const handleSave = () => {
@@ -142,6 +151,7 @@ export default function AllRankingsView() {
               isReorderMode={isReorderMode}
               isCollapsed={isActuallyCollapsed}
               onUpdate={handleUpdate}
+              onMove={handleMove}
               genre={item.genre || 'music'}
             />
           ))}
