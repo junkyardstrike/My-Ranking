@@ -155,7 +155,10 @@ export default function StatsView() {
           case 'drama': durationPerView = (episodes !== null ? episodes : 10) * 40; break;
           case 'movie': durationPerView = 120; break;
           case 'music': durationPerView = 3; break;
-          case 'manga': durationPerView = 30; break;
+          case 'manga': 
+            const volumes = (item.volumes !== undefined && item.volumes !== null && item.volumes !== '') ? Number(item.volumes) : 1;
+            durationPerView = 30 * volumes; 
+            break;
           default: durationPerView = 0; break;
         }
       }

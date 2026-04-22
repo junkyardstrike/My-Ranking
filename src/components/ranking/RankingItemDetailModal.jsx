@@ -76,7 +76,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   if (!isOpen || !liveItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = liveItem;
 
   let calculatedDuration = duration;
   if (!calculatedDuration) {
@@ -85,7 +85,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       case 'drama': calculatedDuration = episodes * 40; break;
       case 'movie': calculatedDuration = 120; break;
       case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = 30; break;
+      case 'manga': calculatedDuration = volumes * 30; break;
       default: calculatedDuration = 0; break;
     }
   }
@@ -360,7 +360,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            {(genre === 'anime' || genre === 'drama') && (
                              <div className="space-y-1">
                                 <label className="text-[10px] font-bold text-slate-400">話数</label>
-                                <input type="number" min="1" value={liveItem.episodes || ''} onChange={e => handleUpdate({ episodes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
+                                <input type="number" min="1" value={episodes} onChange={e => handleUpdate({ episodes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
+                             </div>
+                           )}
+                           {genre === 'manga' && (
+                             <div className="space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400">巻数</label>
+                                <input type="number" min="1" value={volumes} onChange={e => handleUpdate({ volumes: parseInt(e.target.value) || 1 })} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
                              </div>
                            )}
                         </div>
