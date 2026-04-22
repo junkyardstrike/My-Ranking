@@ -131,14 +131,31 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   return (
     <div className="relative">
+      <style>{`
+        @keyframes fadeInUpStagger {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        .ranking-item-animate {
+          animation: fadeInUpStagger 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          opacity: 0;
+        }
+      `}</style>
+
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
             {visibleItems.map((item, idx) => (
               <div 
                 key={item.id}
-                className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
-                style={{ animationDelay: `${idx * 40}ms` }}
+                className="ranking-item-animate"
+                style={{ animationDelay: `${idx * 60}ms` }}
               >
                 <SortableItem 
                   item={item} 

@@ -260,7 +260,7 @@ export default function StatsView() {
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
                   <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
-                    <Counter value={stats.lifetimeStats.totalHours} />
+                    {stats.lifetimeStats.totalHours}
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
@@ -477,7 +477,7 @@ export default function StatsView() {
               <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-black text-white italic font-mono leading-none">
-                  <Counter value={stats.totalCount} />
+                  {stats.totalCount}
                 </span>
                 <span className="text-[11px] font-black text-accent/80 italic">作品</span>
               </div>
