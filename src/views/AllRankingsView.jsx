@@ -52,7 +52,29 @@ export default function AllRankingsView() {
         const matchesGenre = selectedGenre === 'all' || item.genre === selectedGenre;
         return matchesSearch && matchesGenre;
       })
-      .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      .sort((a, b) => {
+        const aIsUnranked = !a.rankingId;
+        const bIsUnranked = !b.rankingId;
+
+        // 1. Unranked first
+        if (aIsUnranked !== bIsUnranked) {
+          return aIsUnranked ? -1 : 1;
+        }
+
+        // 2. Group by genre within status groups
+        if (a.genre !== b.genre) {
+          return (a.genre || '').localeCompare(b.genre || '');
+        }
+
+        // 3. Final sorting within groups
+        if (aIsUnranked) {
+          // Unranked: newest added first
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        } else {
+          // Ranked: by rank position
+          return (a.rank || 999) - (b.rank || 999);
+        }
+      });
   }, [allItems, searchQuery, selectedGenre]);
 
   const isActuallyCollapsed = isCollapsed;
