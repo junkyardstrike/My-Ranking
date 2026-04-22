@@ -143,18 +143,16 @@ function DroppableFolder({ folder, rankings }) {
            <img src={coverImage} alt="" className="w-full h-full object-cover" />
          </div>
       )}
-      <div className="relative z-10 p-6 flex flex-col items-center space-y-3 pointer-events-none mt-4">
-        <div className="p-3 bg-slate-800/80 backdrop-blur-md rounded-xl group-hover:scale-110 transition-transform duration-300 border border-white/5">
-          <Folder className="w-10 h-10 text-accent" />
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="font-semibold text-center line-clamp-2 text-slate-100 tracking-wide">{folder.name}</span>
+      <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between z-20 pointer-events-none">
+        <div className="transform transition-transform duration-300 group-hover:translate-x-1 flex-1">
+          <span className="font-bold text-sm text-white line-clamp-1 drop-shadow-md">{folder.name}</span>
           {folder.englishName && (
-            <div className="mt-1 flex flex-col items-center">
-              <div className="h-px w-6 bg-accent/50 my-1" />
-              <span className="text-[10px] sm:text-xs tracking-wider text-slate-400 font-medium uppercase text-center block leading-tight">{folder.englishName}</span>
-            </div>
+            <span className="text-[8px] tracking-wider text-slate-400 font-medium uppercase block leading-tight truncate">{folder.englishName}</span>
           )}
+        </div>
+        <div className="flex items-center gap-1 opacity-80 bg-black/40 px-2 py-0.5 rounded-full border border-white/5">
+          <Folder className="w-2.5 h-2.5 text-accent" />
+          <span className="text-[8px] font-bold text-white uppercase">Folder</span>
         </div>
       </div>
 
@@ -320,11 +318,11 @@ function RootFolderCard({ folder, rankings }) {
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 transition-transform duration-700 group-hover:scale-105 z-0" />
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10 z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent z-10 pointer-events-none" />
       
-      <div className="absolute bottom-0 left-0 p-6 sm:p-8 w-full flex items-end justify-between z-20 pointer-events-none">
-        <div className="transform transition-transform duration-300 group-hover:translate-x-2">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-wide drop-shadow-md">{folder.name}</h2>
+      <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 flex items-end justify-between z-20 pointer-events-none">
+        <div className="transform transition-transform duration-300 group-hover:translate-x-2 flex-1">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-wide drop-shadow-md line-clamp-1">{folder.name}</h2>
           
           {folder.englishName && (
             <div className="mt-2 mb-1">
@@ -332,24 +330,23 @@ function RootFolderCard({ folder, rankings }) {
               <p className="text-xs sm:text-sm tracking-[0.1em] text-white/70 font-medium uppercase drop-shadow-sm">{folder.englishName}</p>
             </div>
           )}
-
-          <div className="flex items-center gap-2 mt-3 opacity-80 bg-black/40 px-3 py-1 rounded-full w-fit backdrop-blur-sm border border-white/5">
-            <Folder className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium">Folder</span>
-          </div>
         </div>
         
-        {isEditMode && (
-          <div className="pointer-events-auto relative">
+        <div className="flex flex-col items-end gap-3 pointer-events-auto">
+          {isEditMode && (
             <label 
-              className="bg-black/60 backdrop-blur-md p-3.5 rounded-full hover:bg-black/80 transition-colors cursor-pointer border border-white/10 shadow-lg flex items-center justify-center transform hover:scale-110"
+              className="bg-black/60 backdrop-blur-md p-3.5 rounded-full hover:bg-black/80 transition-colors cursor-pointer border border-white/10 shadow-lg flex items-center justify-center transform hover:scale-110 mb-2"
               onClick={e => e.stopPropagation()}
             >
               <ImageIcon className="w-5 h-5 text-white" />
               <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
             </label>
+          )}
+          <div className="flex items-center gap-2 opacity-80 bg-black/40 px-3 py-1 rounded-full w-fit backdrop-blur-sm border border-white/5">
+            <Folder className="w-4 h-4 text-accent" />
+            <span className="text-sm font-medium text-white">Folder</span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -374,24 +371,28 @@ export default function FolderView() {
   const currentFolder = folders.find(f => f.id === currentFolderId);
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pt-2 sm:pt-4">
-      {!isRoot && (
-        <div className="mb-2">
+    <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
+      <div className="flex items-end justify-between px-1">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Library' : currentFolder?.name}</h1>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{isRoot ? 'コレクション・アーカイブ' : `フォルダ: ${currentFolder?.name}`}</p>
+        </div>
+        {!isRoot && (
           <button 
             onClick={() => navigate(currentFolder?.parentId ? `/folder/${currentFolder.parentId}` : '/')}
             className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 bg-surface/50 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-surface-light hover:border-white/10 shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium">戻る</span>
+            <span className="text-xs font-bold uppercase tracking-widest">Back</span>
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {(childFolders.length === 0 && childRankings.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-surface/30 backdrop-blur-sm rounded-3xl border border-white/5 border-dashed shadow-inner">
+        <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
           <Folder className="w-20 h-20 mb-6 opacity-20 text-accent" />
-          <p className="text-xl font-medium tracking-wide">この階層は空です</p>
-          <p className="text-sm mt-3 text-slate-500 max-w-xs text-center leading-relaxed">右上のメニューから新しいフォルダやランキングを作成して始めましょう。</p>
+          <p className="text-xl font-black italic tracking-tighter">No Items Yet</p>
+          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed">右上のメニューから新しいフォルダやランキングを作成してください</p>
         </div>
       ) : (
         <>

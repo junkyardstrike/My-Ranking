@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
-import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, MoreHorizontal, ChevronRight } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -10,6 +10,7 @@ const GENRES = [
   { id: 'manga', label: '漫画', icon: BookOpen },
   { id: 'movie', label: '映画', icon: Film },
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
+  { id: 'game', label: 'ゲーム', icon: Gamepad2 },
   { id: 'music', label: '音楽', icon: Music },
 ];
 
@@ -115,9 +116,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     let bgClass = "bg-black/40 text-slate-500 border-white/5";
     let icon = null;
     
-    if (rank === 1) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 2) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 3) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
+    if (rank === 1) { 
+      bgClass = "bg-gradient-to-br from-indigo-500 via-purple-500 via-pink-500 via-red-500 via-yellow-500 via-green-500 to-blue-500 text-white border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)] animate-pulse"; 
+      icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-200" />; 
+    }
+    else if (rank === 2) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 3) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 4) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
     
     if (!rank) {
       const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;

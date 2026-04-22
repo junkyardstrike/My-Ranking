@@ -1,7 +1,7 @@
 import { useStore } from '../store/useStore';
 import { useState, useMemo } from 'react';
 import RankingItem from '../components/ranking/RankingItem';
-import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Hash, Save } from 'lucide-react';
+import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -9,6 +9,7 @@ const GENRE_FILTERS = [
   { id: 'manga', label: '漫画', icon: BookOpen },
   { id: 'movie', label: '映画', icon: Film },
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
+  { id: 'game', label: 'ゲーム', icon: Gamepad2 },
   { id: 'music', label: '音楽', icon: Music },
 ];
 
@@ -21,6 +22,7 @@ export default function AllRankingsView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [hasChanges, setHasChanges] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const filteredItems = useMemo(() => {
     return allItems
@@ -53,7 +55,23 @@ export default function AllRankingsView() {
             <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">Records</h1>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">全作品マスターリスト</p>
           </div>
-          <div className="text-right">
+          <div className="flex flex-col items-end gap-3">
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
+            >
+              {isCollapsed ? (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
+                </>
+              ) : (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">折り畳み</span>
+                </>
+              )}
+            </button>
             <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
               <span className="text-xs font-black text-slate-400">総作品数</span>
               <span className="text-2xl font-black text-accent font-mono leading-none">{allItems.length}</span>
@@ -111,6 +129,7 @@ export default function AllRankingsView() {
               key={item.id}
               item={item}
               isEditMode={isEditMode}
+              isCollapsed={isCollapsed}
               onUpdate={handleUpdate}
               genre={item.genre || 'music'}
             />

@@ -27,24 +27,18 @@ export default function RankingView() {
   return (
     <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
       <div className="mb-6">
-        <div className="relative flex justify-center mb-6">
+        <div className="flex items-end justify-between px-1 mb-6">
+          <div>
+            <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{ranking.title}</h1>
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{ranking.englishName || 'RANKING SELECTION'}</p>
+          </div>
           <button 
             onClick={() => navigate(ranking.folderId ? `/folder/${ranking.folderId}` : '/')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 inline-flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-white/10 shadow-sm"
+            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 bg-white/5 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-white/10 shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm font-medium hidden sm:inline">戻る</span>
+            <span className="text-xs font-bold uppercase tracking-widest">Back</span>
           </button>
-          
-          <div className="flex flex-col items-center px-10 text-center">
-            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight drop-shadow-2xl">{ranking.title}</h1>
-            {ranking.englishName && (
-              <div className="mt-1.5 flex flex-col items-center">
-                <div className="h-0.5 w-8 bg-accent/80 my-1" />
-                <p className="text-[11px] tracking-[0.2em] text-accent font-black uppercase opacity-90">{ranking.englishName}</p>
-              </div>
-            )}
-          </div>
         </div>
 
         <div className="flex flex-col items-center gap-3">

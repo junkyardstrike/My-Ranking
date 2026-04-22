@@ -94,6 +94,7 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
 
   const handleSave = () => {
     if (onSave) onSave(items);
+    useStore.getState().captureRankHistory(ranking.id);
     setHasChanges(false);
     alert('ランキングの変更を保存しました。');
   };

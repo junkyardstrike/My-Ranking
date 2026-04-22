@@ -148,6 +148,10 @@ export async function fetchMetadata(title, genre) {
       return fetchDramaMetadata(title);
     case 'movie':
       return fetchMovieMetadata(title);
+    case 'game':
+      // Game API could be added here (e.g., RAWG or IGDB)
+      // For now, use Drama fetcher as a generic fallback or just return null
+      return fetchDramaMetadata(title);
     default:
       return null;
   }

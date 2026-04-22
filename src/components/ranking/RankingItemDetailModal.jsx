@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, MoreHorizontal, Type, Sparkles, Loader, Trash2 } from 'lucide-react';
+import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2 } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -10,6 +10,7 @@ const GENRE_MAP = {
   manga: { label: '漫画', icon: BookOpen },
   movie: { label: '映画', icon: Film },
   drama: { label: 'ドラマ', icon: Clapperboard },
+  game: { label: 'ゲーム', icon: Gamepad2 },
   music: { label: '音楽', icon: Music },
 };
 
@@ -128,6 +129,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       }
     } catch (e) { console.error(e); }
     finally { setIsFetching(false); }
+  };
+
+  const handleCopy = () => {
+    const text = `${title}\n${author ? `by ${author}\n` : ''}\n${memo || ''}`;
+    navigator.clipboard.writeText(text);
+    alert('作品情報をコピーしました');
   };
 
   const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
@@ -331,10 +338,28 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                        )}
                     </div>
                   )}
+                   {liveItem.previousRanks && liveItem.previousRanks.length > 0 && (
+                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-3 shadow-lg">
+                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2"><History size={12} /> RANK HISTORY</p>
+                        <div className="flex flex-wrap gap-2">
+                           {liveItem.previousRanks.map((h, i) => (
+                             <div key={i} className="flex flex-col items-center bg-black/40 px-3 py-1.5 rounded-xl border border-white/5">
+                                <span className="text-[10px] font-black text-accent italic">Rank {h.rank}</span>
+                                <span className="text-[8px] text-slate-500 font-bold">{new Date(h.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}</span>
+                             </div>
+                           ))}
+                        </div>
+                     </div>
+                   )}
                </div>
 
                <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
-                  <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2 px-1"><AlignLeft size={12} /> NARRATIVE</p>
+                  <div className="flex items-center justify-between px-1">
+                      <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> NARRATIVE</p>
+                      <button onClick={handleCopy} className="text-[9px] text-accent/60 hover:text-accent font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors">
+                         <Copy size={10} /> COPY TEXT
+                      </button>
+                   </div>
                   {isGlobalEditMode ? (
                      <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-300 text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
                   ) : (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music } from 'lucide-react';
+import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
 const GENRES = [
@@ -8,6 +8,7 @@ const GENRES = [
   { id: 'manga', label: '漫画', icon: BookOpen, color: 'from-pink-500 to-rose-500', emoji: '📖' },
   { id: 'movie', label: '映画', icon: Film, color: 'from-amber-500 to-orange-500', emoji: '🎬' },
   { id: 'drama', label: 'ドラマ', icon: Clapperboard, color: 'from-purple-500 to-violet-500', emoji: '🎭' },
+  { id: 'game', label: 'ゲーム', icon: Gamepad2, color: 'from-orange-500 to-red-500', emoji: '🎮' },
   { id: 'music', label: '音楽', icon: Music, color: 'from-slate-500 to-slate-600', emoji: '🎵' },
 ];
 

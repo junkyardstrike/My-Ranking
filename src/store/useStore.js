@@ -234,6 +234,31 @@ export const useStore = create((set, get) => ({
     });
   },
 
+  captureRankHistory: (rankingId) => {
+    set(state => {
+      const rankings = state.rankings.map(r => {
+        if (r.id !== rankingId) return r;
+        const newItems = (r.items || []).map(item => {
+          if (!item.title) return item;
+          const history = item.previousRanks || [];
+          const lastRank = history.length > 0 ? history[history.length - 1].rank : null;
+          if (lastRank === item.currentRank) return item;
+          
+          return {
+            ...item,
+            previousRanks: [
+              ...history,
+              { rank: item.currentRank, date: new Date().toISOString() }
+            ].slice(-10)
+          };
+        });
+        return { ...r, items: newItems };
+      });
+      saveData('rankings', rankings);
+      return { rankings };
+    });
+  },
+
   moveRanking: (activeId, overId) => {
     set((state) => {
       const oldIndex = state.rankings.findIndex(r => r.id === activeId);
