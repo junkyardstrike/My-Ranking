@@ -265,11 +265,11 @@ export default function StatsView() {
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1 mt-4">
-                  <p className="text-[10px] text-slate-500 font-bold tracking-tighter leading-tight text-center sm:text-right">
+                <div className="flex flex-col items-center sm:items-end gap-1.5 mt-4">
+                  <p className="text-[10px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right">
                     ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
                   </p>
-                  <p className="text-[8px] text-slate-600 font-medium tracking-tight text-center sm:text-right">
+                  <p className="text-[9px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
                     デフォルト設定：アニメ20分 / ドラマ40分 / 映画120分 / 音楽3分 / マンガ30分(1巻)
                   </p>
                 </div>
@@ -353,7 +353,7 @@ export default function StatsView() {
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
                   <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-2.5 flex items-center gap-2">
+                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
                     95点以上 × 5回以上の鑑賞
                   </p>
