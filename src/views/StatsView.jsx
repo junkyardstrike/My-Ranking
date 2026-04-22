@@ -339,8 +339,9 @@ export default function StatsView() {
 
               <div className="flex items-center gap-4 bg-yellow-500/10 px-6 py-3 rounded-2xl border border-yellow-500/20 backdrop-blur-sm self-start md:self-auto">
                 <div className="text-right">
-                  <p className="text-[9px] font-black text-yellow-600/60 uppercase tracking-widest leading-none">Inducted Masters / 殿堂入り数</p>
-                  <p className="text-3xl font-black text-yellow-500 font-mono leading-none mt-1">
+                  <p className="text-sm font-black text-yellow-500 uppercase tracking-tighter leading-none mb-1">殿堂入り数</p>
+                  <p className="text-[8px] font-bold text-yellow-600/40 uppercase tracking-[0.2em] leading-none">Inducted Masters</p>
+                  <p className="text-3xl font-black text-yellow-500 font-mono leading-none mt-1.5">
                     <Counter value={stats.hallOfFame.length} />
                   </p>
                 </div>
