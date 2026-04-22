@@ -306,7 +306,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
                <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                  <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={totalLifetimeDuration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="自動計算" />
+                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="標準時間" />
                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">分</span>
                </div>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
@@ -314,6 +314,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                    <Tv className="w-3.5 h-3.5 text-slate-500" />
                    <input type="number" min="1" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: parseInt(e.target.value) || 1 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">話</span>
+                 </div>
+               )}
+               {effectiveGenre === 'manga' && (
+                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+                   <BookOpen className="w-3.5 h-3.5 text-slate-500" />
+                   <input type="number" min="1" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: parseInt(e.target.value) || 1 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
+                   <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">巻</span>
                  </div>
                )}
             </div>
