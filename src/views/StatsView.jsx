@@ -199,7 +199,7 @@ export default function StatsView() {
   }, [rankings, unrankedItems, getAllItems]);
 
   return (
-    <div className="animate-in fade-in duration-700 space-y-4 pb-12">
+    <div className="animate-in fade-in duration-700 space-y-4 pb-32">
       {/* Header */}
       <div className="flex items-end justify-between px-1 mb-2">
         <div>

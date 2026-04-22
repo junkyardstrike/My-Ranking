@@ -356,33 +356,42 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   )}
                 </div>
                 {!localIsCollapsed && (
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                    {isSelected && !rankingId && (
-                      <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
-                        <Crown size={8} /> 選出済み
-                      </span>
-                    )}
-                    {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
-                    {rating > 0 && (
-                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-md border border-white/5">
-                        <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest">Score</span>
-                        <div className="scale-75 origin-left -ml-1">
-                          <ScoreRating rating={rating} readOnly />
+                  <div className="flex flex-col gap-1 mt-1.5">
+                    {/* Top Row: Tags, Author, Score */}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      {isSelected && !rankingId && (
+                        <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
+                          <Crown size={8} /> 選出済み
+                        </span>
+                      )}
+                      {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
+                      {rating > 0 && (
+                        <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-md border border-white/5">
+                          <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest">Score</span>
+                          <div className="scale-75 origin-left -ml-1">
+                            <ScoreRating rating={rating} readOnly />
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
-                    {calculatedDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{calculatedDuration}m</span>}
-                    {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
+                      )}
+                    </div>
                     
-                    {/* Rank history in expanded view */}
-                    {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
-                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 ml-auto">
-                        <History size={10} className="text-slate-600" />
-                        <div className="flex items-center gap-1">
-                          <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
-                          <span className="text-[9px] font-black text-accent">{currentRank}</span>
-                        </div>
+                    {/* Bottom Row: Metrics, Date, History */}
+                    {(views > 0 || calculatedDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
+                        {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
+                        {calculatedDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{calculatedDuration}m</span>}
+                        {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-400"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
+                        
+                        {/* Rank history in expanded view */}
+                        {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
+                          <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 ml-auto">
+                            <History size={10} className="text-slate-600" />
+                            <div className="flex items-center gap-1">
+                              <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
+                              <span className="text-[9px] font-black text-accent">{currentRank}</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
