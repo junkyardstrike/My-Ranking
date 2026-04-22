@@ -377,17 +377,30 @@ export default function FolderView() {
       `}</style>
       <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-3 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-700 drop-shadow-[0_10px_20px_rgba(212,175,55,0.3)] pr-8">
-              {isRoot ? 'Ranking' : currentFolder?.name}
-            </h1>
-            <PixelItem type="sword" size={60} />
-            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
-          </div>
-          <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
-            {isRoot ? 'ランキング・アーカイブ' : `フォルダ: ${currentFolder?.name}`}
-            <span className="w-12 h-px bg-slate-800" />
-          </p>
+          {isRoot ? (
+            <>
+              <div className="relative flex items-center gap-1 overflow-visible">
+                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-700 drop-shadow-[0_10px_20px_rgba(212,175,55,0.3)] pr-4">
+                  Ranking
+                </h1>
+                <PixelItem type="sword" size={40} className="mb-1" />
+                <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+              </div>
+              <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
+                ランキング・アーカイブ
+                <span className="w-12 h-px bg-slate-800" />
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-3xl sm:text-4xl font-black text-white italic tracking-tighter drop-shadow-lg">
+                {currentFolder?.name}
+              </h1>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest mt-1">
+                Folder: {currentFolder?.englishName || 'COLLECTION'}
+              </p>
+            </>
+          )}
         </div>
 
         {!isRoot && (
