@@ -155,11 +155,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     }
     else if (rank === 4) { bgClass = "bg-gradient-to-br from-slate-400 via-slate-600 to-slate-800 text-white border-white/10 shadow-sm"; }
     
-    if (!rank) {
-      const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;
+    if (!rank || !rankingId) {
       return (
-        <div className={`flex-shrink-0 flex items-center justify-center bg-white/5 text-accent rounded-lg border border-white/5 ${size}`}>
-          <GenreIcon size={isActuallyCollapsed ? 12 : 16} />
+        <div className={`flex-shrink-0 flex flex-col items-center justify-center bg-accent/20 text-accent rounded-lg border border-accent/30 shadow-[0_0_10px_rgba(16,185,129,0.3)] ${size}`}>
+          <span className="text-[8px] font-black uppercase tracking-tighter leading-none mb-0.5">Unranked</span>
+          <Plus size={isActuallyCollapsed ? 10 : 12} />
         </div>
       );
     }

@@ -53,27 +53,29 @@ export default function AllRankingsView() {
         return matchesSearch && matchesGenre;
       })
       .sort((a, b) => {
-        // Strict Unranked check (Must NOT have rankingId AND MUST have isSelected false or no isSelected)
-        const aRanked = !!a.rankingId || a.isSelected === true;
-        const bRanked = !!b.rankingId || b.isSelected === true;
+        // 1. Unranked items (NO rankingId) MUST come first
+        const aIsUnranked = !a.rankingId;
+        const bIsUnranked = !b.rankingId;
 
-        if (aRanked !== bRanked) {
-          return aRanked ? 1 : -1; // Unranked (-1) comes first
+        if (aIsUnranked !== bIsUnranked) {
+          return aIsUnranked ? -1 : 1;
         }
 
-        // Group by genre
+        // 2. Group by genre within those groups
         const aGenre = a.genre || 'other';
         const bGenre = b.genre || 'other';
         if (aGenre !== bGenre) {
           return aGenre.localeCompare(bGenre);
         }
 
-        // Sort within group
-        if (!aRanked) {
-          // Newest first
-          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        // 3. Final sorting within group
+        if (aIsUnranked) {
+          // Unranked: Newest added first
+          const timeA = new Date(a.createdAt || 0).getTime();
+          const timeB = new Date(b.createdAt || 0).getTime();
+          return timeB - timeA;
         } else {
-          // Ranking order
+          // Ranked: By their rank position (1, 2, 3...)
           return (a.currentRank || 999) - (b.currentRank || 999);
         }
       });
