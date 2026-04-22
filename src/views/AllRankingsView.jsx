@@ -53,29 +53,28 @@ export default function AllRankingsView() {
         return matchesSearch && matchesGenre;
       })
       .sort((a, b) => {
-        // 1. Unranked items (isSelected: false) come first
-        if (a.isSelected !== b.isSelected) {
-          return a.isSelected ? 1 : -1; // false comes before true
+        // Strict Unranked check (Must NOT have rankingId AND MUST have isSelected false or no isSelected)
+        const aRanked = !!a.rankingId || a.isSelected === true;
+        const bRanked = !!b.rankingId || b.isSelected === true;
+
+        if (aRanked !== bRanked) {
+          return aRanked ? 1 : -1; // Unranked (-1) comes first
         }
 
-        // 2. Group by genre
+        // Group by genre
         const aGenre = a.genre || 'other';
         const bGenre = b.genre || 'other';
         if (aGenre !== bGenre) {
           return aGenre.localeCompare(bGenre);
         }
 
-        // 3. Final sorting within those groups
-        if (!a.isSelected) {
-          // Unranked: Newest added first
-          const timeA = new Date(a.createdAt || 0).getTime();
-          const timeB = new Date(b.createdAt || 0).getTime();
-          return timeB - timeA;
+        // Sort within group
+        if (!aRanked) {
+          // Newest first
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         } else {
-          // Ranked: By their rank position (1, 2, 3...)
-          const rankA = a.currentRank || 999;
-          const rankB = b.currentRank || 999;
-          return rankA - rankB;
+          // Ranking order
+          return (a.currentRank || 999) - (b.currentRank || 999);
         }
       });
   }, [allItems, searchQuery, selectedGenre]);
