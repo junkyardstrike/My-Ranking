@@ -226,9 +226,9 @@ export default function StatsView() {
         <section className="md:col-span-2 relative py-4">
           <div className="relative z-10 flex flex-col gap-8">
             {/* Top: Pixel Walker & Total */}
-            <div className="flex flex-row items-center justify-center gap-6 sm:gap-16 lg:gap-32 w-full px-2 sm:px-8">
+            <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
               {/* Left: Pixel Walker */}
-              <div className="flex-shrink-0 ml-4 sm:ml-8">
+              <div className="flex-shrink-0 ml-8 sm:ml-16">
                  <PixelWalker className="transform scale-[1.2] origin-center" />
               </div>
 
@@ -266,10 +266,10 @@ export default function StatsView() {
                    <div 
                      key={g.id} 
                      onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
-                     className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 cursor-pointer hover:border-accent/50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all"
+                     className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 cursor-pointer md:hover:border-accent/50 md:hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all"
                    >
                       {g.bgImage && (
-                        <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
+                        <div className="absolute inset-0 z-0 opacity-30 md:group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
@@ -328,7 +328,7 @@ export default function StatsView() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {stats.hallOfFame.map(item => (
-                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group hover:bg-yellow-500/10 transition-all duration-500">
+                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group md:hover:bg-yellow-500/10 transition-all duration-500">
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-yellow-500/20 shadow-lg flex-shrink-0">
                       {item.imageBase64 ? (
                         <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
@@ -480,7 +480,7 @@ export default function StatsView() {
               <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-36 flex flex-col justify-between shadow-lg">
                 {/* Random Genre Overlay Image */}
                 {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-25 group-hover:opacity-40 transition-opacity duration-700">
+                  <div className="absolute inset-0 z-0 opacity-25 md:group-hover:opacity-40 transition-opacity duration-700">
                     <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                   </div>
