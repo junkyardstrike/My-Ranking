@@ -335,7 +335,14 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       </span>
                     )}
                     {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
-                    {rating > 0 && <div className="scale-75 origin-left -ml-1"><ScoreRating rating={rating} readOnly /></div>}
+                    {rating > 0 && (
+                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-md border border-white/5">
+                        <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest">Score</span>
+                        <div className="scale-75 origin-left -ml-1">
+                          <ScoreRating rating={rating} readOnly />
+                        </div>
+                      </div>
+                    )}
                     {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
                     {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                     

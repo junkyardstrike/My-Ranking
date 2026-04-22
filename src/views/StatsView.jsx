@@ -94,20 +94,22 @@ export default function StatsView() {
       }
     });
 
-    // 3. Hall of Fame (Robust check)
+    // 3. Hall of Fame (Robust check with loose equality and type coercion)
     const hallOfFame = allItems.filter(item => {
-      const r = Number(item.rating);
+      const r = Number(item.rating || 0);
       const v = Number(item.views || 0);
-      return r === 100 && v >= 5;
+      // Ensure we catch both string and number, and handle potential float precision
+      return Math.round(r) >= 100 && v >= 5;
     });
 
     // 4. Genre Average Scores
     const genreScores = {};
     allItems.forEach(item => {
-      if (item.rating > 0) {
+      const r = Number(item.rating || 0);
+      if (r > 0) {
         const g = item.genre || 'other';
         if (!genreScores[g]) genreScores[g] = { total: 0, count: 0 };
-        genreScores[g].total += Number(item.rating);
+        genreScores[g].total += r;
         genreScores[g].count += 1;
       }
     });
@@ -341,8 +343,8 @@ export default function StatsView() {
               <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-28 flex flex-col justify-between">
                 {/* Random Genre Overlay Image */}
                 {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-10 group-hover:opacity-20 transition-opacity duration-700">
-                    <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-50" />
+                  <div className="absolute inset-0 z-0 opacity-25 group-hover:opacity-40 transition-opacity duration-700">
+                    <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                   </div>
                 )}
