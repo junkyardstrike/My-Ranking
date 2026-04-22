@@ -273,7 +273,7 @@ export default function FolderView() {
     <div className="space-y-6 animate-in fade-in duration-700 pt-0 pb-20">
       <div className="flex items-end justify-between px-1 mb-2">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Library' : currentFolder?.name}</h1>
+          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Ranking' : currentFolder?.name}</h1>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{isRoot ? 'コレクション・アーカイブ' : `フォルダ: ${currentFolder?.name}`}</p>
         </div>
         {!isRoot && (
