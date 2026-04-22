@@ -348,12 +348,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                      <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-1 col-span-2 md:col-span-1 pt-4 md:pt-0 bg-white/5 rounded-2xl py-2">
                         <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
-                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration.toLocaleString()}</p>
+                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{(totalLifetimeDuration / 60).toFixed(1)}h</p>
                         <p className="text-[8px] text-slate-500 font-bold text-center">
                           {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                            `${unitDuration}m × ${genre === 'manga' ? (volumes || 1) + 'v' : (episodes || 1) + 'h'} × ${views}v`
+                            `${unitDuration}m × ${genre === 'manga' ? (volumes || 1) + 'v' : (episodes || 1) + 'h'} × ${views}v = ${(totalLifetimeDuration / 60).toFixed(1)}h`
                           ) : (
-                            `${unitDuration}m × ${views}v`
+                            `${unitDuration}m × ${views}v = ${(totalLifetimeDuration / 60).toFixed(1)}h`
                           )}
                         </p>
                      </div>
