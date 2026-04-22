@@ -53,12 +53,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
 
   const liveItem = liveItemFromStore ? {
     ...liveItemFromStore,
+    ...propItem, // Ensure local overrides (like currentRank from drag-and-drop) take precedence
     isSelected: propItem.isSelected || liveItemFromStore.isSelected,
     rankingId: propItem.rankingId || liveItemFromStore.rankingId,
     rankingTitle: propItem.rankingTitle || liveItemFromStore.rankingTitle
   } : propItem;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1, volumes = 1 } = liveItem;
   
   // Safe genre fallback: ensure 'other' is mapped to 'music'
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
@@ -71,7 +72,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       case 'drama': calculatedDuration = episodes * 40; break;
       case 'movie': calculatedDuration = 120; break;
       case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = 30; break;
+      case 'manga': calculatedDuration = volumes * 30; break;
       default: calculatedDuration = 0; break;
     }
   }

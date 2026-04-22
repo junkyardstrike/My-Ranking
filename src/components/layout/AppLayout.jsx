@@ -5,7 +5,7 @@ import BottomTabBar from './BottomTabBar';
 import { useStore } from '../../store/useStore';
 import { useEffect } from 'react';
 import { Edit3, ArrowUpDown } from 'lucide-react';
-import { DndContext, closestCenter, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+
 
 export default function AppLayout() {
   const init = useStore(state => state.init);
@@ -14,40 +14,18 @@ export default function AppLayout() {
   const isReorderMode = useStore(state => state.isReorderMode);
   const setEditMode = useStore(state => state.setEditMode);
   const setReorderMode = useStore(state => state.setReorderMode);
-  const moveRanking = useStore(state => state.moveRanking);
-  const moveFolder = useStore(state => state.moveFolder);
   const folders = useStore(state => state.folders);
   const rankings = useStore(state => state.rankings);
 
   useEffect(() => { init(); }, [init]);
 
-  const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 5 } })
-  );
-
-  const handleDragEnd = (event) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    // Check if moving folders
-    const isActiveFolder = folders.some(f => f.id === active.id);
-    const isOverFolder = folders.some(f => f.id === over.id);
-
-    if (isActiveFolder && isOverFolder) {
-      moveFolder(active.id, over.id);
-    } else {
-      // Otherwise assume ranking move
-      moveRanking(active.id, over.id);
-    }
-  };
-
+  
   if (!isInitialized) {
     return <div className="min-h-screen flex items-center justify-center text-slate-400">Loading...</div>;
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <>
       {/* Animated background orbs */}
       <div aria-hidden="true">
         <div className="bg-orb bg-orb-1" />
@@ -107,6 +85,6 @@ export default function AppLayout() {
 
         <BottomTabBar />
       </div>
-    </DndContext>
+    </>
   );
 }

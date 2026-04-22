@@ -146,7 +146,7 @@ export default function StatsView() {
       const views = Number(item.views || 0);
       
       let durationPerView = 0;
-      if (item.duration !== undefined && item.duration !== null && item.duration !== '') {
+      if (item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) {
         durationPerView = Number(item.duration);
       } else {
         const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : null;
