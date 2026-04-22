@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import PixelWalker from '../components/common/PixelWalker';
+import HeaderWalker from '../components/common/HeaderWalker';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -103,7 +103,7 @@ export default function AllRankingsView() {
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)]">
               Records
             </h1>
-            <PixelWalker size={36} className="mb-2" />
+            <HeaderWalker size={36} className="mb-2" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
