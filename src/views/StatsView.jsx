@@ -395,9 +395,9 @@ export default function StatsView() {
                       </div>
                     </div>
 
-                    {/* Diagonal Genre Ribbon - Enlarged */}
+                    {/* Diagonal Genre Ribbon - Enlarged Text */}
                     <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
-                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[10px] font-black uppercase tracking-[0.2em] py-1.5 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
+                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[13px] font-black uppercase tracking-[0.1em] py-2 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
                           {GENRE_LABELS[item.genre] || 'OTHER'}
                        </div>
                     </div>
