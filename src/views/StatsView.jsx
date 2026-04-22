@@ -236,7 +236,7 @@ export default function StatsView() {
           <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
             <span className="text-sm font-black text-slate-400">総作品数</span>
             <span className="text-3xl font-black text-accent font-mono leading-none">
-              <Counter value={stats.totalCount} />
+              {stats.totalCount}
             </span>
           </div>
         </div>

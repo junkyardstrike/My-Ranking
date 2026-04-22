@@ -133,18 +133,23 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     <div className="relative">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
-            {visibleItems.map(item => (
-              <SortableItem 
-                key={item.id} 
-                item={item} 
-                isEditMode={isEditMode}
-                isReorderMode={isReorderMode}
-                isCollapsed={isActuallyCollapsed}
-                rankingId={ranking.id}
-                onUpdate={handleLocalUpdate}
-                onMove={handleLocalMove}
-              />
+          <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
+            {visibleItems.map((item, idx) => (
+              <div 
+                key={item.id}
+                className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+                style={{ animationDelay: `${idx * 40}ms` }}
+              >
+                <SortableItem 
+                  item={item} 
+                  isEditMode={isEditMode} 
+                  isReorderMode={isReorderMode}
+                  isCollapsed={isActuallyCollapsed}
+                  rankingId={ranking.id}
+                  onUpdate={handleLocalUpdate}
+                  onMove={handleLocalMove}
+                />
+              </div>
             ))}
           </div>
         </SortableContext>
