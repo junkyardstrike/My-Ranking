@@ -221,7 +221,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                  e.stopPropagation(); 
                                  const nextRank = Math.max(1, currentRank - 1);
                                  if (onMove) onMove(id, nextRank);
-                                 else moveItemToRank(rankingId, id, nextRank);
+                                 else moveItemToRank(rankingId || propRankingId, id, nextRank);
                                }}
                                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
                              >
@@ -233,7 +233,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                  e.stopPropagation(); 
                                  const nextRank = Math.min(100, currentRank + 1);
                                  if (onMove) onMove(id, nextRank);
-                                 else moveItemToRank(rankingId, id, nextRank);
+                                 else moveItemToRank(rankingId || propRankingId, id, nextRank);
                                }}
                                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
                              >

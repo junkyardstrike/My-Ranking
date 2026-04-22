@@ -185,6 +185,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     </button>
                   ))}
                 </div>
+                {(rankingId || liveItem.rankingId) && (
+                  <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
+                    <button onClick={(e) => { e.stopPropagation(); if (onMove) onMove(id, Math.max(1, currentRank - 1)); }} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400"><Minus size={12} /></button>
+                    <span className="w-6 text-center text-[11px] font-black text-white italic">{currentRank}</span>
+                    <button onClick={(e) => { e.stopPropagation(); if (onMove) onMove(id, Math.min(100, currentRank + 1)); }} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400"><Plus size={12} /></button>
+                  </div>
+                )}
               </div>
               {(dragHandleProps || isReorderMode) && (
                 <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all">
