@@ -14,11 +14,14 @@ const GENRE_FILTERS = [
 ];
 
 export default function AllRankingsView() {
-  const getAllItems = useStore(state => state.getAllItems);
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
-  const allItems = useStore(state => state.getAllItems());
+  const rankings = useStore(state => state.rankings);
+  const unrankedItems = useStore(state => state.unrankedItems);
+  const getAllItems = useStore(state => state.getAllItems);
+  
+  const allItems = useMemo(() => getAllItems(), [rankings, unrankedItems, getAllItems]);
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
