@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -55,6 +56,8 @@ export default function StatsView() {
   const rankings = useStore(state => state.rankings);
   const unrankedItems = useStore(state => state.unrankedItems);
   
+  const navigate = useNavigate();
+
   const stats = useMemo(() => {
     const allItems = getAllItems();
     
@@ -260,7 +263,11 @@ export default function StatsView() {
                <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計消費時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
-                   <div key={g.id} className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40">
+                   <div 
+                     key={g.id} 
+                     onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
+                     className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 cursor-pointer hover:border-accent/50 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition-all"
+                   >
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
@@ -285,6 +292,72 @@ export default function StatsView() {
                  )}
                </div>
             </div>
+          </div>
+        </section>
+
+        {/* 3. Hall of Fame */}
+        <section className="md:col-span-2 relative">
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
+          <div className="relative bg-black/60 border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
+                  <Trophy className="w-5 h-5 text-yellow-500" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter flex items-center gap-2">
+                    殿堂入り <span className="text-[10px] text-yellow-700 font-bold tracking-widest ml-1 italic">/ Hall of Fame</span>
+                  </h2>
+                  <p className="text-[10px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
+                </div>
+              </div>
+              <div className="bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-2">
+                <span className="text-[10px] font-black text-yellow-600 uppercase">Inductees</span>
+                <span className="text-xl font-black text-yellow-500 font-mono leading-none">
+                  <Counter value={stats.hallOfFame.length} />
+                </span>
+              </div>
+            </div>
+
+            {stats.hallOfFame.length === 0 ? (
+              <div className="py-8 text-center border border-dashed border-white/5 rounded-[24px]">
+                <Star className="w-8 h-8 text-slate-800 mx-auto mb-2 opacity-20" />
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic leading-none">Legend Awaited</p>
+                <p className="text-[8px] text-slate-700 font-bold mt-1 uppercase">NO INDUCTEES YET</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {stats.hallOfFame.map(item => (
+                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group hover:bg-yellow-500/10 transition-all duration-500">
+                    <div className="w-12 h-12 rounded-xl overflow-hidden border border-yellow-500/20 shadow-lg flex-shrink-0">
+                      {item.imageBase64 ? (
+                        <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-black/40 flex items-center justify-center">
+                          <Target className="w-4 h-4 text-yellow-500/30" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-black text-white text-xs truncate uppercase italic tracking-tight">{item.title}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="flex items-center gap-0.5">
+                          <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
+                          <span className="text-[10px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          <Eye className="w-2.5 h-2.5 text-yellow-600" />
+                          <span className="text-[10px] font-black text-yellow-600 font-mono leading-none">{item.views}</span>
+                        </div>
+                        <span className="text-[8px] font-black text-slate-500 uppercase ml-auto px-1.5 py-0.5 bg-black/40 rounded-full border border-white/5">
+                          {GENRE_LABELS[item.genre] || 'OTHER'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -389,71 +462,6 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame */}
-        <section className="md:col-span-2 relative">
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
-          <div className="relative bg-black/60 border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
-                  <Trophy className="w-5 h-5 text-yellow-500" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-black text-yellow-500 uppercase tracking-tighter flex items-center gap-2">
-                    殿堂入り <span className="text-[10px] text-yellow-700 font-bold tracking-widest ml-1 italic">/ Hall of Fame</span>
-                  </h2>
-                  <p className="text-[10px] text-yellow-600/60 font-bold uppercase tracking-widest mt-0.5">※ 95点以上かつ5回以上の鑑賞で殿堂入り</p>
-                </div>
-              </div>
-              <div className="bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-2">
-                <span className="text-[10px] font-black text-yellow-600 uppercase">Inductees</span>
-                <span className="text-xl font-black text-yellow-500 font-mono leading-none">
-                  <Counter value={stats.hallOfFame.length} />
-                </span>
-              </div>
-            </div>
-
-            {stats.hallOfFame.length === 0 ? (
-              <div className="py-8 text-center border border-dashed border-white/5 rounded-[24px]">
-                <Star className="w-8 h-8 text-slate-800 mx-auto mb-2 opacity-20" />
-                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic leading-none">Legend Awaited</p>
-                <p className="text-[8px] text-slate-700 font-bold mt-1 uppercase">NO INDUCTEES YET</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {stats.hallOfFame.map(item => (
-                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group hover:bg-yellow-500/10 transition-all duration-500">
-                    <div className="w-12 h-12 rounded-xl overflow-hidden border border-yellow-500/20 shadow-lg flex-shrink-0">
-                      {item.imageBase64 ? (
-                        <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-black/40 flex items-center justify-center">
-                          <Target className="w-4 h-4 text-yellow-500/30" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-black text-white text-xs truncate uppercase italic tracking-tight">{item.title}</h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex items-center gap-0.5">
-                          <Star className="w-2.5 h-2.5 text-yellow-500 fill-yellow-500" />
-                          <span className="text-[10px] font-black text-yellow-500 font-mono leading-none">{item.rating}</span>
-                        </div>
-                        <div className="flex items-center gap-0.5">
-                          <Eye className="w-2.5 h-2.5 text-yellow-600" />
-                          <span className="text-[10px] font-black text-yellow-600 font-mono leading-none">{item.views}</span>
-                        </div>
-                        <span className="text-[8px] font-black text-slate-500 uppercase ml-auto px-1.5 py-0.5 bg-black/40 rounded-full border border-white/5">
-                          {GENRE_LABELS[item.genre] || 'OTHER'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
 
         {/* 4. Genre Average Ranking */}
         <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl md:col-span-2">

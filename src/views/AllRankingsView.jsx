@@ -1,5 +1,6 @@
 import { useStore } from '../store/useStore';
 import { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
@@ -15,6 +16,7 @@ const GENRE_FILTERS = [
 ];
 
 export default function AllRankingsView() {
+  const location = useLocation();
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
@@ -25,7 +27,7 @@ export default function AllRankingsView() {
   const allItems = useMemo(() => getAllItems(), [rankings, unrankedItems, getAllItems]);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState('all');
+  const [selectedGenre, setSelectedGenre] = useState(location.state?.filterGenre || 'all');
   const [hasChanges, setHasChanges] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isReorderMode = useStore(state => state.isReorderMode);
