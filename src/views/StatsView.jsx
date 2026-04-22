@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -59,6 +59,8 @@ export default function StatsView() {
   const unrankedItems = useStore(state => state.unrankedItems);
   
   const navigate = useNavigate();
+  const location = useLocation();
+  const { key: locationKey } = location;
   const touchStartPos = useRef(null);
 
   const stats = useMemo(() => {
@@ -244,7 +246,7 @@ export default function StatsView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 0. Lifetime Counter */}
-        <section className="md:col-span-2 relative py-4">
+        <section className="md:col-span-2 relative py-4 premium-section-animate" style={{ animationDelay: '100ms' }}>
           <div className="relative z-10 flex flex-col gap-8">
             {/* Top: Pixel Walker & Total */}
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
@@ -326,7 +328,7 @@ export default function StatsView() {
         </section>
 
         {/* 3. Hall of Fame - Open Design (No Box) */}
-        <section className="md:col-span-2 relative group py-12">
+        <section className="md:col-span-2 relative group py-12 premium-section-animate" style={{ animationDelay: '200ms' }}>
           {/* Animated Golden Aura */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
           
@@ -377,7 +379,8 @@ export default function StatsView() {
                 {stats.hallOfFame.map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-yellow-400/50"
+                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-yellow-400/50 premium-section-animate"
+                    style={{ animationDelay: `${250 + (idx * 50)}ms` }}
                   >
                     {/* Card Shine Effect */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
@@ -441,7 +444,7 @@ export default function StatsView() {
         </div>
 
         {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
+        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group premium-section-animate" style={{ animationDelay: '400ms' }}>
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
@@ -500,8 +503,8 @@ export default function StatsView() {
         </section>
 
         {/* 2. Score Distribution */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] p-6 shadow-2xl">
-          <div className="flex items-center gap-2 mb-6">
+        <section className="bg-white/5 rounded-[40px] p-6 border border-white/5 shadow-2xl premium-section-animate" style={{ animationDelay: '300ms' }}>
+          <div className="flex items-start justify-between mb-8">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
             </div>
@@ -546,7 +549,7 @@ export default function StatsView() {
 
 
         {/* 4. Genre Average Ranking */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl md:col-span-2">
+        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl md:col-span-2 premium-section-animate" style={{ animationDelay: '600ms' }}>
           <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20">
               <Star className="w-4 h-4 text-blue-400" />

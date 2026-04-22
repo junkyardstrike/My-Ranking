@@ -17,6 +17,7 @@ const GENRE_FILTERS = [
 
 export default function AllRankingsView() {
   const location = useLocation();
+  const { key: locationKey } = location;
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
@@ -75,7 +76,25 @@ export default function AllRankingsView() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
+    <div className="pt-2 sm:pt-4 pb-32" key={locationKey}>
+      <style>{`
+        @keyframes premiumEntry {
+          0% {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+            filter: blur(15px) brightness(0.5);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0) brightness(1);
+          }
+        }
+        .premium-item-animate {
+          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+      `}</style>
       <div className="space-y-6">
         <div className="flex items-end justify-between px-1 mb-6">
           <div>
@@ -154,18 +173,23 @@ export default function AllRankingsView() {
           <p className="text-xs text-slate-700 uppercase font-bold tracking-widest">条件に一致する作品が見つかりません</p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {filteredItems.map((item) => (
-            <RankingItem 
-              key={item.id}
-              item={item}
-              isEditMode={isEditMode}
-              isReorderMode={isReorderMode}
-              isCollapsed={isActuallyCollapsed}
-              onUpdate={handleUpdate}
-              onMove={handleMove}
-              genre={item.genre || 'music'}
-            />
+        <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
+          {filteredItems.map((item, idx) => (
+            <div 
+              key={item.id} 
+              className="premium-item-animate"
+              style={{ animationDelay: `${idx * 40}ms` }}
+            >
+              <RankingItem 
+                item={item} 
+                isEditMode={isEditMode} 
+                isReorderMode={isReorderMode}
+                isCollapsed={isActuallyCollapsed}
+                onUpdate={handleUpdate}
+                onMove={handleMove}
+                genre={item.genre || 'music'}
+              />
+            </div>
           ))}
         </div>
       )}
@@ -177,7 +201,7 @@ export default function AllRankingsView() {
             onClick={handleSave}
             className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
           >
-            <Save className="w-6 h-6" />
+            <Save className="w-5 h-5" strokeWidth={3} />
             変更を保存
           </button>
         </div>

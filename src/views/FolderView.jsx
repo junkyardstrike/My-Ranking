@@ -95,6 +95,8 @@ function DroppableFolder({ folder, rankings }) {
     }
   };
 
+  const folderRankings = rankings.filter(r => r.folderId === folder.id);
+  const totalItems = folderRankings.reduce((sum, r) => sum + (r.items?.length || 0), 0);
   const coverImage = getFolderCoverImage(folder, rankings);
 
   const style = transform ? {
@@ -144,9 +146,14 @@ function DroppableFolder({ folder, rankings }) {
 
       <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
         <h3 className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110">{folder.name}</h3>
-        {folder.englishName && (
-          <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{folder.englishName}</span>
-        )}
+        <div className="flex items-center gap-2 mt-0.5">
+          {folder.englishName && (
+            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase leading-tight truncate opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{folder.englishName}</span>
+          )}
+          <span className="text-[10px] font-black text-accent/80 italic uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            ({totalItems}作品)
+          </span>
+        </div>
       </div>
 
       <div className="absolute top-3 right-3 z-20 pointer-events-none">
