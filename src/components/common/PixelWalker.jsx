@@ -51,11 +51,11 @@ const PixelWalker = ({ className = "" }) => {
 
   return (
     <div 
-      className={`relative ${className} w-24 h-24 overflow-hidden cursor-pointer active:scale-95 transition-transform`}
+      className={`relative ${className} w-24 h-24 cursor-pointer`}
       onClick={handleJump}
     >
       {/* Background speed lines to simulate movement */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-20 overflow-hidden rounded-xl">
          <div className="absolute top-4 left-0 w-8 h-[2px] bg-white animate-[slide_1s_infinite_linear]" style={{ animationDelay: '0s' }} />
          <div className="absolute top-12 left-4 w-12 h-[2px] bg-accent animate-[slide_1.5s_infinite_linear]" style={{ animationDelay: '0.5s' }} />
          <div className="absolute top-20 left-2 w-6 h-[2px] bg-white animate-[slide_0.8s_infinite_linear]" style={{ animationDelay: '0.2s' }} />

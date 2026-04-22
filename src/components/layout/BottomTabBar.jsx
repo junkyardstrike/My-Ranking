@@ -32,7 +32,7 @@ export default function BottomTabBar() {
                 <button
                   key={tab.id}
                   onClick={() => handleTab(tab)}
-                  className={`flex flex-col items-center justify-center gap-1.5 py-4 transition-all duration-300 relative ${isActive ? 'text-accent' : 'text-slate-500 hover:text-slate-300'}`}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-4 transition-all duration-300 relative ${isActive ? 'text-accent' : 'text-slate-500 md:hover:text-slate-300'}`}
                 >
                   {isActive && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
