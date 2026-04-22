@@ -273,26 +273,12 @@ export default function StatsView() {
                <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
-                   <button 
+                    <div 
                       key={g.id} 
-                      onTouchStart={(e) => {
-                        touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-                      }}
-                      onTouchEnd={(e) => {
-                        if (!touchStartPos.current) return;
-                        const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartPos.current.x);
-                        const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartPos.current.y);
-                        if (deltaX < 30 && deltaY < 30) {
-                          navigate('/all', { state: { filterGenre: g.id } });
-                        }
-                        touchStartPos.current = null;
-                      }}
-                      onClick={() => navigate('/all', { state: { filterGenre: g.id } })}
-                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 md:hover:border-accent/50 md:hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] text-left w-full block"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 text-left w-full"
                     >
                       {g.bgImage && (
-                        <div className="absolute inset-0 z-0 opacity-30 md:group-hover:opacity-50 transition-opacity duration-500">
+                        <div className="absolute inset-0 z-0 opacity-30 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
@@ -308,8 +294,8 @@ export default function StatsView() {
                         <span className="text-4xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
                         <span className="text-sm font-black text-accent/80 drop-shadow-md">時間</span>
                       </div>
-                   </button>
-                 ))}
+                    </div>
+                  ))}
                  {stats.lifetimeStats.genreLifetime.length === 0 && (
                     <p className="text-xs text-slate-600 text-center py-4 font-bold col-span-2 md:col-span-3">データがありません</p>
                  )}
