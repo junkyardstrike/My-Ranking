@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
@@ -42,11 +42,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const updateItemStore = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
 
-  const itemFromStore = useStore(state => {
+  const itemFromStore = useStore(useCallback(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
     const allUnranked = state.unrankedItems || [];
     return [...allRanked, ...allUnranked].find(i => i.id === propItem?.id);
-  });
+  }, [propItem?.id]));
 
   const liveItem = itemFromStore ? {
     ...itemFromStore,
@@ -95,7 +95,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   if (genre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
   else if (genre === 'anime' || genre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
 
-  const totalLifetimeDuration = totalDurationPerView * (views || 1);
+  const totalLifetimeDuration = totalDurationPerView * views;
+
   const handleUpdate = (updates) => {
     if (onUpdate) {
       onUpdate(id, updates);
@@ -326,7 +327,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
-                  <div className={`bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid ${isGlobalEditMode ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} gap-4 shadow-lg items-center`}>
+                  <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-4 shadow-lg items-center">
                      <div className="space-y-3 text-center">
                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> スコア / SCORE</p>
                        <div className="flex justify-center w-full">
@@ -346,19 +347,18 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}</p>
                        )}
                      </div>
-                     {!isGlobalEditMode && (
-                        <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
-                           <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration}</p>
-                           <p className="text-[8px] text-slate-500 font-bold text-center">
-                             {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                               `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${(views || 1)}回`
-                             ) : (
-                               `${unitDuration}分 × ${(views || 1)}回`
-                             )}
-                           </p>
-                        </div>
-                     )}
+
+                     <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
+                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{totalLifetimeDuration}</p>
+                        <p className="text-[8px] text-slate-500 font-bold text-center">
+                          {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
+                            `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${views}回`
+                          ) : (
+                            `${unitDuration}分 × ${views}回`
+                          )}
+                        </p>
+                     </div>
                   </div>
 
                   {isGlobalEditMode && (
@@ -394,22 +394,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            )}
                         </div>
                      </div>
-
-                         {/* Real-time Calculation Preview in Edit Mode */}
-                         <div className="pt-2 border-t border-white/5">
-                            <div className="flex items-center justify-between bg-black/20 p-3 rounded-2xl border border-white/5">
-                               <div className="space-y-0.5">
-                                  <p className="text-[8px] text-slate-500 font-black uppercase tracking-wider">合計所要時間の計算結果 / TOTAL PREVIEW</p>
-                                  <p className="text-[10px] text-slate-300 font-mono">
-                                     {unitDuration}m × {genre === 'manga' ? (volumes || 1) + 'v' : (genre === 'anime' || genre === 'drama' ? (episodes || 1) + 'e' : '1')} × {views || 0} views
-                                  </p>
-                               </div>
-                               <div className="text-right">
-                                  <span className="text-xl font-black text-accent font-mono tracking-tighter italic">{totalLifetimeDuration}</span>
-                                  <span className="text-[9px] text-accent/60 font-black ml-1">min</span>
-                               </div>
-                            </div>
-                         </div>
                   )}
 
                   {isGlobalEditMode && (
