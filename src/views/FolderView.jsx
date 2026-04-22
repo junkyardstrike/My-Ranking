@@ -375,8 +375,8 @@ export default function FolderView() {
           opacity: 0;
         }
       `}</style>
-      <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
-        <div className="flex flex-col gap-1">
+      <div className="relative flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
+        <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center flex-1' : ''}`}>
           {isRoot ? (
             <>
               <div className="relative flex items-center gap-1 overflow-visible">
@@ -404,13 +404,15 @@ export default function FolderView() {
         </div>
 
         {!isRoot && (
-          <button 
-            onClick={() => navigate(currentFolder?.parentId ? `/folder/${currentFolder.parentId}` : '/')}
-            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
-          >
-            <ArrowLeft className="w-4 h-4 text-accent" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
-          </button>
+          <div className="absolute right-0 top-0">
+             <button 
+              onClick={() => navigate(currentFolder?.parentId ? `/folder/${currentFolder.parentId}` : '/')}
+              className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
+            >
+              <ArrowLeft className="w-4 h-4 text-accent" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
+            </button>
+          </div>
         )}
       </div>
 
