@@ -25,7 +25,6 @@ import {
   History
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import PixelWalker from '../components/common/PixelWalker';
 
 const GENRE_LABELS = {
   anime: 'アニメ',
