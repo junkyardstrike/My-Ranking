@@ -220,11 +220,7 @@ export default function StatsView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* 0. Lifetime Counter */}
-        <section className={`md:col-span-2 relative py-4 ${stats.lifetimeStats.hasHallOfFameItem ? 'rounded-[32px] overflow-hidden shadow-[0_0_50px_rgba(234,179,8,0.15)]' : ''}`}>
-          {stats.lifetimeStats.hasHallOfFameItem && (
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none" />
-          )}
-          
+        <section className="md:col-span-2 relative py-4">
           <div className="relative z-10 flex flex-col gap-8">
             {/* Top: Pixel Walker & Total */}
             <div className="flex flex-row items-center justify-center gap-8 sm:gap-16 lg:gap-32 w-full px-2 sm:px-8">
@@ -245,6 +241,8 @@ export default function StatsView() {
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
+                <p className="text-[9px] text-slate-500 font-bold mt-2 tracking-widest">※(各作品の所要時間 × 閲覧・視聴回数) を合算</p>
+                
                 {stats.lifetimeStats.days > 0 && (
                   <div className="mt-4 bg-white/5 border border-white/10 px-4 sm:px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
                     <span className="text-xs font-black text-slate-300">約</span>
@@ -258,10 +256,11 @@ export default function StatsView() {
             </div>
 
             {/* Bottom: Genre Breakdown */}
-            <div className="w-full">
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+            <div className="w-full mt-2">
+               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計消費時間</h3>
+               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
-                   <div key={g.id} className="relative h-24 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3 bg-black/40">
+                   <div key={g.id} className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40">
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-50 transition-opacity duration-500">
                            <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
@@ -270,14 +269,14 @@ export default function StatsView() {
                       )}
                       <div className="relative z-10 flex flex-col justify-start">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
-                          <span className="text-base font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
+                          <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
+                          <span className="text-xl font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-4 leading-none">{g.id}</span>
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest pl-5 leading-none">{g.id}</span>
                       </div>
                       <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-2xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
-                        <span className="text-xs font-black text-accent/80 drop-shadow-md">時間</span>
+                        <span className="text-4xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
+                        <span className="text-sm font-black text-accent/80 drop-shadow-md">時間</span>
                       </div>
                    </div>
                  ))}
