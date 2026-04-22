@@ -19,7 +19,8 @@ import {
   LayoutGrid,
   Clock,
   Sparkles,
-  Award
+  Award,
+  Info
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelWalker from '../components/common/PixelWalker';
@@ -143,7 +144,7 @@ export default function StatsView() {
         return {
           id: genre,
           name: GENRE_LABELS[genre] || genre,
-          avg: Math.round((data.total / data.count) * 10) / 10,
+          avg: Math.ceil(data.total / data.count),
           count: data.count,
           color: GENRE_COLORS[genre] || GENRE_COLORS.other,
           bgImage: randomImg
@@ -600,7 +601,12 @@ export default function StatsView() {
                 </div>
               </div>
             ))}
-          </div>
+          <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
+            <Info className="w-3.5 h-3.5 text-accent opacity-60" />
+            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+              ※平均スコアは統計上の理由により、小数点以下を切り上げて表示しています
+            </p>
+          </div>          </div>
         </section>
       </div>
     </div>
