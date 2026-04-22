@@ -18,7 +18,7 @@ export default function AllRankingsView() {
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
-  const allItems = getAllItems();
+  const allItems = useStore(state => state.getAllItems());
   
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');

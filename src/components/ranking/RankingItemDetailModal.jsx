@@ -34,7 +34,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate, onMove }) {
+export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate, onMove, rankingId: propRankingId }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
@@ -209,7 +209,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
             <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3">
-                    {rankingId ? (
+                    {(rankingId || propRankingId) ? (
                       <div className="flex items-center gap-2">
                         <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
                           <Crown size={14} /> Rank {currentRank}
@@ -346,7 +346,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
                   )}
 
-                  {!isSelected && !rankingId && (
+                  {!isSelected && !(rankingId || propRankingId) && (
                     <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
                        {!isAddingToRanking ? (
                          <button onClick={() => setIsAddingToRanking(true)} className="w-full py-4 rounded-[20px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-accent/20 text-xl tracking-tight italic">

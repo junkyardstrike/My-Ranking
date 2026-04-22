@@ -360,6 +360,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         onClose={() => setIsModalOpen(false)} 
         onUpdate={onUpdate}
         onMove={onMove}
+        rankingId={rankingId || liveItem.rankingId}
       />
     </>
   );
