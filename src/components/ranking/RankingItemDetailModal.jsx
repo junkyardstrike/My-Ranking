@@ -41,6 +41,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItemStore = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
+  const settings = useStore(state => state.settings) || {
+    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
+    useViewCount: true
+  };
 
   const itemFromStore = useStore(useCallback(state => {
     const allItems = [
@@ -78,21 +82,15 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
   let unitDuration = baseDuration;
   if (unitDuration === null) {
-    switch (genre) {
-      case 'anime': unitDuration = 20; break;
-      case 'drama': unitDuration = 40; break;
-      case 'movie': unitDuration = 120; break;
-      case 'music': unitDuration = 3; break;
-      case 'manga': unitDuration = 30; break;
-      default: unitDuration = 0; break;
-    }
+    unitDuration = settings.defaultDurations[genre] || settings.defaultDurations.movie || 60;
   }
 
   let totalDurationPerView = unitDuration;
   if (genre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
   else if (genre === 'anime' || genre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
 
-  const totalLifetimeDuration = totalDurationPerView * views;
+  const finalViewCount = settings.useViewCount ? (views || 1) : 1;
+  const totalLifetimeDuration = totalDurationPerView * finalViewCount;
 
   const handleUpdate = (updates) => {
     if (onUpdate) {
@@ -351,9 +349,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{(totalLifetimeDuration / 60).toFixed(1)}時間</p>
                         <p className="text-[8px] text-slate-500 font-bold text-center">
                           {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                            `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${views}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
+                            `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
                           ) : (
-                            `${unitDuration}分 × ${views}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
+                            `${unitDuration}分 × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
                           )}
                         </p>
                      </div>
