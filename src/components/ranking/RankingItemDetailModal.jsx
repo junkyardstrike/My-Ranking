@@ -290,6 +290,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                <div className="flex flex-wrap items-center gap-6 pl-1">
                   <div className="flex items-center gap-2">
                      <User size={16} className="text-accent/60" />
+                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline-block">作者:</span>
                      {isGlobalEditMode ? (
                         <input 
                           type="text" 
@@ -301,11 +302,12 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           placeholder="作者名" 
                         />
                      ) : (
-                        <span className="text-slate-500 font-black uppercase tracking-[0.2em] text-[10px]">{author || 'AUTHOR'}</span>
+                        <span className="text-slate-500 font-black uppercase tracking-[0.2em] text-[10px]">{author || '未設定'}</span>
                      )}
                   </div>
-                  <div className="flex items-center gap-2 border-l border-white/10 pl-6">
+                  <div className="flex items-center gap-2 border-l border-white/10 pl-4 sm:pl-6">
                      <Calendar size={16} className="text-emerald-500/60" />
+                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest hidden sm:inline-block">作成日:</span>
                      {isGlobalEditMode ? (
                         <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
                      ) : (
@@ -319,14 +321,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                <div className="lg:col-span-5 space-y-4">
                   <div className={`bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid ${isGlobalEditMode ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} gap-4 shadow-lg items-center`}>
                      <div className="space-y-3 text-center">
-                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
+                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> スコア</p>
                        <div className="flex justify-center w-full">
                           <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                        </div>
                      </div>
                      
                      <div className="flex flex-col items-center border-l border-white/10 space-y-2">
-                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> VIEWS</p>
+                       <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> 閲覧回数</p>
                        {isGlobalEditMode ? (
                           <div className="flex items-center gap-2 justify-center w-full">
                              <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">-</button>
@@ -339,7 +341,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
                      {!isGlobalEditMode && (
                         <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
-                           <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> TIME(m)</p>
+                           <p className="text-[9px] text-slate-600 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 所要時間(分)</p>
                            <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration}</p>
                         </div>
                      )}

@@ -375,23 +375,23 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       )}
                     </div>
                     
-                    {/* Bottom Row: Metrics, Date, History */}
-                    {(views > 0 || calculatedDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
+                    {/* Bottom Row: Metrics, Date */}
+                    {(views > 0 || calculatedDuration > 0 || formattedDate) && (
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
                         {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
                         {calculatedDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{calculatedDuration}m</span>}
                         {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-400"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
-                        
-                        {/* Rank history in expanded view */}
-                        {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
-                          <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 ml-auto">
-                            <History size={10} className="text-slate-600" />
-                            <div className="flex items-center gap-1">
-                              <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
-                              <span className="text-[9px] font-black text-accent">{currentRank}</span>
-                            </div>
-                          </div>
-                        )}
+                      </div>
+                    )}
+                    
+                    {/* Rank history in expanded view (New Line) */}
+                    {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
+                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 w-fit mt-0.5">
+                        <History size={10} className="text-slate-600" />
+                        <div className="flex items-center gap-1">
+                          <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
+                          <span className="text-[9px] font-black text-accent">{currentRank}</span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -411,6 +411,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 <div 
                   {...dragHandleProps} 
                   className="p-2 cursor-grab text-slate-700 hover:text-accent transition-colors active:scale-90"
+                  style={{ touchAction: 'none' }}
                 >
                   <GripVertical size={16} />
                 </div>

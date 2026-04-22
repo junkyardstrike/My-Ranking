@@ -234,7 +234,7 @@ export default function StatsView() {
 
               {/* Right: Total Time */}
               <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
-                <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計消費時間</h2>
+                <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
@@ -260,7 +260,7 @@ export default function StatsView() {
 
             {/* Bottom: Genre Breakdown */}
             <div className="w-full mt-2">
-               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計消費時間</h3>
+               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
                    <button 
