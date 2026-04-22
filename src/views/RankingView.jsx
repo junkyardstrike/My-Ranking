@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import RankingEditor from '../components/ranking/RankingEditor';
@@ -13,6 +13,12 @@ export default function RankingView() {
   const updateRankingItems = useStore(state => state.updateRankingItems);
   
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const isReorderMode = useStore(state => state.isReorderMode);
+
+  // Auto-collapse when reorder mode is turned on
+  useEffect(() => {
+    if (isReorderMode) setIsCollapsed(true);
+  }, [isReorderMode]);
 
   const ranking = rankings.find(r => r.id === rankingId);
 
@@ -43,7 +49,7 @@ export default function RankingView() {
 
         <div className="flex flex-col items-center gap-3">
           {/* Collapse Toggle */}
-          {!isEditMode && !useStore.getState().isReorderMode && (
+          {!isEditMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
@@ -56,16 +62,16 @@ export default function RankingView() {
               ) : (
                 <>
                   <Minimize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">折り畳む</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">折り畳み</span>
                 </>
               )}
             </button>
           )}
 
-          {(isEditMode || useStore.getState().isReorderMode) && (
-            <div className="inline-block px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-lg">
-              <p className="text-accent text-sm font-medium text-center">
-                {isEditMode ? '内容を直接編集できます。' : 'ドラッグして順位を並び替えできます。'}
+          {(isEditMode || isReorderMode) && (
+            <div className="inline-block px-3 py-1 bg-accent/20 border border-accent/30 rounded-lg">
+              <p className="text-accent text-[10px] font-bold text-center uppercase tracking-widest">
+                {isEditMode ? 'Edit Mode Active' : 'Reorder Mode Active'}
               </p>
             </div>
           )}

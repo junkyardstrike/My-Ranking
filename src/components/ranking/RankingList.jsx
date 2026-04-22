@@ -101,7 +101,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     alert('ランキングの変更を保存しました。');
   };
 
-  const isActuallyCollapsed = isReorderMode ? true : propIsCollapsed;
+  const isActuallyCollapsed = propIsCollapsed;
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
 
   if (visibleItems.length === 0 && !isEditMode) {

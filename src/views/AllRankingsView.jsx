@@ -1,5 +1,5 @@
 import { useStore } from '../store/useStore';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 
@@ -23,6 +23,12 @@ export default function AllRankingsView() {
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [hasChanges, setHasChanges] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const isReorderMode = useStore(state => state.isReorderMode);
+
+  // Auto-collapse when reorder mode is turned on
+  useEffect(() => {
+    if (isReorderMode) setIsCollapsed(true);
+  }, [isReorderMode]);
   
   const filteredItems = useMemo(() => {
     return allItems
@@ -36,8 +42,7 @@ export default function AllRankingsView() {
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
   }, [allItems, searchQuery, selectedGenre]);
 
-  const isReorderMode = useStore(state => state.isReorderMode);
-  const isActuallyCollapsed = isReorderMode ? true : isCollapsed;
+  const isActuallyCollapsed = isCollapsed;
 
   const handleUpdate = (id, updates) => {
     updateItem(id, updates);
@@ -59,15 +64,15 @@ export default function AllRankingsView() {
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">全作品マスターリスト</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            {!isEditMode && !isReorderMode && (
+            {!isEditMode && (
               <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
                 className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
               >
-                {isCollapsed ? (
+                {isActuallyCollapsed ? (
                   <>
                     <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">展開する</span>
                   </>
                 ) : (
                   <>

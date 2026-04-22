@@ -123,12 +123,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     let icon = null;
     
     if (rank === 1) { 
-      bgClass = "bg-gradient-to-br from-indigo-500 via-purple-500 via-pink-500 via-red-500 via-yellow-500 via-green-500 to-blue-500 text-white border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)]"; 
-      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-200" />; 
+      bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-400 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-[0_0_15px_rgba(255,215,0,0.4)]"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-900/60" />; 
     }
-    else if (rank === 2) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 3) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 4) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
+    else if (rank === 2) { 
+      bgClass = "bg-gradient-to-br from-slate-100 via-slate-300 to-slate-500 text-slate-900 border-slate-200/50 shadow-lg"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-slate-700/60" />; 
+    }
+    else if (rank === 3) { 
+      bgClass = "bg-gradient-to-br from-orange-200 via-orange-400 to-orange-600 text-orange-950 border-orange-300/50 shadow-md"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-800/60" />; 
+    }
+    else if (rank === 4) { bgClass = "bg-gradient-to-br from-slate-400 via-slate-600 to-slate-800 text-white border-white/10 shadow-sm"; }
     
     if (!rank) {
       const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;
@@ -152,14 +158,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       <div 
         className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer relative group/card ${
           currentRank === 1 
-            ? 'border-transparent bg-black/40 shadow-2xl' 
+            ? 'border-transparent bg-black/60 shadow-2xl' 
+            : currentRank === 2
+            ? 'bg-slate-500/10 border-slate-500/30 hover:bg-slate-500/20'
+            : currentRank === 3
+            ? 'bg-orange-500/10 border-orange-500/30 hover:bg-orange-500/20'
             : 'bg-black/20 backdrop-blur-md border-white/5 hover:bg-white/5'
         }`} 
         onClick={() => setIsModalOpen(true)}
       >
         {/* Rainbow glow effect for rank 1 */}
         {currentRank === 1 && (
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#9932cc] to-[#ff0080] rounded-2xl -z-10 animate-rainbow-slow blur-[3px] opacity-80" />
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-[#FF0000] via-[#FF7F00] via-[#FFFF00] via-[#00FF00] via-[#0000FF] via-[#4B0082] to-[#8B00FF] rounded-2xl -z-10 animate-rainbow-slow blur-[4px] opacity-90" />
         )}
         
         {isEditMode ? (
@@ -278,13 +288,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex items-center gap-2">
                   <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
-                  {localIsCollapsed && previousRanks.length > 0 && (
+                  {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                     <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
                       <History size={8} className="text-slate-500" />
                       <div className="flex gap-0.5">
-                        {previousRanks.slice(-2).reverse().map((r, i) => (
-                          <span key={i} className="text-[7px] font-bold text-slate-400">{r.rank}→</span>
-                        ))}
+                        <span className="text-[7px] font-bold text-slate-400">{previousRanks[previousRanks.length - 1].rank}→</span>
                         <span className="text-[7px] font-black text-accent">{currentRank}</span>
                       </div>
                     </div>
@@ -303,13 +311,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                     
                     {/* Rank history in expanded view */}
-                    {previousRanks.length > 0 && (
+                    {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                       <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 ml-auto">
                         <History size={10} className="text-slate-600" />
                         <div className="flex items-center gap-1">
-                          {previousRanks.slice(-3).map((r, i) => (
-                            <span key={i} className="text-[9px] font-bold text-slate-500">{r.rank} <span className="text-[8px] opacity-40">→</span></span>
-                          ))}
+                          <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
                           <span className="text-[9px] font-black text-accent">{currentRank}</span>
                         </div>
                       </div>
