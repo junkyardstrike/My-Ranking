@@ -164,13 +164,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-30">
           <div className="flex items-center gap-4">
              <div onClick={() => setEditMode(!isGlobalEditMode)} className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all">
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isGlobalEditMode ? 'text-accent' : 'text-slate-300'}`}>編集モード</span>
+                <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
                 <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-all ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
                    <div className={`w-3 h-3 rounded-full transition-all ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600'}`} />
                 </div>
              </div>
           </div>
-          <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-all">
+          <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-white transition-all">
             <X size={20} />
           </button>
         </div>
@@ -237,7 +237,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                  if (onMove) onMove(id, nextRank);
                                  else moveItemToRank(rankingId || propRankingId, id, nextRank);
                                }}
-                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-white hover:text-white transition-all"
                              >
                                <Minus size={14} />
                              </button>
@@ -249,11 +249,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                  if (onMove) onMove(id, nextRank);
                                  else moveItemToRank(rankingId || propRankingId, id, nextRank);
                                }}
-                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-slate-400 hover:text-white transition-all"
+                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-white hover:text-white transition-all"
                              >
                                <Plus size={14} />
                              </button>
-                             <span className="text-[7px] font-black text-slate-300 uppercase tracking-widest px-2">順位 / POS</span>
+                             <span className="text-[7px] font-black text-white uppercase tracking-widest px-2">順位 / POS</span>
                           </div>
                         )}
                       </div>
@@ -274,7 +274,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                              <button 
                                key={key} 
                                onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm' : 'text-slate-400 hover:text-slate-400'}`}
+                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm' : 'text-white hover:text-white'}`}
                              >
                                 <Icon size={14} />
                                 {isSelectedGenre && <span className="text-[9px] font-black uppercase tracking-widest">{info.label}</span>}
@@ -293,7 +293,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                <div className="flex flex-wrap items-center gap-6 pl-1">
                   <div className="flex items-center gap-2">
                      <User size={16} className="text-accent/60" />
-                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest inline-block">作者 / AUTHOR:</span>
+                     <span className="text-[10px] font-black text-white uppercase tracking-widest inline-block">作者 / AUTHOR:</span>
                      {isGlobalEditMode ? (
                         <input 
                           type="text" 
@@ -305,16 +305,16 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           placeholder="作者名" 
                         />
                      ) : (
-                        <span className="text-slate-300 font-black uppercase tracking-[0.2em] text-[10px]">{author || '未設定'}</span>
+                        <span className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{author || '未設定'}</span>
                      )}
                   </div>
                   <div className="flex items-center gap-2 border-l border-white/10 pl-4 sm:pl-6">
                      <Calendar size={16} className="text-emerald-500/60" />
-                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest inline-block">作成日 / DATE:</span>
+                     <span className="text-[10px] font-black text-white uppercase tracking-widest inline-block">作成日 / DATE:</span>
                      {isGlobalEditMode ? (
                         <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
                      ) : (
-                        <span className="text-slate-300 font-bold text-[10px] tracking-widest">{createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}</span>
+                        <span className="text-white font-bold text-[10px] tracking-widest">{createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}</span>
                      )}
                   </div>
                </div>
@@ -325,14 +325,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                <div className="lg:col-span-5 space-y-4">
                   <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-4 shadow-lg items-center">
                      <div className="space-y-3 text-center">
-                       <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> スコア / SCORE</p>
+                       <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> スコア / SCORE</p>
                        <div className="flex justify-center w-full">
                           <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                        </div>
                      </div>
                      
                      <div className="flex flex-col items-center border-l border-white/10 space-y-2">
-                       <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
+                       <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
                        {isGlobalEditMode ? (
                           <div className="flex items-center gap-2 justify-center w-full">
                              <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">-</button>
@@ -345,9 +345,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      </div>
 
                      <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-1 col-span-2 md:col-span-1 pt-4 md:pt-0 bg-white/5 rounded-2xl py-2">
-                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
+                        <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
                         <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{(totalLifetimeDuration / 60).toFixed(1)}時間</p>
-                        <p className="text-[8px] text-slate-500 font-bold text-center">
+                        <p className="text-[8px] text-white font-bold text-center">
                           {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
                             `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
                           ) : (
@@ -360,11 +360,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
                         <div className="flex items-center gap-2 mb-2">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> 所要時間・話数 / TIME & EPISODES</p>
+                           <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> 所要時間・話数 / TIME & EPISODES</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-400">
+                              <label className="text-[10px] font-bold text-white">
                                 {genre === 'movie' ? '所要時間 (分)' : '1話/1巻あたりの時間 (分)'}
                               </label>
                               <input 
@@ -378,13 +378,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            </div>
                            {(genre === 'anime' || genre === 'drama') && (
                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-400">話数</label>
+                                <label className="text-[10px] font-bold text-white">話数</label>
                                 <input type="number" min="1" value={episodes === 0 ? '' : episodes} onChange={e => handleUpdate({ episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ episodes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
                              </div>
                            )}
                            {genre === 'manga' && (
                              <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-slate-400">巻数</label>
+                                <label className="text-[10px] font-bold text-white">巻数</label>
                                 <input type="number" min="1" value={volumes === 0 ? '' : volumes} onChange={e => handleUpdate({ volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ volumes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
                              </div>
                            )}
@@ -395,14 +395,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> 書体スタイル / STYLE</p>
+                           <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> 書体スタイル / STYLE</p>
                            <div className="flex items-center gap-4 flex-1">
                               <span className="text-[10px] font-mono font-black text-accent w-6 text-center">{fontSize}</span>
                               <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
                               <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-8 h-8 rounded-lg bg-transparent border-none cursor-pointer" />
                            </div>
                         </div>
-                        <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-3 rounded-xl border font-black text-[10px] tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-400 border-white/10'}`}>
+                        <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-3 rounded-xl border font-black text-[10px] tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
                            太字設定 / BOLD FONT: {isBold ? 'ON' : 'OFF'}
                         </button>
                      </div>
@@ -423,11 +423,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                               </select>
                               <div className="relative">
                                  <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-black outline-none focus:border-accent text-lg" placeholder="順位 / Pos" />
-                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest">順位 / Rank</span>
+                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-white uppercase tracking-widest">順位 / Rank</span>
                               </div>
                            </div>
                            <div className="flex gap-4 pt-2">
-                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-slate-400 font-black uppercase text-[10px] tracking-widest">キャンセル / Cancel</button>
+                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-white font-black uppercase text-[10px] tracking-widest">キャンセル / Cancel</button>
                               <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-3 rounded-xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-30 tracking-tight text-sm shadow-lg">追加する / INSERT NOW <ArrowRight size={18} /></button>
                            </div>
                          </div>
@@ -438,15 +438,15 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
                   <div className="flex items-center justify-between px-1">
-                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> メモ・あらすじ / NARRATIVE</p>
+                      <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> メモ・あらすじ / NARRATIVE</p>
                       <button onClick={handleCopy} className="text-[9px] text-accent/60 hover:text-accent font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors">
                          <Copy size={10} /> コピー / COPY TEXT
                       </button>
                    </div>
                   {isGlobalEditMode ? (
-                     <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-300 text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
+                     <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-white text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
                   ) : (
-                     <div className="flex-1 bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-400 text-base leading-relaxed italic shadow-inner min-h-[150px] whitespace-pre-wrap custom-scrollbar">
+                     <div className="flex-1 bg-white/5 p-6 rounded-[32px] border border-white/5 text-white text-base leading-relaxed italic shadow-inner min-h-[150px] whitespace-pre-wrap custom-scrollbar">
                         {memo || <span className="opacity-10 text-3xl not-italic font-black">記述なし / NO NARRATIVE.</span>}
                      </div>
                   )}
