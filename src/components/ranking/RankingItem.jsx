@@ -54,11 +54,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const liveItem = {
     ...(liveItemFromStore || {}),
     ...propItem,
+    // Explicitly preserve rankingId from props if store version doesn't have it
+    rankingId: propItem.rankingId || rankingId || liveItemFromStore?.rankingId,
     // Ensure history is preserved from store
     previousRanks: (liveItemFromStore?.previousRanks || propItem.previousRanks || [])
   };
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1, volumes = 1 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1, volumes = 1, rankingId: effectiveRankingId } = liveItem;
   
   // Safe genre fallback: ensure 'other' is mapped to 'music'
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
@@ -155,7 +157,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     }
     else if (rank === 4) { bgClass = "bg-gradient-to-br from-slate-400 via-slate-600 to-slate-800 text-white border-white/10 shadow-sm"; }
     
-    if (!rank || !rankingId) {
+    if (!rank || !effectiveRankingId) {
       return (
         <div className={`flex-shrink-0 flex flex-col items-center justify-center bg-accent/20 text-accent rounded-lg border border-accent/30 shadow-[0_0_10px_rgba(16,185,129,0.3)] ${size}`}>
           <span className="text-[8px] font-black uppercase tracking-tighter leading-none mb-0.5">Unranked</span>
@@ -366,7 +368,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   <div className="flex flex-col gap-1 mt-1.5">
                     {/* Top Row: Tags, Author, Score */}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      {isSelected && !rankingId && (
+                      {isSelected && !effectiveRankingId && (
                         <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
                           <Crown size={8} /> 選出済み
                         </span>

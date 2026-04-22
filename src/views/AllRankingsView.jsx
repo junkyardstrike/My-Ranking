@@ -53,30 +53,32 @@ export default function AllRankingsView() {
         return matchesSearch && matchesGenre;
       })
       .sort((a, b) => {
-        // 1. Unranked items (NO rankingId) MUST come first
-        const aIsUnranked = !a.rankingId;
-        const bIsUnranked = !b.rankingId;
-
-        if (aIsUnranked !== bIsUnranked) {
-          return aIsUnranked ? -1 : 1;
+        // 1. Ranking status (Unranked: 0, Ranked: 1)
+        const aStatus = a.rankingId ? 1 : 0;
+        const bStatus = b.rankingId ? 1 : 0;
+        
+        if (aStatus !== bStatus) {
+          return aStatus - bStatus; // 0 (unranked) comes before 1 (ranked)
         }
 
-        // 2. Group by genre within those groups
+        // 2. Group by genre within the status groups
         const aGenre = a.genre || 'other';
         const bGenre = b.genre || 'other';
         if (aGenre !== bGenre) {
           return aGenre.localeCompare(bGenre);
         }
 
-        // 3. Final sorting within group
-        if (aIsUnranked) {
-          // Unranked: Newest added first
+        // 3. Sorting within the groups
+        if (aStatus === 0) {
+          // Unranked: newest added first
           const timeA = new Date(a.createdAt || 0).getTime();
           const timeB = new Date(b.createdAt || 0).getTime();
           return timeB - timeA;
         } else {
-          // Ranked: By their rank position (1, 2, 3...)
-          return (a.currentRank || 999) - (b.currentRank || 999);
+          // Ranked: by their current rank position
+          const rankA = a.currentRank || 999;
+          const rankB = b.currentRank || 999;
+          return rankA - rankB;
         }
       });
   }, [allItems, searchQuery, selectedGenre]);
