@@ -115,13 +115,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       if (result) {
         const updates = { memo: result.memo, author: result.author || author };
         
-        // Automatic extraction for manga volumes
-        if (effectiveGenre === 'manga' && result.memo) {
-          const volumeMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || 
-                            result.memo.match(/全(\d+)巻/) || 
-                            result.memo.match(/(\d+)巻/);
-          if (volumeMatch && volumeMatch[1]) {
-            updates.volumes = parseInt(volumeMatch[1]);
+        // Automatic extraction for volumes/episodes
+        if (result.memo) {
+          if (effectiveGenre === 'manga') {
+            const volMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || result.memo.match(/全(\d+)巻/) || result.memo.match(/(\d+)巻/);
+            if (volMatch && volMatch[1]) {
+              updates.volumes = parseInt(volMatch[1]);
+            }
+          } else if (effectiveGenre === 'anime' || effectiveGenre === 'drama') {
+            const epMatch = result.memo.match(/EPISODES:\s*(\d+)話/i) || result.memo.match(/全(\d+)話/) || result.memo.match(/(\d+)話/);
+            if (epMatch && epMatch[1]) {
+              updates.episodes = parseInt(epMatch[1]);
+            }
           }
         }
         
