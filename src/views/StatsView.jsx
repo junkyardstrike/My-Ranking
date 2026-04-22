@@ -379,7 +379,7 @@ export default function StatsView() {
                 {stats.hallOfFame.map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-yellow-400/50 premium-section-animate"
+                    className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
                     style={{ animationDelay: `${250 + (idx * 50)}ms` }}
                   >
                     {/* Card Shine Effect */}

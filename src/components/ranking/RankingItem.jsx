@@ -176,14 +176,14 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   return (
     <>
       <div 
-        className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer relative group/card ${
+        className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
           currentRank === 1 
-            ? 'border-transparent bg-black/60 shadow-2xl' 
+            ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/20 via-black/80 to-black/90 shadow-[0_20px_50px_rgba(0,0,0,0.5)] scale-[1.01]' 
             : currentRank === 2
-            ? 'bg-slate-500/10 border-slate-500/30 hover:bg-slate-500/20'
+            ? 'border-slate-400/30 bg-gradient-to-br from-slate-400/15 via-black/80 to-black/90 hover:from-slate-400/25 hover:border-slate-400/50 shadow-xl'
             : currentRank === 3
-            ? 'bg-orange-500/10 border-orange-500/30 hover:bg-orange-500/20'
-            : 'bg-black/20 backdrop-blur-md border-white/5 hover:bg-white/5'
+            ? 'border-orange-500/30 bg-gradient-to-br from-orange-500/15 via-black/80 to-black/90 hover:from-orange-500/25 hover:border-orange-500/50 shadow-lg'
+            : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
         }`} 
         onClick={() => setIsModalOpen(true)}
       >
