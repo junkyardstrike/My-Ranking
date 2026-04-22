@@ -239,7 +239,7 @@ export default function StatsView() {
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
               {/* Left: Pixel Walker */}
               <div className="flex-shrink-0 ml-8 sm:ml-16">
-                 <PixelWalker className="transform scale-[1.2] origin-center" />
+                 <PixelWalker className="transform scale-[1.2] origin-center translate-y-3" />
               </div>
 
               {/* Right: Total Time */}

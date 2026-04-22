@@ -31,18 +31,18 @@ function ActionButtons({ id, name, type }) {
   };
 
   return (
-    <div className="absolute top-3 left-3 z-30 flex items-center gap-2 pointer-events-auto">
+    <div className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-auto">
       <button 
         onClick={handleEdit}
-        className="bg-black/60 backdrop-blur-md p-2 rounded-full hover:bg-accent/80 transition-all text-white shadow-lg border border-white/10 hover:scale-110"
+        className="bg-black/60 backdrop-blur-md p-1.5 rounded-full hover:bg-accent transition-all text-white border border-white/10 shadow-lg"
       >
-        <Edit2 className="w-4 h-4" />
+        <Edit2 className="w-3 h-3" />
       </button>
       <button 
         onClick={handleDelete}
-        className="bg-black/60 backdrop-blur-md p-2 rounded-full hover:bg-red-500/80 transition-all text-white shadow-lg border border-white/10 hover:scale-110"
+        className="bg-black/60 backdrop-blur-md p-1.5 rounded-full hover:bg-red-500 transition-all text-white border border-white/10 shadow-lg"
       >
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="w-3 h-3" />
       </button>
     </div>
   );
@@ -53,7 +53,6 @@ const getFolderCoverImage = (folder, rankings) => {
   
   const folderRankings = rankings.filter(r => r.folderId === folder.id);
   
-  // Try rank 1 of oldest first
   if (folderRankings.length > 0) {
     const oldestRanking = folderRankings[0];
     const rank1Item = oldestRanking.items?.find(item => item.currentRank === 1);
@@ -62,7 +61,6 @@ const getFolderCoverImage = (folder, rankings) => {
     }
   }
 
-  // Fallback: any item in any ranking in this folder
   for (const ranking of folderRankings) {
     const anyItem = ranking.items?.find(item => item.imageBase64);
     if (anyItem && anyItem.imageBase64) {
@@ -105,7 +103,6 @@ function DroppableFolder({ folder, rankings }) {
     opacity: isDragging ? 0.8 : 1,
   } : undefined;
 
-  // Use a combined ref for both draggable and droppable
   const setCombinedRef = (node) => {
     if (node) {
       setDroppableRef(node);
@@ -117,11 +114,11 @@ function DroppableFolder({ folder, rankings }) {
     <div 
       ref={isEditMode ? setCombinedRef : null}
       style={style}
-      className={`group relative overflow-hidden bg-surface rounded-2xl flex flex-col items-center justify-center transition-all duration-300 shadow-lg border block w-full h-full min-h-[160px] ${
-        isDragging ? 'scale-[1.02] shadow-2xl z-50' :
+      className={`group relative overflow-hidden bg-white/5 rounded-[24px] border transition-all duration-500 shadow-xl flex flex-col justify-end h-28 w-full ${
+        isDragging ? 'scale-[1.02] shadow-2xl z-50 opacity-50' :
         isOver 
-          ? 'border-accent bg-accent/20 scale-[1.02] shadow-[0_0_20px_rgba(59,130,246,0.3)] z-10' 
-          : 'border-white/5 hover:border-white/20 hover:bg-surface-light hover:-translate-y-1'
+          ? 'border-accent bg-accent/20 scale-[1.02] shadow-[0_0_30px_rgba(212,175,55,0.4)] z-10' 
+          : 'border-white/10 hover:border-white/30'
       }`}
     >
       <Link to={`/folder/${folder.id}`} className="absolute inset-0 z-10" />
@@ -132,37 +129,39 @@ function DroppableFolder({ folder, rankings }) {
         <div 
           {...listeners} 
           {...attributes} 
-          className="absolute top-3 right-3 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
+          className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
         >
-          <GripVertical className="w-5 h-5" />
+          <GripVertical className="w-4 h-4" />
         </div>
       )}
 
       {coverImage && (
-         <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-30 transition-opacity">
-           <img src={coverImage} alt="" className="w-full h-full object-cover" />
+         <div className="absolute inset-0 z-0 transition-all duration-700">
+           <img src={coverImage} alt="" className="w-full h-full object-cover brightness-[0.55] group-hover:brightness-[0.65] group-hover:scale-110 transition-all duration-700" />
+           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
          </div>
       )}
-      <div className="absolute bottom-0 left-0 right-0 p-4 flex items-end justify-between z-20 pointer-events-none">
-        <div className="transform transition-transform duration-300 group-hover:translate-x-1 flex-1">
-          <span className="font-bold text-sm text-white line-clamp-1 drop-shadow-md">{folder.name}</span>
-          {folder.englishName && (
-            <span className="text-[8px] tracking-wider text-slate-400 font-medium uppercase block leading-tight truncate">{folder.englishName}</span>
-          )}
-        </div>
-        <div className="flex items-center gap-1 opacity-80 bg-black/40 px-2 py-0.5 rounded-full border border-white/5">
-          <Folder className="w-2.5 h-2.5 text-accent" />
-          <span className="text-[8px] font-bold text-white uppercase">Folder</span>
+
+      <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
+        <h3 className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110">{folder.name}</h3>
+        {folder.englishName && (
+          <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{folder.englishName}</span>
+        )}
+      </div>
+
+      <div className="absolute top-3 right-3 z-20 pointer-events-none">
+        <div className="p-1.5 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm shadow-lg">
+          <Folder className="w-3 h-3 text-accent" />
         </div>
       </div>
 
       {isEditMode && (
-        <div className="absolute bottom-3 right-3 z-20 pointer-events-auto">
+        <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
           <label 
             className="bg-black/60 p-2 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
             onClick={e => e.stopPropagation()}
           >
-            <ImageIcon className="w-4 h-4 text-white" />
+            <ImageIcon className="w-3.5 h-3.5 text-white" />
             <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
           </label>
         </div>
@@ -197,156 +196,56 @@ function DraggableRanking({ ranking }) {
   };
 
   return (
-    <div ref={isEditMode ? setNodeRef : null} style={style} className={`block w-full h-full min-h-[160px] ${isDragging ? 'scale-[1.02] shadow-2xl z-50 relative' : ''}`}>
-      <div className="group relative bg-surface p-6 rounded-2xl flex flex-col items-center justify-center hover:bg-surface-light hover:-translate-y-1 transition-all duration-300 shadow-lg border border-white/5 hover:border-white/20 h-full min-h-[160px] overflow-hidden">
+    <div ref={isEditMode ? setNodeRef : null} style={style} className={`block w-full h-full ${isDragging ? 'scale-[1.02] shadow-2xl z-50 relative' : ''}`}>
+      <div className="group relative bg-white/5 rounded-[24px] border border-white/10 hover:border-white/30 transition-all duration-500 shadow-xl h-28 overflow-hidden flex flex-col justify-end">
         <Link to={`/ranking/${ranking.id}`} className="absolute inset-0 z-10" />
 
         {ranking.coverImageBase64 ? (
            <>
-             <div className="absolute inset-0 z-0 opacity-50 group-hover:opacity-70 transition-opacity">
-               <img src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover" />
+             <div className="absolute inset-0 z-0 transition-all duration-700">
+               <img src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover brightness-[0.55] group-hover:brightness-[0.65] group-hover:scale-110 transition-all duration-700" />
+               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
              </div>
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/80 z-0 pointer-events-none" />
            </>
         ) : (
-           <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 z-0 pointer-events-none" />
+           <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
         )}
 
-        {isEditMode && <ActionButtons id={ranking.id} name={ranking.title} type="ranking" />}
-
-        <div className="flex flex-col items-center pointer-events-none z-10 w-full px-2">
-          <span className="font-bold text-center line-clamp-2 text-white text-xl sm:text-2xl tracking-wide drop-shadow-lg">{ranking.title}</span>
+        <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
+          <h3 className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110">{ranking.title}</h3>
           {ranking.englishName && (
-            <div className="mt-2 flex flex-col items-center">
-              <div className="h-px w-10 bg-emerald-400/70 my-1.5" />
-              <span className="text-[10px] sm:text-xs tracking-widest text-emerald-100 font-medium uppercase text-center block leading-tight drop-shadow-md">{ranking.englishName}</span>
-            </div>
+            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{ranking.englishName}</span>
           )}
+        </div>
+
+        <div className="absolute top-3 right-3 z-20 pointer-events-none">
+          <div className="p-1.5 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm shadow-lg">
+            <ListOrdered className="w-3 h-3 text-accent" />
+          </div>
         </div>
         
         {isEditMode && (
           <>
+            <ActionButtons id={ranking.id} name={ranking.title} type="ranking" />
             <div 
               {...listeners} 
               {...attributes} 
-              className="absolute top-3 right-3 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
+              className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
             >
-              <GripVertical className="w-5 h-5" />
+              <GripVertical className="w-4 h-4" />
             </div>
             
-            <div className="absolute bottom-3 right-3 z-20 pointer-events-auto">
+            <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
               <label 
                 className="bg-black/60 p-2 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
                 onClick={e => e.stopPropagation()}
               >
-                <ImageIcon className="w-4 h-4 text-white" />
+                <ImageIcon className="w-3.5 h-3.5 text-white" />
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               </label>
             </div>
           </>
         )}
-      </div>
-    </div>
-  );
-}
-
-function RootFolderCard({ folder, rankings }) {
-  const updateFolder = useStore(state => state.updateFolder);
-  const isEditMode = useStore(state => state.isEditMode);
-
-  const { isOver, setNodeRef: setDroppableRef } = useDroppable({
-    id: folder.id,
-  });
-
-  const { attributes, listeners, setNodeRef: setDraggableRef, transform, isDragging } = useDraggable({
-    id: folder.id,
-    disabled: !isEditMode
-  });
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        updateFolder(folder.id, { coverImageBase64: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const coverImage = getFolderCoverImage(folder, rankings);
-
-  const style = transform ? {
-    transform: CSS.Translate.toString(transform),
-    zIndex: isDragging ? 50 : 1,
-    opacity: isDragging ? 0.8 : 1,
-  } : undefined;
-
-  const setCombinedRef = (node) => {
-    setDroppableRef(node);
-    setDraggableRef(node);
-  };
-
-  return (
-    <div 
-      ref={isEditMode ? setCombinedRef : null}
-      style={style}
-      className={`group relative overflow-hidden rounded-2xl w-full h-48 sm:h-56 transition-all duration-500 shadow-2xl border block ${
-        isDragging ? 'scale-[1.02] shadow-2xl z-50 opacity-50' :
-        isOver 
-          ? 'border-accent scale-[1.02] shadow-[0_0_30px_rgba(59,130,246,0.4)] z-10' 
-          : 'border-white/10 hover:border-white/30 hover:-translate-y-1'
-      }`}
-    >
-      <Link to={`/folder/${folder.id}`} className="absolute inset-0 z-10" />
-      
-      {isEditMode && <ActionButtons id={folder.id} name={folder.name} type="folder" />}
-
-      {isEditMode && (
-        <div 
-          {...listeners} 
-          {...attributes} 
-          className="absolute top-3 right-3 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-white bg-black/40 rounded-lg hover:bg-black/60 z-20 pointer-events-auto"
-        >
-          <GripVertical className="w-5 h-5" />
-        </div>
-      )}
-
-      {coverImage ? (
-        <img src={coverImage} alt="" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 z-0" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 transition-transform duration-700 group-hover:scale-105 z-0" />
-      )}
-      
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent z-10 pointer-events-none" />
-      
-      <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 flex items-end justify-between z-20 pointer-events-none">
-        <div className="transform transition-transform duration-300 group-hover:translate-x-2 flex-1">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-wide drop-shadow-md line-clamp-1">{folder.name}</h2>
-          
-          {folder.englishName && (
-            <div className="mt-2 mb-1">
-              <div className="h-px w-12 bg-accent/60 mb-1.5" />
-              <p className="text-xs sm:text-sm tracking-[0.1em] text-white/70 font-medium uppercase drop-shadow-sm">{folder.englishName}</p>
-            </div>
-          )}
-        </div>
-        
-        <div className="flex flex-col items-end gap-3 pointer-events-auto">
-          {isEditMode && (
-            <label 
-              className="bg-black/60 backdrop-blur-md p-3.5 rounded-full hover:bg-black/80 transition-colors cursor-pointer border border-white/10 shadow-lg flex items-center justify-center transform hover:scale-110 mb-2"
-              onClick={e => e.stopPropagation()}
-            >
-              <ImageIcon className="w-5 h-5 text-white" />
-              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
-            </label>
-          )}
-          <div className="flex items-center gap-2 opacity-80 bg-black/40 px-3 py-1 rounded-full w-fit backdrop-blur-sm border border-white/5">
-            <Folder className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-white">Folder</span>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -371,8 +270,8 @@ export default function FolderView() {
   const currentFolder = folders.find(f => f.id === currentFolderId);
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
-      <div className="flex items-end justify-between px-1 mb-6">
+    <div className="space-y-6 animate-in fade-in duration-700 pt-0 pb-20">
+      <div className="flex items-end justify-between px-1 mb-2">
         <div>
           <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Library' : currentFolder?.name}</h1>
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{isRoot ? 'コレクション・アーカイブ' : `フォルダ: ${currentFolder?.name}`}</p>
@@ -389,21 +288,17 @@ export default function FolderView() {
       </div>
 
       {(childFolders.length === 0 && childRankings.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
+        <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white/5 rounded-[40px] border border-white/5 border-dashed mx-1">
           <Folder className="w-20 h-20 mb-6 opacity-20 text-accent" />
           <p className="text-xl font-black italic tracking-tighter">No Items Yet</p>
-          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed">右上のメニューから新しいフォルダやランキングを作成してください</p>
+          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed px-4">右上のメニューから新しいフォルダやランキングを作成してください</p>
         </div>
       ) : (
-        <>
-
-
+        <div className="px-0">
           {childFolders.length > 0 && (
-            <div className={isRoot ? "space-y-6" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {childFolders.map(folder => (
-                isRoot ? 
-                  <RootFolderCard key={folder.id} folder={folder} rankings={rankings} /> : 
-                  <DroppableFolder key={folder.id} folder={folder} rankings={rankings} />
+                <DroppableFolder key={folder.id} folder={folder} rankings={rankings} />
               ))}
             </div>
           )}
@@ -413,13 +308,13 @@ export default function FolderView() {
           )}
 
           {childRankings.length > 0 && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {childRankings.map(ranking => (
                 <DraggableRanking key={ranking.id} ranking={ranking} />
               ))}
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );

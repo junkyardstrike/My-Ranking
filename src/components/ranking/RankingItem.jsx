@@ -307,7 +307,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
                <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                  <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={calculatedDuration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="自動計算" />
+                 <input type="number" min="0" value={totalLifetimeDuration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="自動計算" />
                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">分</span>
                </div>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
@@ -384,7 +384,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     </div>
                     
                     {/* Bottom Row: Metrics, Date, History */}
-                    {(views > 0 || calculatedDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
+                    {(views > 0 || totalLifetimeDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
                         {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
                         {totalLifetimeDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{totalLifetimeDuration}m</span>}
