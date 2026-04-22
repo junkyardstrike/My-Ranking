@@ -61,8 +61,8 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   const [items, setItems] = useState(ranking.items);
   const [hasChanges, setHasChanges] = useState(false);
   
-  // Use location key to force animation re-trigger on tab change
-  const { pathname } = useLocation();
+  // Use location key to FORCE full re-mount on every navigation
+  const { key: locationKey } = useLocation();
 
   useEffect(() => {
     setItems(ranking.items);
@@ -134,22 +134,22 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   }
 
   return (
-    <div className="relative" key={pathname}>
+    <div className="relative" key={locationKey}>
       <style>{`
-        @keyframes premiumFadeIn {
+        @keyframes extremeEntry {
           0% {
             opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            filter: blur(10px) brightness(0.5);
+            transform: translateY(50px) scale(0.5) rotate(-5deg);
+            filter: blur(20px);
           }
           100% {
             opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0) brightness(1);
+            transform: translateY(0) scale(1) rotate(0deg);
+            filter: blur(0);
           }
         }
-        .premium-item-entry {
-          animation: premiumFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .extreme-item-animate {
+          animation: extremeEntry 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
           opacity: 0;
         }
       `}</style>
@@ -160,8 +160,8 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
             {visibleItems.map((item, idx) => (
               <div 
                 key={item.id}
-                className="premium-item-entry"
-                style={{ animationDelay: `${idx * 50}ms` }}
+                className="extreme-item-animate"
+                style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <SortableItem 
                   item={item} 
