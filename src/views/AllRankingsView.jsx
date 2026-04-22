@@ -97,19 +97,18 @@ export default function AllRankingsView() {
         }
       `}</style>
       <div className="space-y-6">
-      <div className="flex flex-col gap-6 mb-10">
-        <div className="flex flex-col items-center text-center gap-1">
+      <div className="flex items-start justify-between mb-10">
+        <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-200 via-blue-500 to-blue-700 drop-shadow-[0_10px_20px_rgba(59,130,246,0.3)] pr-4">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)] pr-6">
               Records
             </h1>
             <PixelItem type="grimoire" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent rounded-full shadow-[0_0_10px_rgba(59,130,246,0.8)]" />
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
-            <span className="w-8 h-px bg-slate-800" />
             作品マスターリスト
-            <span className="w-8 h-px bg-slate-800" />
+            <span className="w-12 h-px bg-slate-800" />
           </p>
         </div>
 
@@ -132,9 +131,9 @@ export default function AllRankingsView() {
               )}
             </button>
           )}
-          <div className="inline-flex items-center gap-3 bg-accent/10 px-5 py-2.5 rounded-2xl border border-accent/20 shadow-lg backdrop-blur-sm">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</span>
-            <span className="text-3xl font-black text-accent font-mono leading-none">
+          <div className="inline-flex items-center gap-3 bg-blue-500/10 px-5 py-2.5 rounded-2xl border border-blue-500/20 shadow-lg backdrop-blur-sm">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
+            <span className="text-3xl font-black text-blue-400 font-mono leading-none">
               {allItems.length}
             </span>
           </div>
