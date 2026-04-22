@@ -208,10 +208,10 @@ export default function SettingsView() {
 
           <div className="p-5 space-y-6">
             <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
-              <p className="text-xs text-accent font-bold mb-1 flex items-center gap-2">
-                <Sparkles size={14} /> 投資時間の精密計算について
+              <p className="text-sm text-accent font-black mb-2 flex items-center gap-2 not-italic">
+                <Sparkles size={16} /> 視聴時間の精密計算について
               </p>
-              <p className="text-[10px] text-slate-400 leading-relaxed">
+              <p className="text-xs text-slate-300 leading-relaxed font-medium not-italic font-sans">
                 STATSタブでの累計視聴時間の算出に使用される設定です。個々の作品詳細で「所要時間」が未入力の場合、ここで設定した時間がデフォルト値として適用されます。アニメや漫画等の連載形式は「設定時間 × 話数/巻数」で算出されます。
               </p>
             </div>
