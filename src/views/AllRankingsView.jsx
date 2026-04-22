@@ -2,6 +2,7 @@ import { useStore } from '../store/useStore';
 import { useState, useMemo, useEffect } from 'react';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
+import Counter from '../components/common/Counter';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -100,7 +101,9 @@ export default function AllRankingsView() {
             )}
             <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
               <span className="text-xs font-black text-slate-400">総作品数</span>
-              <span className="text-2xl font-black text-accent font-mono leading-none">{allItems.length}</span>
+              <span className="text-2xl font-black text-accent font-mono leading-none">
+                <Counter value={allItems.length} />
+              </span>
             </div>
           </div>
         </div>
