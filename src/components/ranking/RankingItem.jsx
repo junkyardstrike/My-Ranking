@@ -113,7 +113,19 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     try {
       const result = await fetchMetadata(localTitle.trim(), effectiveGenre);
       if (result) {
-        onUpdate(propItem.id, { memo: result.memo, author: result.author || author });
+        const updates = { memo: result.memo, author: result.author || author };
+        
+        // Automatic extraction for manga volumes
+        if (effectiveGenre === 'manga' && result.memo) {
+          const volumeMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || 
+                            result.memo.match(/全(\d+)巻/) || 
+                            result.memo.match(/(\d+)巻/);
+          if (volumeMatch && volumeMatch[1]) {
+            updates.volumes = parseInt(volumeMatch[1]);
+          }
+        }
+        
+        onUpdate(propItem.id, updates);
         if (result.author) setLocalAuthor(result.author);
         setFetchStatus('success');
       } else { setFetchStatus('error'); }
