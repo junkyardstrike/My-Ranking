@@ -5,7 +5,7 @@ import BottomTabBar from './BottomTabBar';
 import { useStore } from '../../store/useStore';
 import { useEffect } from 'react';
 import { Edit3, ArrowUpDown } from 'lucide-react';
-import { DndContext, closestCenter, MouseSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, MouseSensor, TouchSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 
 export default function AppLayout() {
   const init = useStore(state => state.init);
@@ -22,8 +22,9 @@ export default function AppLayout() {
   useEffect(() => { init(); }, [init]);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 10 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
   );
 
   const handleDragEnd = (event) => {

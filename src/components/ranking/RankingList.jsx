@@ -6,8 +6,13 @@ import {
   MouseSensor, 
   TouchSensor, 
   useSensor, 
-  useSensors 
+  useSensors,
+  PointerSensor
 } from '@dnd-kit/core';
+import { 
+  restrictToVerticalAxis,
+  restrictToWindowEdges
+} from '@dnd-kit/modifiers';
 import { 
   arrayMove, 
   SortableContext, 
@@ -30,11 +35,11 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
   } = useSortable({ id: item.id, disabled: !isEditMode && !isReorderMode });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: CSS.Translate.toString(transform),
+    transition: transition || (isDragging ? 'none' : 'transform 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22)'),
     zIndex: isDragging ? 50 : 1,
     position: 'relative',
-    opacity: isDragging ? 0.8 : 1,
+    opacity: isDragging ? 0.9 : 1,
   };
 
   return (
@@ -115,7 +120,12 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   return (
     <div className="relative">
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext 
+        sensors={sensors} 
+        collisionDetection={closestCenter} 
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+      >
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
             {visibleItems.map(item => (

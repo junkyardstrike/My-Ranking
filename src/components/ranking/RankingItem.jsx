@@ -167,9 +167,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         }`} 
         onClick={() => setIsModalOpen(true)}
       >
-        {/* Rainbow glow effect for rank 1 */}
+        {/* Rainbow glow effect for rank 1 - Brighter and more vivid */}
         {currentRank === 1 && (
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-[#FF0000] via-[#FF7F00] via-[#FFFF00] via-[#00FF00] via-[#0000FF] via-[#4B0082] to-[#8B00FF] rounded-2xl -z-10 animate-rainbow-slow blur-[4px] opacity-90" />
+          <div className="absolute -inset-[1.5px] bg-gradient-to-r from-[#FF0000] via-[#FF8000] via-[#FFFF00] via-[#00FF00] via-[#00FFFF] via-[#0000FF] via-[#8000FF] to-[#FF0000] rounded-2xl -z-10 animate-rainbow-slow blur-[5px] opacity-100 saturate-[1.8] brightness-[1.2]" />
         )}
         
         {isEditMode ? (

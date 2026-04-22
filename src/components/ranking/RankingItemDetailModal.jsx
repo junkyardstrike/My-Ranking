@@ -40,6 +40,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const rankings = useStore(state => state.rankings);
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItemStore = useStore(state => state.updateItem);
+  const moveItemToRank = useStore(state => state.moveItemToRank);
 
   const itemFromStore = useStore(state => {
     const allRanked = (state.rankings || []).flatMap(r => r.items || []);
@@ -206,17 +207,35 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
             </div>
 
             <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    {rankingId ? (
+                      <div className="flex items-center gap-2">
+                        <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
+                          <Crown size={14} /> Rank {currentRank}
+                        </div>
+                        {isGlobalEditMode && (
+                          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-2 py-1">
+                             <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">Change to</span>
+                             <input 
+                               type="number" 
+                               min="1" 
+                               max="100"
+                               value={currentRank}
+                               onChange={(e) => moveItemToRank(rankingId, id, parseInt(e.target.value))}
+                               className="w-12 bg-transparent border-none outline-none text-white font-black text-sm text-center"
+                             />
+                          </div>
+                        )}
+                      </div>
+                    ) : isSelected && (
+                      <div className="px-4 py-2 bg-accent/20 border border-accent/30 text-accent font-black text-[10px] uppercase tracking-widest rounded-lg shadow-sm italic flex items-center gap-2">
+                        <Crown size={14} /> 選出済み
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div className="flex flex-wrap items-center gap-3">
-                  {rankingId ? (
-                    <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
-                      <Crown size={14} /> Rank {currentRank}
-                    </div>
-                  ) : isSelected && (
-                    <div className="px-4 py-2 bg-accent/20 border border-accent/30 text-accent font-black text-[10px] uppercase tracking-widest rounded-lg shadow-sm italic flex items-center gap-2">
-                      <Crown size={14} /> 選出済み
-                    </div>
-                  )}
-                  
                   <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 flex items-center gap-0.5">
                      {isGlobalEditMode ? (
                         Object.entries(GENRE_MAP).map(([key, info]) => {
@@ -240,6 +259,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         </div>
                      )}
                   </div>
+                </div>
                </div>
 
                <div className="flex flex-wrap items-center gap-6 pl-1">

@@ -220,6 +220,28 @@ export const useStore = create((set, get) => ({
     return newItem;
   },
 
+  moveItemToRank: (rankingId, itemId, targetRank) => {
+    set(state => {
+      const ranking = state.rankings.find(r => r.id === rankingId);
+      if (!ranking) return state;
+      
+      const itemToMove = ranking.items.find(i => i.id === itemId);
+      if (!itemToMove) return state;
+
+      const otherItems = ranking.items.filter(i => i.id !== itemId);
+      const newIndex = Math.max(0, Math.min(targetRank - 1, ranking.items.length - 1));
+      
+      const newItems = [...otherItems];
+      newItems.splice(newIndex, 0, { ...itemToMove, currentRank: targetRank });
+      
+      const finalItems = newItems.map((item, i) => ({ ...item, currentRank: i + 1 }));
+      const rankings = state.rankings.map(r => r.id === rankingId ? { ...r, items: finalItems } : r);
+      
+      saveData('rankings', rankings);
+      return { rankings };
+    });
+  },
+
   insertItemIntoRanking: (targetRankingId, itemToInsert, targetRank) => {
     set(state => {
       const ranking = state.rankings.find(r => r.id === targetRankingId);
