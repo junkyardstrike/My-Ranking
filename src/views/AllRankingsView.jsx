@@ -230,6 +230,7 @@ export default function AllRankingsView() {
                 onUpdate={handleUpdate}
                 onMove={handleMove}
                 genre={item.genre || 'music'}
+                rankingId={item.rankingId}
               />
             </div>
           ))}
