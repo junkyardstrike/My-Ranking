@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 const TABS = [
   { id: 'home',     icon: Home,        label: 'HOME',    path: '/' },
@@ -12,7 +12,6 @@ const TABS = [
 export default function BottomTabBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const touchStartPos = useRef(null);
 
   const activeTab = TABS.find(t => t.path && t.path !== '/' && location.pathname.startsWith(t.path))?.id
     || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null);
@@ -33,21 +32,14 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
-                  onTouchStart={(e) => {
-                    touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                  onTouchStart={() => handleNavigate(tab.path)}
+                  onClick={(e) => {
+                    // Click as fallback but primary is onTouchStart
+                    e.preventDefault();
+                    handleNavigate(tab.path);
                   }}
-                  onTouchEnd={(e) => {
-                    if (!touchStartPos.current) return;
-                    const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartPos.current.x);
-                    const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartPos.current.y);
-                    if (deltaX < 10 && deltaY < 10) {
-                      handleNavigate(tab.path);
-                    }
-                    touchStartPos.current = null;
-                  }}
-                  onClick={() => handleNavigate(tab.path)}
                   className={`flex flex-col items-center justify-center gap-1.5 py-4 relative ${isActive ? 'text-accent' : 'text-slate-500'}`}
-                  style={{ WebkitTapHighlightColor: 'transparent' }}
+                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
                 >
                   {isActive && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
