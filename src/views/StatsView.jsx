@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { 
@@ -57,6 +57,7 @@ export default function StatsView() {
   const unrankedItems = useStore(state => state.unrankedItems);
   
   const navigate = useNavigate();
+  const touchStartPos = useRef(null);
 
   const stats = useMemo(() => {
     const allItems = getAllItems();

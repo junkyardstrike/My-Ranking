@@ -394,6 +394,22 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            )}
                         </div>
                      </div>
+
+                         {/* Real-time Calculation Preview in Edit Mode */}
+                         <div className="pt-2 border-t border-white/5">
+                            <div className="flex items-center justify-between bg-black/20 p-3 rounded-2xl border border-white/5">
+                               <div className="space-y-0.5">
+                                  <p className="text-[8px] text-slate-500 font-black uppercase tracking-wider">合計所要時間の計算結果 / TOTAL PREVIEW</p>
+                                  <p className="text-[10px] text-slate-300 font-mono">
+                                     {unitDuration}m × {genre === 'manga' ? (volumes || 1) + 'v' : (genre === 'anime' || genre === 'drama' ? (episodes || 1) + 'e' : '1')} × {views || 0} views
+                                  </p>
+                               </div>
+                               <div className="text-right">
+                                  <span className="text-xl font-black text-accent font-mono tracking-tighter italic">{totalLifetimeDuration}</span>
+                                  <span className="text-[9px] text-accent/60 font-black ml-1">min</span>
+                               </div>
+                            </div>
+                         </div>
                   )}
 
                   {isGlobalEditMode && (
