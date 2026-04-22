@@ -200,74 +200,97 @@ export default function SettingsView() {
         </div>
 
         {/* Precision Calculation Settings */}
-        <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden shadow-xl mt-3">
-          <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
-            <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Precision Calculation</p>
-            <Settings2 className="w-4 h-4 text-slate-600" />
-          </div>
+        {/* Precision Calculation Settings */}
+        <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[32px] overflow-hidden shadow-2xl mt-6 relative">
+          {/* Purple Glow Background */}
+          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
+            backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(124,58,237,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(212,175,55,0.2) 0%, transparent 50%)'
+          }} />
 
-          <div className="p-5 space-y-6">
-            <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
-              <p className="text-sm text-accent font-black mb-2 flex items-center gap-2 not-italic">
-                <Sparkles size={16} /> 視聴時間の精密計算について
-              </p>
-              <p className="text-xs text-slate-300 leading-relaxed font-medium not-italic font-sans">
-                STATSタブでの累計視聴時間の算出に使用される設定です。個々の作品詳細で「所要時間」が未入力の場合、ここで設定した時間がデフォルト値として適用されます。アニメや漫画等の連載形式は「設定時間 × 話数/巻数」で算出されます。
-              </p>
+          <div className="relative z-10">
+            <div className="p-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Settings2 className="w-4 h-4 text-accent" />
+                <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-black">Precision Calculation / 視聴時間の精密設定</p>
+              </div>
             </div>
-            {/* View Count Toggle */}
-            <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${settings.useViewCount ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-500/20 text-slate-400'}`}>
-                  <Activity className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white">閲覧回数を計算に含める</p>
-                  <p className="text-[10px] text-slate-500 font-medium">ONの場合: 時間 × 閲覧回数</p>
+
+            <div className="p-6 space-y-8">
+              {/* Description Box */}
+              <div className="relative p-5 bg-white/5 rounded-2xl border border-white/10 shadow-inner overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent opacity-50" />
+                <div className="relative z-10">
+                  <p className="text-sm text-accent font-black mb-2 flex items-center gap-2 not-italic">
+                    <Sparkles size={16} /> 視聴時間の精密計算について
+                  </p>
+                  <p className="text-xs text-slate-300 leading-relaxed font-medium not-italic font-sans">
+                    STATSタブでの累計視聴時間の算出に使用される設定です。個々の作品詳細で「所要時間」が未入力の場合、ここで設定した時間がデフォルト値として適用されます。アニメや漫画等の連載形式は「設定時間 × 話数/巻数」で算出されます。
+                  </p>
                 </div>
               </div>
-              <button 
-                onClick={handleToggleViewCount}
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${settings.useViewCount ? 'bg-emerald-500' : 'bg-slate-700'}`}
-              >
-                <div className={`w-4 h-4 bg-white rounded-full shadow-lg transition-transform duration-300 ${settings.useViewCount ? 'translate-x-6' : 'translate-x-0'}`} />
-              </button>
-            </div>
 
-            {/* Durations Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[
-                { id: 'movie', label: '映画', icon: Film, unit: '作品' },
-                { id: 'music', label: '音楽', icon: Music, unit: '曲' },
-                { id: 'anime', label: 'アニメ', icon: Tv, unit: '話' },
-                { id: 'drama', label: 'ドラマ', icon: Clapperboard, unit: '話' },
-                { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },
-                { id: 'game', label: 'ゲーム', icon: Gamepad2, unit: '作品' },
-              ].map(genre => (
-                <div key={genre.id} className="flex flex-col gap-2 p-3 bg-black/20 rounded-xl border border-white/5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <genre.icon className="w-3.5 h-3.5 text-accent" />
-                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{genre.label}</span>
-                    </div>
-                    <span className="text-[9px] font-bold text-slate-600">1{genre.unit}あたり</span>
+              {/* View Count Toggle */}
+              <div className="relative flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10 shadow-lg overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/5 to-transparent opacity-30" />
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${settings.useViewCount ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-slate-500/20 text-slate-400'}`}>
+                    <Activity className="w-6 h-6" />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <input 
-                      type="number" 
-                      defaultValue={settings.defaultDurations?.[genre.id] || 0}
-                      onBlur={(e) => {
-                        const val = parseInt(e.target.value);
-                        if (val !== settings.defaultDurations?.[genre.id]) {
-                          handleDurationChange(genre.id, e.target.value);
-                        }
-                      }}
-                      className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white font-mono font-bold text-sm outline-none focus:border-accent w-full"
-                    />
-                    <span className="text-[10px] font-black text-slate-500 uppercase">分</span>
+                  <div>
+                    <p className="text-base font-black text-white italic tracking-tight">閲覧回数を計算に含める</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Include View Count in Duration</p>
                   </div>
                 </div>
-              ))}
+                <button 
+                  onClick={handleToggleViewCount}
+                  className={`relative z-10 w-14 h-7 rounded-full p-1 transition-all duration-500 ${settings.useViewCount ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-700'}`}
+                >
+                  <div className={`w-5 h-5 bg-white rounded-full shadow-lg transition-transform duration-300 ${settings.useViewCount ? 'translate-x-7' : 'translate-x-0'}`} />
+                </button>
+              </div>
+
+              {/* Durations Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 px-1">
+                  <Clock className="w-4 h-4 text-accent" />
+                  <h3 className="text-xs font-black text-white uppercase tracking-widest italic">Default Unit Durations</h3>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-white/5 rounded-[28px] border border-white/10 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-30" />
+                  {[
+                    { id: 'movie', label: '映画', icon: Film, unit: '作品' },
+                    { id: 'music', label: '音楽', icon: Music, unit: '曲' },
+                    { id: 'anime', label: 'アニメ', icon: Tv, unit: '話' },
+                    { id: 'drama', label: 'ドラマ', icon: Clapperboard, unit: '話' },
+                    { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },
+                    { id: 'game', label: 'ゲーム', icon: Gamepad2, unit: '作品' },
+                  ].map(genre => (
+                    <div key={genre.id} className="relative z-10 flex flex-col gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 hover:border-white/20 transition-all group">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <genre.icon className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+                          <span className="text-xs font-black text-white uppercase tracking-widest">{genre.label}</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">1{genre.unit}あたり</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <input 
+                          type="number" 
+                          defaultValue={settings.defaultDurations?.[genre.id] || 0}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (val !== settings.defaultDurations?.[genre.id]) {
+                              handleDurationChange(genre.id, e.target.value);
+                            }
+                          }}
+                          className="bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono font-black text-lg outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 w-full transition-all"
+                        />
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">min</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
