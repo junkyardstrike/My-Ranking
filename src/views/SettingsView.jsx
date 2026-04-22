@@ -73,9 +73,12 @@ export default function SettingsView() {
   };
 
   return (
-    <div className="animate-in fade-in duration-300 pb-24 max-w-lg mx-auto">
-      <div className="flex items-center justify-between mb-1">
-        <h1 className="text-2xl font-bold text-white uppercase tracking-tighter">Settings</h1>
+    <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
+      <div className="flex items-end justify-between px-1 mb-6">
+        <div>
+          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">Settings</h1>
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">アプリ設定・データ管理</p>
+        </div>
         {status && (
           <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold animate-in slide-in-from-right-4 fade-in ${status.type === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
             {status.type === 'success' ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
@@ -83,7 +86,6 @@ export default function SettingsView() {
           </div>
         )}
       </div>
-      <div className="h-px w-16 bg-accent/60 mb-6" />
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">

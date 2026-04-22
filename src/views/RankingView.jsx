@@ -43,7 +43,7 @@ export default function RankingView() {
 
         <div className="flex flex-col items-center gap-3">
           {/* Collapse Toggle */}
-          {!isEditMode && (
+          {!isEditMode && !useStore.getState().isReorderMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
               className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
@@ -62,10 +62,10 @@ export default function RankingView() {
             </button>
           )}
 
-          {isEditMode && (
+          {(isEditMode || useStore.getState().isReorderMode) && (
             <div className="inline-block px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-lg">
               <p className="text-accent text-sm font-medium text-center">
-                ドラッグして順位を並び替え、内容を直接編集できます。
+                {isEditMode ? '内容を直接編集できます。' : 'ドラッグして順位を並び替えできます。'}
               </p>
             </div>
           )}

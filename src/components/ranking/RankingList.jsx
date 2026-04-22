@@ -19,7 +19,7 @@ import { CSS } from '@dnd-kit/utilities';
 import RankingItem from './RankingItem';
 import { useStore } from '../../store/useStore';
 
-function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
+function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId, onUpdate }) {
   const {
     attributes,
     listeners,
@@ -27,7 +27,7 @@ function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
     transform,
     transition,
     isDragging
-  } = useSortable({ id: item.id, disabled: !isEditMode });
+  } = useSortable({ id: item.id, disabled: !isEditMode && !isReorderMode });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -42,9 +42,10 @@ function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
       <RankingItem 
         item={item} 
         isEditMode={isEditMode} 
+        isReorderMode={isReorderMode}
         isCollapsed={isCollapsed}
         rankingId={rankingId}
-        dragHandleProps={isEditMode ? {...attributes, ...listeners} : null}
+        dragHandleProps={(isEditMode || isReorderMode) ? {...attributes, ...listeners} : null}
         onUpdate={onUpdate}
         genre={item.genre || 'music'}
       />
@@ -52,7 +53,8 @@ function SortableItem({ item, isEditMode, isCollapsed, rankingId, onUpdate }) {
   );
 }
 
-export default function RankingList({ ranking, isCollapsed = false, isEditMode = false, onSave }) {
+export default function RankingList({ ranking, isCollapsed: propIsCollapsed = false, isEditMode = false, onSave }) {
+  const isReorderMode = useStore(state => state.isReorderMode);
   const updateItem = useStore(state => state.updateItem);
   const [items, setItems] = useState(ranking.items);
   const [hasChanges, setHasChanges] = useState(false);
@@ -99,6 +101,7 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
     alert('ランキングの変更を保存しました。');
   };
 
+  const isActuallyCollapsed = isReorderMode ? true : propIsCollapsed;
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
 
   if (visibleItems.length === 0 && !isEditMode) {
@@ -114,13 +117,14 @@ export default function RankingList({ ranking, isCollapsed = false, isEditMode =
     <div className="relative">
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          <div className={`space-y-1 ${isCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
+          <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-0.5' : 'space-y-3'}`}>
             {visibleItems.map(item => (
               <SortableItem 
                 key={item.id} 
                 item={item} 
                 isEditMode={isEditMode}
-                isCollapsed={isCollapsed}
+                isReorderMode={isReorderMode}
+                isCollapsed={isActuallyCollapsed}
                 rankingId={ranking.id}
                 onUpdate={handleLocalUpdate}
               />

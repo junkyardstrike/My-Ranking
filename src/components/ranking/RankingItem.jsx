@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
-import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -34,10 +34,15 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed = false, rankingId }) {
+export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
+  const [localIsCollapsed, setLocalIsCollapsed] = useState(propIsCollapsed);
+
+  useEffect(() => {
+    setLocalIsCollapsed(propIsCollapsed);
+  }, [propIsCollapsed]);
 
   // Subscribe to live store updates for this specific item
   const liveItemFromStore = useStore(state => {
@@ -53,7 +58,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     rankingTitle: propItem.rankingTitle || liveItemFromStore.rankingTitle
   } : propItem;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [] } = liveItem;
   
   // Safe genre fallback: ensure 'other' is mapped to 'music'
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
@@ -112,23 +117,24 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   };
 
   const renderRankBadge = (rank) => {
-    const size = isCollapsed ? "w-8 h-8" : "w-10 h-10";
+    const isActuallyCollapsed = localIsCollapsed;
+    const size = isActuallyCollapsed ? "w-8 h-8" : "w-10 h-10";
     let bgClass = "bg-black/40 text-slate-500 border-white/5";
     let icon = null;
     
     if (rank === 1) { 
-      bgClass = "bg-gradient-to-br from-indigo-500 via-purple-500 via-pink-500 via-red-500 via-yellow-500 via-green-500 to-blue-500 text-white border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)] animate-pulse"; 
-      icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-200" />; 
+      bgClass = "bg-gradient-to-br from-indigo-500 via-purple-500 via-pink-500 via-red-500 via-yellow-500 via-green-500 to-blue-500 text-white border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.4)]"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-200" />; 
     }
-    else if (rank === 2) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 3) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
-    else if (rank === 4) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
+    else if (rank === 2) { bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-500 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-lg"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 3) { bgClass = "bg-gradient-to-br from-slate-200 via-slate-400 to-slate-500 text-slate-950 border-slate-300/50 shadow-md"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5" />; }
+    else if (rank === 4) { bgClass = "bg-gradient-to-br from-orange-300 via-orange-500 to-orange-700 text-orange-950 border-orange-400/50 shadow-md"; icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-900" />; }
     
     if (!rank) {
       const GenreIcon = GENRES.find(g => g.id === effectiveGenre)?.icon || MoreHorizontal;
       return (
         <div className={`flex-shrink-0 flex items-center justify-center bg-white/5 text-accent rounded-lg border border-white/5 ${size}`}>
-          <GenreIcon size={isCollapsed ? 12 : 16} />
+          <GenreIcon size={isActuallyCollapsed ? 12 : 16} />
         </div>
       );
     }
@@ -136,7 +142,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     return (
       <div className={`flex-shrink-0 flex flex-col items-center justify-center font-bold font-mono rounded-lg border backdrop-blur-md transition-all duration-300 ${size} ${bgClass}`}>
         {icon}
-        <span className={`drop-shadow-sm leading-none ${isCollapsed ? 'text-xs' : 'text-sm'}`}>{rank}</span>
+        <span className={`drop-shadow-sm leading-none ${isActuallyCollapsed ? 'text-xs' : 'text-sm'}`}>{rank}</span>
       </div>
     );
   };
@@ -144,9 +150,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   return (
     <>
       <div 
-        className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer hover:bg-white/5 active:scale-[0.98] ${currentRank === 1 ? 'bg-yellow-500/10 border-yellow-500/20 shadow-xl' : 'bg-black/20 backdrop-blur-md border-white/5'}`} 
+        className={`rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col cursor-pointer relative group/card ${
+          currentRank === 1 
+            ? 'border-transparent bg-black/40 shadow-2xl' 
+            : 'bg-black/20 backdrop-blur-md border-white/5 hover:bg-white/5'
+        }`} 
         onClick={() => setIsModalOpen(true)}
       >
+        {/* Rainbow glow effect for rank 1 */}
+        {currentRank === 1 && (
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-[#ff0080] via-[#ff8c00] via-[#40e0d0] via-[#9932cc] to-[#ff0080] rounded-2xl -z-10 animate-rainbow-slow blur-[3px] opacity-80" />
+        )}
+        
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
             {/* Header Row */}
@@ -161,7 +176,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   ))}
                 </div>
               </div>
-              {dragHandleProps && (
+              {(dragHandleProps || isReorderMode) && (
                 <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-600 hover:text-accent bg-white/5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
                   <GripVertical className="w-5 h-5" />
                 </div>
@@ -257,12 +272,25 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             </div>
           </div>
         ) : (
-          <div className={`flex flex-row items-stretch ${isCollapsed ? 'min-h-[44px]' : 'min-h-[84px]'}`}>
-            <div className={`flex-1 flex flex-row min-w-0 gap-3 ${isCollapsed ? 'p-2 items-center' : 'p-3'}`}>
+          <div className={`flex flex-row items-stretch ${localIsCollapsed ? 'min-h-[44px]' : 'min-h-[84px]'}`}>
+            <div className={`flex-1 flex flex-row min-w-0 gap-3 ${localIsCollapsed ? 'p-2 items-center' : 'p-3'}`}>
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: isCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
-                {!isCollapsed && (
+                <div className="flex items-center gap-2">
+                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
+                  {localIsCollapsed && previousRanks.length > 0 && (
+                    <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
+                      <History size={8} className="text-slate-500" />
+                      <div className="flex gap-0.5">
+                        {previousRanks.slice(-2).reverse().map((r, i) => (
+                          <span key={i} className="text-[7px] font-bold text-slate-400">{r.rank}→</span>
+                        ))}
+                        <span className="text-[7px] font-black text-accent">{currentRank}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {!localIsCollapsed && (
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
                     {isSelected && !rankingId && (
                       <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
@@ -273,18 +301,51 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     {rating > 0 && <div className="scale-75 origin-left -ml-1"><ScoreRating rating={rating} readOnly /></div>}
                     {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
                     {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-500"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
+                    
+                    {/* Rank history in expanded view */}
+                    {previousRanks.length > 0 && (
+                      <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5 ml-auto">
+                        <History size={10} className="text-slate-600" />
+                        <div className="flex items-center gap-1">
+                          {previousRanks.slice(-3).map((r, i) => (
+                            <span key={i} className="text-[9px] font-bold text-slate-500">{r.rank} <span className="text-[8px] opacity-40">→</span></span>
+                          ))}
+                          <span className="text-[9px] font-black text-accent">{currentRank}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </div>
-            {!isCollapsed && imageBase64 && (
+            {!localIsCollapsed && imageBase64 && (
               <div className="flex-shrink-0 p-2 flex items-center">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                   <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
                 </div>
               </div>
             )}
-            <div className="flex items-center pr-2 text-slate-800"><ChevronRight size={14} /></div>
+            
+            <div className="flex items-center pr-1 gap-1">
+              {(isReorderMode || dragHandleProps) && !isEditMode && (
+                <div 
+                  {...dragHandleProps} 
+                  className="p-2 cursor-grab text-slate-700 hover:text-accent transition-colors"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <GripVertical size={16} />
+                </div>
+              )}
+              <div 
+                className="p-2 text-slate-800 hover:text-white transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLocalIsCollapsed(!localIsCollapsed);
+                }}
+              >
+                {localIsCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+              </div>
+            </div>
           </div>
         )}
       </div>

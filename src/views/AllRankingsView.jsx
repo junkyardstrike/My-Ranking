@@ -36,6 +36,9 @@ export default function AllRankingsView() {
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
   }, [allItems, searchQuery, selectedGenre]);
 
+  const isReorderMode = useStore(state => state.isReorderMode);
+  const isActuallyCollapsed = isReorderMode ? true : isCollapsed;
+
   const handleUpdate = (id, updates) => {
     updateItem(id, updates);
     setHasChanges(true);
@@ -48,30 +51,32 @@ export default function AllRankingsView() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 pb-32">
-      <div className="mb-6 space-y-6">
-        <div className="flex items-end justify-between px-1">
+    <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
+      <div className="space-y-6">
+        <div className="flex items-end justify-between px-1 mb-6">
           <div>
             <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">Records</h1>
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">全作品マスターリスト</p>
           </div>
           <div className="flex flex-col items-end gap-3">
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
-            >
-              {isCollapsed ? (
-                <>
-                  <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
-                </>
-              ) : (
-                <>
-                  <Minimize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">折り畳み</span>
-                </>
-              )}
-            </button>
+            {!isEditMode && !isReorderMode && (
+              <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
+              >
+                {isCollapsed ? (
+                  <>
+                    <Maximize2 className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
+                  </>
+                ) : (
+                  <>
+                    <Minimize2 className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">折り畳み</span>
+                  </>
+                )}
+              </button>
+            )}
             <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
               <span className="text-xs font-black text-slate-400">総作品数</span>
               <span className="text-2xl font-black text-accent font-mono leading-none">{allItems.length}</span>
@@ -129,7 +134,8 @@ export default function AllRankingsView() {
               key={item.id}
               item={item}
               isEditMode={isEditMode}
-              isCollapsed={isCollapsed}
+              isReorderMode={isReorderMode}
+              isCollapsed={isActuallyCollapsed}
               onUpdate={handleUpdate}
               genre={item.genre || 'music'}
             />

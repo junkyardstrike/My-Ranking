@@ -51,6 +51,7 @@ export const useStore = create((set, get) => ({
   rankings: [], 
   unrankedItems: [], 
   isEditMode: false,
+  isReorderMode: false,
   viewMode: 'list', 
   currentFolderId: null,
 
@@ -63,6 +64,7 @@ export const useStore = create((set, get) => ({
 
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
   setEditMode: (mode) => set({ isEditMode: mode }),
+  setReorderMode: (mode) => set({ isReorderMode: mode }),
   
   getAllItems: () => {
     const state = get();
