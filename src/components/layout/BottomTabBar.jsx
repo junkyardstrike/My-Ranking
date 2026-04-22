@@ -1,10 +1,11 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, LayoutList, Settings, Archive } from 'lucide-react';
+import { Home, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
 import { useState } from 'react';
 
 const TABS = [
   { id: 'home',     icon: Home,        label: 'HOME',    path: '/' },
   { id: 'all',      icon: Archive,     label: 'RECORDS', path: '/all' },
+  { id: 'stats',    icon: BarChart3,   label: 'STATS',   path: '/stats' },
   { id: 'settings', icon: Settings,    label: 'SETTINGS',path: '/settings' },
 ];
 
@@ -23,7 +24,7 @@ export default function BottomTabBar() {
       {/* Bottom tab bar - Raised slightly for iOS Home bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-[80] flex items-end justify-center pointer-events-none">
         <div className="w-full max-w-4xl mx-auto pb-6 sm:pb-8"> {/* Increased bottom padding */}
-          <div className="mx-4 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] grid grid-cols-3 pointer-events-auto overflow-hidden">
+          <div className="mx-4 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] grid grid-cols-4 pointer-events-auto overflow-hidden">
             {TABS.map(tab => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;

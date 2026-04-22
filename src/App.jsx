@@ -5,6 +5,8 @@ import RankingView from './views/RankingView';
 import AllRankingsView from './views/AllRankingsView';
 import SettingsView from './views/SettingsView';
 
+import StatsView from './views/StatsView';
+
 function App() {
   return (
     <BrowserRouter>
@@ -14,6 +16,7 @@ function App() {
           <Route path="folder/:folderId" element={<FolderView />} />
           <Route path="ranking/:rankingId" element={<RankingView />} />
           <Route path="all" element={<AllRankingsView />} />
+          <Route path="stats" element={<StatsView />} />
           <Route path="settings" element={<SettingsView />} />
         </Route>
       </Routes>
