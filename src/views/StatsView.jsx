@@ -16,7 +16,8 @@ import {
   Eye,
   Target,
   LayoutGrid,
-  Clock
+  Clock,
+  Sparkles
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelWalker from '../components/common/PixelWalker';
@@ -386,22 +387,22 @@ export default function StatsView() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-black text-white text-lg sm:text-xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight">{item.title}</h3>
-                        <div className="flex items-center gap-4 mt-3">
-                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/20 rounded-xl border border-yellow-500/30 shadow-inner">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-sm font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                        <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight mb-2">{item.title}</h3>
+                        <div className="flex items-center gap-6 mt-4">
+                          <div className="flex items-center gap-2 px-4 py-1.5 bg-yellow-500/20 rounded-xl border border-yellow-500/30 shadow-inner">
+                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+                            <span className="text-lg font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Eye className="w-4 h-4 text-yellow-600/80" />
-                            <span className="text-xs font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
+                            <Eye className="w-5 h-5 text-yellow-600/80" />
+                            <span className="text-base font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
                           </div>
                         </div>
-                        <div className="mt-4 flex items-center justify-between">
-                           <span className="text-[10px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-3 py-1 rounded-full border border-yellow-500/10">
+                        <div className="mt-6 flex items-center justify-between">
+                           <span className="text-xs font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-4 py-1.5 rounded-full border border-yellow-500/10">
                              {GENRE_LABELS[item.genre] || 'OTHER'}
                            </span>
-                           <span className="text-[10px] font-bold text-slate-500 font-mono">RANK #{idx + 1}</span>
+                           <span className="text-xs font-bold text-slate-500 font-mono italic">MASTER RANK #{idx + 1}</span>
                         </div>
                       </div>
                     </div>
@@ -445,13 +446,13 @@ export default function StatsView() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-black text-white italic font-mono leading-none">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-3xl font-black text-white italic font-mono leading-none">
                   <Counter value={stats.totalCount} />
                 </span>
-                <span className="text-[10px] font-black text-slate-400">作品</span>
+                <span className="text-sm font-black text-accent italic">作品</span>
               </div>
             </div>
           </div>
