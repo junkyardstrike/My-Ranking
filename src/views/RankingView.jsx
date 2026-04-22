@@ -38,7 +38,10 @@ export default function RankingView() {
     <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
       <div className="relative mb-6">
         <div className="flex flex-col items-center text-center px-1 mb-6 py-2">
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">{ranking.title}</h1>
+          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tighter uppercase italic drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] relative overflow-hidden px-4">
+            <span className="relative z-10">{ranking.title}</span>
+            <div className="absolute inset-0 title-flash mix-blend-overlay pointer-events-none" style={{ animationDelay: '0.5s' }} />
+          </h1>
           <p className="text-[11px] text-yellow-500/60 font-black uppercase tracking-[0.4em] mt-2 italic">{ranking.englishName || 'RANKING SELECTION ARCHIVE'}</p>
         </div>
 

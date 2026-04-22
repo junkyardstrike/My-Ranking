@@ -370,18 +370,15 @@ export default function FolderView() {
             filter: blur(0) brightness(1);
           }
         }
-        .premium-card-animate {
-          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          opacity: 0;
-        }
       `}</style>
       <div className="relative flex flex-col mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center w-full' : ''}`}>
           {isRoot ? (
             <div className="flex flex-col gap-1">
               <div className="relative flex items-center gap-1 overflow-visible">
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-100 via-yellow-400 to-yellow-700 drop-shadow-[0_15px_30px_rgba(212,175,55,0.4)] pr-6">
-                  Ranking
+                <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-yellow-100 via-yellow-400 to-yellow-700 drop-shadow-[0_15px_30px_rgba(212,175,55,0.4)] pr-6 relative overflow-hidden">
+                  <span className="relative z-10">Ranking</span>
+                  <div className="absolute inset-0 title-flash mix-blend-overlay pointer-events-none" />
                 </h1>
                 <PixelItem type="sword" size={40} className="mb-1" />
                 <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)]" />

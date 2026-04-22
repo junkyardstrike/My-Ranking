@@ -74,3 +74,19 @@
   background-size: 200% 200%;
   animation: rainbow-slow 6s linear infinite;
 }
+
+@keyframes titleFlash {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.title-flash {
+  background-image: linear-gradient(
+    110deg, 
+    rgba(255,255,255,0) 30%, 
+    rgba(255,255,255,0.8) 50%, 
+    rgba(255,255,255,0) 70%
+  );
+  background-size: 200% 100%;
+  animation: titleFlash 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}

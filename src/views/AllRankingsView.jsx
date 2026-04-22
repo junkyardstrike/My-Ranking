@@ -100,8 +100,9 @@ export default function AllRankingsView() {
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)] pr-6">
-              Records
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-100 via-blue-400 to-blue-700 drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)] pr-6 relative overflow-hidden">
+              <span className="relative z-10">Records</span>
+              <div className="absolute inset-0 title-flash mix-blend-overlay pointer-events-none" style={{ animationDelay: '0.8s' }} />
             </h1>
             <PixelItem type="grimoire" size={40} className="mb-1" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)]" />
