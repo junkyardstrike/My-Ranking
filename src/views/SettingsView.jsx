@@ -78,8 +78,8 @@ export default function SettingsView() {
     <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-3">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-purple-200 via-purple-500 to-purple-700 drop-shadow-[0_10px_20px_rgba(168,85,247,0.3)]">
+          <div className="relative flex items-center gap-3 overflow-visible">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-purple-200 via-purple-500 to-purple-700 drop-shadow-[0_10px_20px_rgba(168,85,247,0.3)] pr-8">
               Settings
             </h1>
             <PixelItem type="key" size={60} />

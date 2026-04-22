@@ -66,6 +66,16 @@ export const useStore = create((set, get) => ({
   setEditMode: (mode) => set({ isEditMode: mode }),
   setReorderMode: (mode) => set({ isReorderMode: mode }),
   
+  setFolders: (folders) => {
+    set({ folders });
+    saveData('folders', folders);
+  },
+
+  setRankings: (rankings) => {
+    set({ rankings });
+    saveData('rankings', rankings);
+  },
+  
   getAllItems: () => {
     const state = get();
     const rankedItems = state.rankings.flatMap(r => 

@@ -99,8 +99,8 @@ export default function AllRankingsView() {
       <div className="space-y-6">
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-3">
-            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-200 via-blue-500 to-blue-700 drop-shadow-[0_10px_20px_rgba(59,130,246,0.3)]">
+          <div className="relative flex items-center gap-3 overflow-visible">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-blue-200 via-blue-500 to-blue-700 drop-shadow-[0_10px_20px_rgba(59,130,246,0.3)] pr-8">
               Records
             </h1>
             <PixelItem type="grimoire" size={60} />
