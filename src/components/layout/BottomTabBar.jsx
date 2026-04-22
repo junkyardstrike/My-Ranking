@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useRef } from 'react';
 
 const TABS = [
   { id: 'home',     icon: Home,        label: 'HOME',    path: '/' },
@@ -12,18 +12,20 @@ const TABS = [
 export default function BottomTabBar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const touchHandled = useRef(false);
+
   const activeTab = TABS.find(t => t.path && t.path !== '/' && location.pathname.startsWith(t.path))?.id
     || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null);
 
-  const handleTab = (tab) => {
-    navigate(tab.path);
-  };
+  const handleNavigate = useCallback((path) => {
+    navigate(path);
+  }, [navigate]);
 
   return (
     <>
       {/* Bottom tab bar - Raised slightly for iOS Home bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-[80] flex items-end justify-center pointer-events-none">
-        <div className="w-full max-w-4xl mx-auto pb-6 sm:pb-8"> {/* Increased bottom padding */}
+        <div className="w-full max-w-4xl mx-auto pb-6 sm:pb-8">
           <div className="mx-4 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] grid grid-cols-4 pointer-events-auto overflow-hidden">
             {TABS.map(tab => {
               const Icon = tab.icon;
@@ -31,14 +33,26 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => handleTab(tab)}
-                  className={`flex flex-col items-center justify-center gap-1.5 py-4 transition-all duration-300 relative ${isActive ? 'text-accent' : 'text-slate-500 md:hover:text-slate-300'}`}
+                  onTouchStart={(e) => {
+                    // Immediately navigate on touch start for iOS responsiveness
+                    touchHandled.current = true;
+                    handleNavigate(tab.path);
+                  }}
+                  onClick={(e) => {
+                    // Fallback for desktop / non-touch devices
+                    if (!touchHandled.current) {
+                      handleNavigate(tab.path);
+                    }
+                    touchHandled.current = false;
+                  }}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-4 relative ${isActive ? 'text-accent' : 'text-slate-500'}`}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   {isActive && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
                   )}
-                  <Icon className={`transition-transform duration-300 ${isActive ? 'scale-110' : 'scale-100'}`} size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  <span className={`text-[8px] font-black tracking-[0.2em] transition-colors ${isActive ? 'text-accent' : 'text-slate-600'}`}>{tab.label}</span>
+                  <Icon className={isActive ? 'scale-110' : 'scale-100'} size={20} strokeWidth={isActive ? 2.5 : 1.5} />
+                  <span className={`text-[8px] font-black tracking-[0.2em] ${isActive ? 'text-accent' : 'text-slate-600'}`}>{tab.label}</span>
                 </button>
               );
             })}

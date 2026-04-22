@@ -78,14 +78,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = liveItem;
 
-  let calculatedDuration = duration;
-  if (!calculatedDuration) {
+  let calculatedDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
+  if (calculatedDuration === null) {
     switch (genre) {
       case 'anime': calculatedDuration = episodes * 20; break;
       case 'drama': calculatedDuration = episodes * 40; break;
       case 'movie': calculatedDuration = 120; break;
       case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = volumes * 30; break;
+      case 'manga': calculatedDuration = (volumes || 1) * 30; break;
       default: calculatedDuration = 0; break;
     }
   }

@@ -65,14 +65,14 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
   const effectiveGenre = rawGenre === 'other' ? 'music' : rawGenre;
 
-  let calculatedDuration = duration;
-  if (!calculatedDuration) {
+  let calculatedDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
+  if (calculatedDuration === null) {
     switch (effectiveGenre) {
       case 'anime': calculatedDuration = episodes * 20; break;
       case 'drama': calculatedDuration = episodes * 40; break;
       case 'movie': calculatedDuration = 120; break;
       case 'music': calculatedDuration = 3; break;
-      case 'manga': calculatedDuration = volumes * 30; break;
+      case 'manga': calculatedDuration = (volumes || 1) * 30; break;
       default: calculatedDuration = 0; break;
     }
   }
