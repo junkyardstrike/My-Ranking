@@ -249,7 +249,7 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl truncate">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-emerald-400 font-mono tracking-tighter drop-shadow-xl truncate">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
@@ -305,15 +305,15 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame - Luxurious Redesign */}
-        <section className="md:col-span-2 relative group">
+        {/* 3. Hall of Fame - Open Design (No Box) */}
+        <section className="md:col-span-2 relative group py-12">
           {/* Animated Golden Aura */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-yellow-600 via-yellow-200 to-yellow-600 rounded-[40px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
           
-          <div className="relative bg-black/80 backdrop-blur-2xl border-2 border-yellow-500/30 rounded-[38px] p-8 shadow-[0_0_50px_rgba(212,175,55,0.15)] overflow-hidden">
+          <div className="relative z-10">
             {/* Background Sparkles Effect */}
-            <div className="absolute top-0 right-0 p-4 opacity-10">
-              <Sparkles className="w-32 h-32 text-yellow-500 animate-spin-slow" />
+            <div className="absolute -top-10 -right-10 opacity-5">
+              <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
             </div>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 relative z-10">
@@ -412,6 +412,18 @@ export default function StatsView() {
             )}
           </div>
         </section>
+
+        {/* DASHBOARD DIVIDER */}
+        <div className="md:col-span-2 mt-8 mb-4">
+          <div className="flex items-center gap-4">
+            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
+            <div className="flex flex-col items-center">
+              <p className="text-[10px] font-black text-accent uppercase tracking-[0.4em] italic mb-1">Dashboard</p>
+              <h2 className="text-xl font-black text-white/40 uppercase tracking-tighter italic">ダッシュボード</h2>
+            </div>
+            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
+          </div>
+        </div>
 
         {/* 1. Genre Ratio Chart */}
         <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
