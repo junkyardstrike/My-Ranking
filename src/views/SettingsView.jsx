@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
-import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelItem from '../components/common/PixelItem';
 
@@ -8,6 +8,8 @@ export default function SettingsView() {
   const rankings = useStore(state => state.rankings) || [];
   const unrankedItems = useStore(state => state.unrankedItems) || [];
   const folders = useStore(state => state.folders) || [];
+  const settings = useStore(state => state.settings) || {};
+  const updateSettings = useStore(state => state.updateSettings);
   const importData = useStore(state => state.importData);
   const clearData = useStore(state => state.clearData);
   
@@ -72,6 +74,27 @@ export default function SettingsView() {
   const showStatus = (type, message) => {
     setStatus({ type, message });
     setTimeout(() => setStatus(null), 3000);
+  };
+
+  const handleDurationChange = (genre, value) => {
+    const val = parseInt(value) || 0;
+    if (confirm(`このジャンルのデフォルト時間を ${val} 分に変更しますか？統計データに即座に反映されます。`)) {
+      updateSettings({
+        defaultDurations: {
+          ...settings.defaultDurations,
+          [genre]: val
+        }
+      });
+      showStatus('success', '設定を更新しました');
+    }
+  };
+
+  const handleToggleViewCount = () => {
+    const nextValue = !settings.useViewCount;
+    if (confirm(`閲覧回数を計算に${nextValue ? '含める' : '含めない'}設定に変更しますか？`)) {
+      updateSettings({ useViewCount: nextValue });
+      showStatus('success', '設定を更新しました');
+    }
   };
 
   return (
@@ -174,6 +197,71 @@ export default function SettingsView() {
               <p className="text-[11px] text-slate-500 font-medium">ストレージのデータを完全にリセット</p>
             </div>
           </button>
+        </div>
+
+        {/* Precision Calculation Settings */}
+        <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden shadow-xl mt-3">
+          <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+            <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Precision Calculation</p>
+            <Settings2 className="w-4 h-4 text-slate-600" />
+          </div>
+
+          <div className="p-5 space-y-6">
+            {/* View Count Toggle */}
+            <div className="flex items-center justify-between p-4 bg-black/40 rounded-xl border border-white/5">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${settings.useViewCount ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-500/20 text-slate-400'}`}>
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white">閲覧回数を計算に含める</p>
+                  <p className="text-[10px] text-slate-500 font-medium">ONの場合: 時間 × 閲覧回数</p>
+                </div>
+              </div>
+              <button 
+                onClick={handleToggleViewCount}
+                className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${settings.useViewCount ? 'bg-emerald-500' : 'bg-slate-700'}`}
+              >
+                <div className={`w-4 h-4 bg-white rounded-full shadow-lg transition-transform duration-300 ${settings.useViewCount ? 'translate-x-6' : 'translate-x-0'}`} />
+              </button>
+            </div>
+
+            {/* Durations Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                { id: 'movie', label: '映画', icon: Film, unit: '作品' },
+                { id: 'music', label: '音楽', icon: Music, unit: '曲' },
+                { id: 'anime', label: 'アニメ', icon: Tv, unit: '話' },
+                { id: 'drama', label: 'ドラマ', icon: Clapperboard, unit: '話' },
+                { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },
+                { id: 'game', label: 'ゲーム', icon: Gamepad2, unit: '作品' },
+              ].map(genre => (
+                <div key={genre.id} className="flex flex-col gap-2 p-3 bg-black/20 rounded-xl border border-white/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <genre.icon className="w-3.5 h-3.5 text-accent" />
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{genre.label}</span>
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-600">1{genre.unit}あたり</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input 
+                      type="number" 
+                      defaultValue={settings.defaultDurations?.[genre.id] || 0}
+                      onBlur={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (val !== settings.defaultDurations?.[genre.id]) {
+                          handleDurationChange(genre.id, e.target.value);
+                        }
+                      }}
+                      className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white font-mono font-bold text-sm outline-none focus:border-accent w-full"
+                    />
+                    <span className="text-[10px] font-black text-slate-500 uppercase">分</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* App info */}

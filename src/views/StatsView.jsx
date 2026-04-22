@@ -60,6 +60,10 @@ export default function StatsView() {
   const getAllItems = useStore(state => state.getAllItems);
   const rankings = useStore(state => state.rankings);
   const unrankedItems = useStore(state => state.unrankedItems);
+  const settings = useStore(state => state.settings) || {
+    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
+    useViewCount: true
+  };
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -165,14 +169,7 @@ export default function StatsView() {
       const baseDuration = (item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) ? Number(item.duration) : null;
       let unitDuration = baseDuration;
       if (unitDuration === null) {
-        switch (g) {
-          case 'anime': unitDuration = 20; break;
-          case 'drama': unitDuration = 40; break;
-          case 'movie': unitDuration = 120; break;
-          case 'music': unitDuration = 3; break;
-          case 'manga': unitDuration = 30; break;
-          default: unitDuration = 0; break;
-        }
+        unitDuration = settings.defaultDurations[g] || settings.defaultDurations.movie || 60;
       }
 
       let totalDurationPerView = unitDuration;
@@ -184,9 +181,9 @@ export default function StatsView() {
         totalDurationPerView = unitDuration * episodes;
       }
 
-      const durationPerView = totalDurationPerView; // For clarity in the existing loop structure
-      
-      const itemTotalMinutes = durationPerView * views;
+      const durationPerView = totalDurationPerView; 
+      const finalViews = settings.useViewCount ? (views || 1) : 1;
+      const itemTotalMinutes = durationPerView * finalViews;
       if (itemTotalMinutes > 0) {
         totalMinutes += itemTotalMinutes;
         genreLifetime[g] = (genreLifetime[g] || 0) + itemTotalMinutes;

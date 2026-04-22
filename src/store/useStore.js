@@ -54,12 +54,34 @@ export const useStore = create((set, get) => ({
   isReorderMode: false,
   viewMode: 'list', 
   currentFolderId: null,
+  settings: {
+    defaultDurations: {
+      movie: 120,
+      music: 3,
+      anime: 20,
+      drama: 40,
+      manga: 30,
+      game: 60
+    },
+    useViewCount: true
+  },
 
   init: async () => {
     const folders = await loadData('folders', []);
     const rankings = await loadData('rankings', []);
     const unrankedItems = await loadData('unrankedItems', []);
-    set({ folders, rankings, unrankedItems, isInitialized: true });
+    const settings = await loadData('settings', {
+      defaultDurations: {
+        movie: 120,
+        music: 3,
+        anime: 20,
+        drama: 40,
+        manga: 30,
+        game: 60
+      },
+      useViewCount: true
+    });
+    set({ folders, rankings, unrankedItems, settings, isInitialized: true });
   },
 
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
@@ -74,6 +96,14 @@ export const useStore = create((set, get) => ({
   setRankings: (rankings) => {
     set({ rankings });
     saveData('rankings', rankings);
+  },
+
+  updateSettings: (updates) => {
+    set((state) => {
+      const newSettings = { ...state.settings, ...updates };
+      saveData('settings', newSettings);
+      return { settings: newSettings };
+    });
   },
   
   getAllItems: () => {
@@ -324,17 +354,37 @@ export const useStore = create((set, get) => ({
   },
 
   importData: async (data) => {
-    const { rankings = [], folders = [], unrankedItems = [] } = data;
-    set({ rankings, folders, unrankedItems, isInitialized: true });
+    const { rankings = [], folders = [], unrankedItems = [], settings = null } = data;
+    const updateObj = { rankings, folders, unrankedItems, isInitialized: true };
+    if (settings) updateObj.settings = settings;
+    
+    set(updateObj);
     await saveData('rankings', rankings);
     await saveData('folders', folders);
     await saveData('unrankedItems', unrankedItems);
+    if (settings) await saveData('settings', settings);
     return true;
   },
 
   clearData: async () => {
     await localforage.clear();
-    set({ rankings: [], folders: [], unrankedItems: [], currentFolderId: null });
+    set({ 
+      rankings: [], 
+      folders: [], 
+      unrankedItems: [], 
+      currentFolderId: null,
+      settings: {
+        defaultDurations: {
+          movie: 120,
+          music: 3,
+          anime: 20,
+          drama: 40,
+          manga: 30,
+          game: 60
+        },
+        useViewCount: true
+      }
+    });
     return true;
   }
 }));

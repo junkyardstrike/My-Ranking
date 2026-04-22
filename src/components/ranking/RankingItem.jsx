@@ -39,6 +39,10 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
   const [localIsCollapsed, setLocalIsCollapsed] = useState(propIsCollapsed);
+  const settings = useStore(state => state.settings) || {
+    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
+    useViewCount: true
+  };
 
   useEffect(() => {
     setLocalIsCollapsed(propIsCollapsed);
@@ -69,21 +73,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
   let unitDuration = baseDuration;
   if (unitDuration === null) {
-    switch (effectiveGenre) {
-      case 'anime': unitDuration = 20; break;
-      case 'drama': unitDuration = 40; break;
-      case 'movie': unitDuration = 120; break;
-      case 'music': unitDuration = 3; break;
-      case 'manga': unitDuration = 30; break;
-      default: unitDuration = 0; break;
-    }
+    unitDuration = settings.defaultDurations[effectiveGenre] || settings.defaultDurations.movie || 60;
   }
 
   let totalDurationPerView = unitDuration;
   if (effectiveGenre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
   else if (effectiveGenre === 'anime' || effectiveGenre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
 
-  const totalLifetimeDuration = totalDurationPerView * (views || 1);
+  const finalViewCount = settings.useViewCount ? (views || 1) : 1;
+  const totalLifetimeDuration = totalDurationPerView * finalViewCount;
 
   // Local states to fix IME bug for lists
   const [localTitle, setLocalTitle] = useState(title || '');
