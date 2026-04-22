@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   DndContext, 
   closestCenter, 
@@ -59,11 +60,14 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   const updateItem = useStore(state => state.updateItem);
   const [items, setItems] = useState(ranking.items);
   const [hasChanges, setHasChanges] = useState(false);
+  
+  // Use location key to force animation re-trigger on tab change
+  const { pathname } = useLocation();
 
   useEffect(() => {
     setItems(ranking.items);
     setHasChanges(false);
-  }, [ranking.id]); // Only reset when switching rankings, not items
+  }, [ranking.id]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
@@ -130,20 +134,22 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   }
 
   return (
-    <div className="relative">
+    <div className="relative" key={pathname}>
       <style>{`
-        @keyframes fadeInUpStagger {
-          from {
+        @keyframes premiumFadeIn {
+          0% {
             opacity: 0;
-            transform: translateY(20px) scale(0.98);
+            transform: translateY(30px) scale(0.95);
+            filter: blur(10px) brightness(0.5);
           }
-          to {
+          100% {
             opacity: 1;
             transform: translateY(0) scale(1);
+            filter: blur(0) brightness(1);
           }
         }
-        .ranking-item-animate {
-          animation: fadeInUpStagger 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        .premium-item-entry {
+          animation: premiumFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
           opacity: 0;
         }
       `}</style>
@@ -154,8 +160,8 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
             {visibleItems.map((item, idx) => (
               <div 
                 key={item.id}
-                className="ranking-item-animate"
-                style={{ animationDelay: `${idx * 60}ms` }}
+                className="premium-item-entry"
+                style={{ animationDelay: `${idx * 50}ms` }}
               >
                 <SortableItem 
                   item={item} 
