@@ -23,7 +23,7 @@ export default function AppLayout() {
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 10 } })
+    useSensor(TouchSensor, { activationConstraint: { distance: 5 } })
   );
 
   const handleDragEnd = (event) => {

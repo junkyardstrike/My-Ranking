@@ -67,8 +67,7 @@ export default function RankingEditor({ ranking, onSave }) {
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 250,
-        tolerance: 5,
+        distance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
