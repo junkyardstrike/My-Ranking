@@ -187,9 +187,29 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 </div>
                 {(rankingId || liveItem.rankingId) && (
                   <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
-                    <button onClick={(e) => { e.stopPropagation(); if (onMove) onMove(id, Math.max(1, currentRank - 1)); }} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400"><Minus size={12} /></button>
-                    <span className="w-6 text-center text-[11px] font-black text-white italic">{currentRank}</span>
-                    <button onClick={(e) => { e.stopPropagation(); if (onMove) onMove(id, Math.min(100, currentRank + 1)); }} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400"><Plus size={12} /></button>
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        const nextRank = Math.max(1, currentRank - 1);
+                        if (onMove) onMove(id, nextRank); 
+                        else moveItemToRank(rankingId || liveItem.rankingId, id, nextRank);
+                      }} 
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 active:scale-90 transition-all"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="w-8 text-center text-[13px] font-black text-white italic tabular-nums">{currentRank}</span>
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        const nextRank = Math.min(100, currentRank + 1);
+                        if (onMove) onMove(id, nextRank); 
+                        else moveItemToRank(rankingId || liveItem.rankingId, id, nextRank);
+                      }} 
+                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 active:scale-90 transition-all"
+                    >
+                      <Plus size={14} />
+                    </button>
                   </div>
                 )}
               </div>
