@@ -17,7 +17,8 @@ import {
   Target,
   LayoutGrid,
   Clock,
-  Sparkles
+  Sparkles,
+  Award
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelWalker from '../components/common/PixelWalker';
