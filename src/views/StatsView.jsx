@@ -249,7 +249,7 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
@@ -384,12 +384,12 @@ export default function StatsView() {
                         <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
                           <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
                             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-base font-black text-yellow-400 font-mono">{item.rating}</span>
+                            <span className="text-base font-black text-yellow-400 font-mono italic">{item.rating}</span>
                           </div>
                           
                           <div className="flex items-center gap-2 shrink-0">
                             <Eye className="w-4 h-4 text-yellow-600/60" />
-                            <span className="text-sm font-black text-yellow-600/80 font-mono">{item.views}回</span>
+                            <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
                           </div>
                         </div>
                       </div>
