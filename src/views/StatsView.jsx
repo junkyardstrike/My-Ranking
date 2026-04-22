@@ -145,14 +145,15 @@ export default function StatsView() {
       const g = item.genre || 'other';
       const views = Number(item.views || 0);
       
+      const isAutoCalculatedGenre = ['manga', 'anime', 'drama'].includes(g);
       let durationPerView = 0;
-      if (item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) {
+      if (!isAutoCalculatedGenre && item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) {
         durationPerView = Number(item.duration);
       } else {
         const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : null;
         switch (g) {
-          case 'anime': durationPerView = (episodes !== null ? episodes : 12) * 20; break;
-          case 'drama': durationPerView = (episodes !== null ? episodes : 10) * 40; break;
+          case 'anime': durationPerView = (episodes !== null ? episodes : 1) * 20; break;
+          case 'drama': durationPerView = (episodes !== null ? episodes : 1) * 40; break;
           case 'movie': durationPerView = 120; break;
           case 'music': durationPerView = 3; break;
           case 'manga': 
