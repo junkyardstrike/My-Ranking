@@ -53,30 +53,28 @@ export default function AllRankingsView() {
         return matchesSearch && matchesGenre;
       })
       .sort((a, b) => {
-        // ABSOLUTE Priority: Unranked (Status 0) vs Ranked (Status 1)
-        // An item is 'Ranked' if it has a rankingId OR it has a currentRank within a ranking
-        const aIsRanked = !!(a.rankingId || (typeof a.currentRank === 'number' && a.currentRank > 0));
-        const bIsRanked = !!(b.rankingId || (typeof b.currentRank === 'number' && b.currentRank > 0));
-        
-        if (aIsRanked !== bIsRanked) {
-          return aIsRanked ? 1 : -1; // Unranked (-1) ALWAYS at the top
+        // 1. ABSOLUTE Priority: Unranked (isSelected: false) vs Ranked (isSelected: true)
+        // This is the most reliable flag from useStore.js
+        if (a.isSelected !== b.isSelected) {
+          return a.isSelected ? 1 : -1; // false comes BEFORE true
         }
 
-        // 2. Group by genre
+        // 2. Group by genre within those groups
         const aGenre = a.genre || 'other';
         const bGenre = b.genre || 'other';
         if (aGenre !== bGenre) {
           return aGenre.localeCompare(bGenre);
         }
 
-        // 3. Sorting within the groups
-        if (!aIsRanked) {
-          // Unranked: newest added first (createdAt DESC)
+        // 3. Final sorting within group
+        if (!a.isSelected) {
+          // Unranked: Newest first (createdAt DESC)
           const timeA = new Date(a.createdAt || 0).getTime();
           const timeB = new Date(b.createdAt || 0).getTime();
-          return timeB - timeA;
+          if (timeB !== timeA) return timeB - timeA;
+          return (b.id || '').localeCompare(a.id || ''); // Fallback to ID for stable sort
         } else {
-          // Ranked: by their position in the ranking (1, 2, 3...)
+          // Ranked: By their position in the ranking (1, 2, 3...)
           const rankA = a.currentRank || 999;
           const rankB = b.currentRank || 999;
           return rankA - rankB;
