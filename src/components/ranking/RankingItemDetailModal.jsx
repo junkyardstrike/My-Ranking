@@ -343,7 +343,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-2 col-span-2 md:col-span-1 pt-4 md:pt-0">
                            <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間(分) / TOTAL</p>
                            <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{calculatedDuration * (views || 1)}</p>
-                           <p className="text-[8px] text-slate-500 font-bold text-center">{calculatedDuration}分 × {views || 1}回</p>
+                           <p className="text-[8px] text-slate-500 font-bold text-center">
+                             {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
+                               `(${genre === 'manga' ? '30' : (genre === 'anime' ? '20' : '40')}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'}) × ${(views || 1)}回`
+                             ) : (
+                               `${calculatedDuration}分 × ${(views || 1)}回`
+                             )}
+                           </p>
                         </div>
                      )}
                   </div>
@@ -351,7 +357,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
                         <div className="flex items-center gap-2 mb-2">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> TIME & EPISODES</p>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> 所要時間・話数 / TIME & EPISODES</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                            <div className="space-y-1">
@@ -377,7 +383,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   {isGlobalEditMode && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
-                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> STYLE</p>
+                           <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> 書体スタイル / STYLE</p>
                            <div className="flex items-center gap-4 flex-1">
                               <span className="text-[10px] font-mono font-black text-accent w-6 text-center">{fontSize}</span>
                               <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
@@ -385,7 +391,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                            </div>
                         </div>
                         <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-3 rounded-xl border font-black text-[10px] tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-slate-400 border-white/10'}`}>
-                           BOLD FONT: {isBold ? 'ON' : 'OFF'}
+                           太字設定 / BOLD FONT: {isBold ? 'ON' : 'OFF'}
                         </button>
                      </div>
                   )}
@@ -394,23 +400,23 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
                        {!isAddingToRanking ? (
                          <button onClick={() => setIsAddingToRanking(true)} className="w-full py-4 rounded-[20px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-accent/20 text-xl tracking-tight italic">
-                            <ListPlus size={24} /> ADD TO RANKING
+                            <ListPlus size={24} /> ランキングに追加 / ADD TO RANKING
                          </button>
                        ) : (
                          <div className="space-y-4 animate-in slide-in-from-bottom-4">
                            <div className="grid grid-cols-1 gap-2">
                               <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-accent appearance-none text-sm">
-                                 <option value="">Select Ranking...</option>
+                                 <option value="">ランキングを選択... / Select Ranking...</option>
                                  {rankings.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
                               </select>
                               <div className="relative">
-                                 <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-black outline-none focus:border-accent text-lg" placeholder="Pos" />
-                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest">Rank</span>
+                                 <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-black outline-none focus:border-accent text-lg" placeholder="順位 / Pos" />
+                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-300 uppercase tracking-widest">順位 / Rank</span>
                               </div>
                            </div>
                            <div className="flex gap-4 pt-2">
-                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-slate-400 font-black uppercase text-[10px] tracking-widest">Cancel</button>
-                              <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-3 rounded-xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-30 tracking-tight text-sm shadow-lg">INSERT NOW <ArrowRight size={18} /></button>
+                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-slate-400 font-black uppercase text-[10px] tracking-widest">キャンセル / Cancel</button>
+                              <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-3 rounded-xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-30 tracking-tight text-sm shadow-lg">追加する / INSERT NOW <ArrowRight size={18} /></button>
                            </div>
                          </div>
                        )}
@@ -418,11 +424,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   )}
                    {liveItem.previousRanks && liveItem.previousRanks.length > 0 && (
                      <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-3 shadow-lg">
-                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><History size={12} /> RANK HISTORY</p>
+                        <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><History size={12} /> 順位履歴 / RANK HISTORY</p>
                         <div className="flex flex-wrap gap-2">
                            {liveItem.previousRanks.map((h, i) => (
                              <div key={i} className="flex flex-col items-center bg-black/40 px-3 py-1.5 rounded-xl border border-white/5">
-                                <span className="text-[10px] font-black text-accent italic">Rank {h.rank}</span>
+                                <span className="text-[10px] font-black text-accent italic">{h.rank}位</span>
                                 <span className="text-[8px] text-slate-300 font-bold">{new Date(h.date).toLocaleDateString('ja-JP', { month: 'short', day: 'numeric' })}</span>
                              </div>
                            ))}
@@ -433,16 +439,16 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
                   <div className="flex items-center justify-between px-1">
-                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> NARRATIVE</p>
+                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> メモ・あらすじ / NARRATIVE</p>
                       <button onClick={handleCopy} className="text-[9px] text-accent/60 hover:text-accent font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors">
-                         <Copy size={10} /> COPY TEXT
+                         <Copy size={10} /> コピー / COPY TEXT
                       </button>
                    </div>
                   {isGlobalEditMode ? (
                      <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-300 text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
                   ) : (
                      <div className="flex-1 bg-white/5 p-6 rounded-[32px] border border-white/5 text-slate-400 text-base leading-relaxed italic shadow-inner min-h-[150px] whitespace-pre-wrap custom-scrollbar">
-                        {memo || <span className="opacity-10 text-3xl not-italic font-black">NO NARRATIVE.</span>}
+                        {memo || <span className="opacity-10 text-3xl not-italic font-black">記述なし / NO NARRATIVE.</span>}
                      </div>
                   )}
                </div>

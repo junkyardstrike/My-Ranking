@@ -247,7 +247,7 @@ export default function StatsView() {
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <p className="text-[9px] text-slate-500 font-bold mt-2 tracking-widest">※(各作品の所要時間 × 閲覧・視聴回数) を合算</p>
+                <p className="text-[9px] text-slate-500 font-bold mt-2 tracking-widest">※(各作品の(所要時間×話数/巻数) × 閲覧・視聴回数) を合算</p>
                 
                 {stats.lifetimeStats.days > 0 && (
                   <div className="mt-4 bg-white/5 border border-white/10 px-4 sm:px-5 py-2 rounded-full inline-flex items-center gap-2 shadow-lg">
