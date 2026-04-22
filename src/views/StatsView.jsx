@@ -367,7 +367,7 @@ export default function StatsView() {
                   <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
                   <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    95点以上 × 5回以上の鑑賞
+                    ９５点以上の評価点かつ５回以上の閲覧実績が達成された作品
                   </p>
                 </div>
               </div>
