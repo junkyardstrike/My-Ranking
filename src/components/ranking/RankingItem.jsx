@@ -399,8 +399,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               </div>
             </div>
             {!localIsCollapsed && imageBase64 && (
-              <div className="flex-shrink-0 p-2 flex items-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
+              <div className="flex-shrink-0 p-2 pr-3 flex items-center">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">
                   <img src={imageBase64} alt={title} className="w-full h-full object-cover" />
                 </div>
               </div>
@@ -415,15 +415,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   <GripVertical size={16} />
                 </div>
               )}
-              <div 
-                className="p-2 text-slate-800 hover:text-white transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLocalIsCollapsed(!localIsCollapsed);
-                }}
-              >
-                {localIsCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
-              </div>
             </div>
           </div>
         )}

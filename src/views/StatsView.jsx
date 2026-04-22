@@ -227,22 +227,22 @@ export default function StatsView() {
           
           <div className="relative z-10 flex flex-col gap-8">
             {/* Top: Pixel Walker & Total */}
-            <div className="flex flex-row items-center justify-between w-full px-2 sm:px-8">
+            <div className="flex flex-row items-center justify-center gap-8 sm:gap-16 lg:gap-32 w-full px-2 sm:px-8">
               {/* Left: Pixel Walker */}
               <div className="flex-shrink-0">
-                 <PixelWalker className="transform scale-[1.2] origin-left" />
+                 <PixelWalker className="transform scale-[1.2] origin-center" />
               </div>
 
               {/* Right: Total Time */}
-              <div className="flex flex-col items-end text-right">
+              <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計消費時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
-                <div className="flex items-baseline gap-2 justify-end">
-                  <span className="text-5xl sm:text-6xl md:text-8xl font-black text-white font-mono tracking-tighter drop-shadow-xl">
+                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl truncate">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
-                  <span className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md">時間</span>
+                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
@@ -290,7 +290,7 @@ export default function StatsView() {
         </section>
 
         {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
+        <section className="bg-black/40 backdrop-blur-md border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group">
           <div className="flex items-center justify-between mt-4">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
@@ -346,7 +346,7 @@ export default function StatsView() {
         </section>
 
         {/* 2. Score Distribution */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl">
+        <section className="bg-black/40 backdrop-blur-md border border-white/5 rounded-[32px] p-6 shadow-2xl">
           <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
@@ -393,7 +393,7 @@ export default function StatsView() {
         {/* 3. Hall of Fame */}
         <section className="md:col-span-2 relative">
           <div className="absolute -inset-[1px] bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-600 rounded-[34px] blur-[2px] opacity-20" />
-          <div className="relative bg-black/60 backdrop-blur-2xl border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
+          <div className="relative bg-black/60 backdrop-blur-md border border-yellow-500/30 rounded-[32px] p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-yellow-500/10 rounded-xl border border-yellow-500/20">
