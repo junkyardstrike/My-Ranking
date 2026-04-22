@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
-import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2 } from 'lucide-react';
+import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelItem from '../components/common/PixelItem';
 
