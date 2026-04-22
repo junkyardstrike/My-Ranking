@@ -1,5 +1,4 @@
-import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { useStore } from '../store/useStore';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
@@ -56,9 +55,6 @@ export default function StatsView() {
   const rankings = useStore(state => state.rankings);
   const unrankedItems = useStore(state => state.unrankedItems);
   
-  const navigate = useNavigate();
-  const touchStartPos = useRef(null);
-
   const stats = useMemo(() => {
     const allItems = getAllItems();
     
@@ -168,7 +164,7 @@ export default function StatsView() {
         totalDurationPerView = unitDuration * episodes;
       }
 
-      const durationPerView = totalDurationPerView; // For clarity in the existing loop structure
+      const durationPerView = totalDurationPerView;
       
       const itemTotalMinutes = durationPerView * views;
       if (itemTotalMinutes > 0) {
@@ -235,14 +231,11 @@ export default function StatsView() {
         {/* 0. Lifetime Counter */}
         <section className="md:col-span-2 relative py-4">
           <div className="relative z-10 flex flex-col gap-8">
-            {/* Top: Pixel Walker & Total */}
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
-              {/* Left: Pixel Walker */}
               <div className="flex-shrink-0 ml-8 sm:ml-16">
                  <PixelWalker className="transform scale-[1.2] origin-center" />
               </div>
 
-              {/* Right: Total Time */}
               <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
@@ -268,14 +261,13 @@ export default function StatsView() {
               </div>
             </div>
 
-            {/* Bottom: Genre Breakdown */}
             <div className="w-full mt-2">
                <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
                     <div 
                       key={g.id} 
-                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 text-left w-full"
+                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 text-left w-full select-none"
                     >
                       {g.bgImage && (
                         <div className="absolute inset-0 z-0 opacity-30 transition-opacity duration-500">
@@ -337,7 +329,7 @@ export default function StatsView() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {stats.hallOfFame.map(item => (
-                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group md:hover:bg-yellow-500/10 transition-all duration-500">
+                  <div key={item.id} className="flex items-center gap-3 bg-yellow-500/5 border border-yellow-500/10 p-3 rounded-2xl group transition-all duration-500">
                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-yellow-500/20 shadow-lg flex-shrink-0">
                       {item.imageBase64 ? (
                         <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
@@ -457,16 +449,16 @@ export default function StatsView() {
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
              {stats.scoreBins.map(bin => (
-               <div key={bin.range} className="flex items-center gap-2">
-                  <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
-                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent transition-all duration-1000" 
-                      style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
-                    />
-                  </div>
-                  <span className="w-10 text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
-               </div>
+                <div key={bin.range} className="flex items-center gap-2">
+                   <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
+                   <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                     <div 
+                       className="h-full bg-accent transition-all duration-1000" 
+                       style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
+                     />
+                   </div>
+                   <span className="w-10 text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
+                </div>
              ))}
           </div>
         </section>
@@ -486,10 +478,9 @@ export default function StatsView() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {stats.genreAverages.map((genre, index) => (
-              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-36 flex flex-col justify-between shadow-lg">
-                {/* Random Genre Overlay Image */}
+              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-36 flex flex-col justify-between shadow-lg select-none">
                 {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-25 md:group-hover:opacity-40 transition-opacity duration-700">
+                  <div className="absolute inset-0 z-0 opacity-25 transition-opacity duration-700">
                     <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                   </div>
