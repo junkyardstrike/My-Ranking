@@ -225,7 +225,7 @@ export default function StatsView() {
           <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
             <span className="text-sm font-black text-slate-400">総作品数</span>
             <span className="text-3xl font-black text-accent font-mono leading-none">
-              <Counter value={stats.totalCount} />
+              {stats.totalCount}
             </span>
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function StatsView() {
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
                   <span className="text-4xl sm:text-5xl md:text-7xl font-black text-white font-mono tracking-tighter drop-shadow-xl truncate">
-                    <Counter value={stats.lifetimeStats.totalHours} />
+                    {stats.lifetimeStats.totalHours}
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
@@ -323,7 +323,7 @@ export default function StatsView() {
               <div className="bg-yellow-500/10 px-3 py-1.5 rounded-xl border border-yellow-500/20 flex items-center gap-2">
                 <span className="text-[10px] font-black text-yellow-600 uppercase">Inductees</span>
                 <span className="text-xl font-black text-yellow-500 font-mono leading-none">
-                  <Counter value={stats.hallOfFame.length} />
+                  {stats.hallOfFame.length}
                 </span>
               </div>
             </div>
@@ -406,7 +406,7 @@ export default function StatsView() {
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <span className="text-[8px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
               <span className="text-xl font-black text-white italic font-mono leading-none">
-                <Counter value={stats.totalCount} />
+                {stats.totalCount}
               </span>
             </div>
           </div>

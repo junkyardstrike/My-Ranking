@@ -322,23 +322,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                </div>
             </div>
 
-            {/* LIVE CALCULATION BANNER - VERY PROMINENT */}
-            {isGlobalEditMode && (
-              <div className="bg-accent/10 border-2 border-accent/40 p-5 rounded-[28px] shadow-[0_0_30px_rgba(212,175,55,0.15)] animate-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-accent uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} /> リアルタイム計算結果 / LIVE TOTAL</p>
-                    <p className="text-[11px] text-slate-300 font-mono italic">
-                       {unitDuration}m × {genre === 'manga' ? (volumes || 1) + '巻' : (genre === 'anime' || genre === 'drama' ? (episodes || 1) + '話' : '1')} × {views}回
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-4xl font-black text-white font-mono tracking-tighter italic drop-shadow-lg">{totalLifetimeDuration.toLocaleString()}</span>
-                    <span className="text-xs font-black text-accent ml-1 italic uppercase">min</span>
-                  </div>
-                </div>
-              </div>
-            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
