@@ -236,7 +236,7 @@ export default function StatsView() {
             <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-emerald-100 via-emerald-400 to-emerald-700 drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)]">
               Stats
             </h1>
-            <HeaderWalker size={36} className="mb-2" />
+            <HeaderWalker className="mb-1" />
             <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)]" />
           </div>
           <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
