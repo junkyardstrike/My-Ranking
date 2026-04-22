@@ -386,8 +386,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     {/* Bottom Row: Metrics, Date, History */}
                     {(views > 0 || totalLifetimeDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
-                        {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}</span>}
-                        {totalLifetimeDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{(totalLifetimeDuration / 60).toFixed(1)}h</span>}
+                        {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}回</span>}
+                        {totalLifetimeDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{(totalLifetimeDuration / 60).toFixed(1)}時間</span>}
                         {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-400"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
                         
                         {/* Rank history in expanded view (Forced New Line) */}
