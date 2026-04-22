@@ -387,22 +387,22 @@ export default function StatsView() {
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-black text-white text-2xl sm:text-3xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight mb-2 drop-shadow-lg">{item.title}</h3>
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-4">
-                          <div className="flex items-center gap-2 px-4 py-1.5 bg-yellow-500/20 rounded-xl border border-yellow-500/30 shadow-inner">
-                            <Star className="w-6 h-6 text-yellow-400 fill-yellow-400" />
-                            <span className="text-xl font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                        <h3 className="font-black text-red-500 uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight mb-2 drop-shadow-lg" style={{ fontSize: '32px' }}>{item.title}</h3>
+                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mt-6">
+                          <div className="flex items-center gap-3 px-6 py-2 bg-yellow-500/20 rounded-2xl border-2 border-yellow-500/40 shadow-inner">
+                            <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
+                            <span className="font-black text-yellow-400 font-mono leading-none" style={{ fontSize: '28px' }}>{item.rating}</span>
                           </div>
-                          <div className="flex items-center gap-2">
-                            <Eye className="w-5 h-5 text-yellow-600/80" />
-                            <span className="text-lg font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
+                          <div className="flex items-center gap-3">
+                            <Eye className="w-8 h-8 text-yellow-600/80" />
+                            <span className="font-black text-yellow-600/80 font-mono leading-none" style={{ fontSize: '24px' }}>{item.views}回</span>
                           </div>
                         </div>
-                        <div className="mt-6 flex items-center justify-between">
-                           <span className="text-sm font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-4 py-2 rounded-full border border-yellow-500/10">
+                        <div className="mt-8 flex items-center justify-between">
+                           <span className="font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-6 py-2 rounded-full border-2 border-yellow-500/20" style={{ fontSize: '14px' }}>
                              {GENRE_LABELS[item.genre] || 'OTHER'}
                            </span>
-                           <span className="text-xs font-bold text-slate-500 font-mono italic">MASTER RANK #{idx + 1}</span>
+                           <span className="text-sm font-bold text-slate-500 font-mono italic">MASTER RANK #{idx + 1}</span>
                         </div>
                       </div>
                     </div>
@@ -446,13 +446,13 @@ export default function StatsView() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <div className="flex items-center justify-center gap-1">
-                <span className="text-3xl font-black text-white italic font-mono leading-none">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-[999]">
+              <span className="text-[12px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
+              <div className="flex items-center justify-center gap-2">
+                <span className="font-black text-white italic font-mono leading-none" style={{ fontSize: '48px' }}>
                   <Counter value={stats.totalCount} />
                 </span>
-                <span className="text-xs font-black text-accent italic">作品</span>
+                <span className="font-black text-red-500 italic" style={{ fontSize: '24px' }}>作品</span>
               </div>
             </div>
           </div>
