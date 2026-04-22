@@ -97,7 +97,7 @@ export default function SettingsView() {
         ].map(s => (
           <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
             <p className="text-2xl font-black text-accent font-mono">
-              <Counter value={s.value} />
+              {s.value}
             </p>
             <p className="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-widest">{s.label}</p>
           </div>
