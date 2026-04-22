@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
 const PALETTES = [
-  { hat1: '#fbbf24', hat2: '#f59e0b', visor: '#38bdf8', jacket1: '#fcd34d', jacket2: '#ffffff', pants: '#6b21a8', shoes: '#a855f7' },
-  { hat1: '#0ea5e9', hat2: '#0284c7', visor: '#f43f5e', jacket1: '#38bdf8', jacket2: '#ffffff', pants: '#0f172a', shoes: '#f43f5e' },
-  { hat1: '#10b981', hat2: '#059669', visor: '#fbbf24', jacket1: '#34d399', jacket2: '#ffffff', pants: '#1e293b', shoes: '#fbbf24' },
-  { hat1: '#ec4899', hat2: '#be185d', visor: '#38bdf8', jacket1: '#f472b6', jacket2: '#ffffff', pants: '#4c1d95', shoes: '#38bdf8' },
-  { hat1: '#f43f5e', hat2: '#e11d48', visor: '#34d399', jacket1: '#fb7185', jacket2: '#ffffff', pants: '#172554', shoes: '#34d399' },
+  { p1: '#fbbf24', p2: '#f59e0b', p3: '#38bdf8', p4: '#fcd34d', p5: '#ffffff' },
+  { p1: '#0ea5e9', p2: '#0284c7', p3: '#f43f5e', p4: '#38bdf8', p5: '#ffffff' },
+  { p1: '#10b981', p2: '#059669', p3: '#fbbf24', p4: '#34d399', p5: '#ffffff' },
+  { p1: '#ec4899', p2: '#be185d', p3: '#38bdf8', p4: '#f472b6', p5: '#ffffff' },
+  { p1: '#f43f5e', p2: '#e11d48', p3: '#34d399', p4: '#fb7185', p5: '#ffffff' },
 ];
 
 const QUOTES = [
@@ -62,10 +62,13 @@ const QUOTES = [
   { text: "アスタ・ラ・ビスタ、ベイビー", source: "ターミネーター2" }
 ];
 
+const TYPES = ['human', 'cat', 'dog', 'bird'];
+
 const PixelWalker = ({ className = "" }) => {
   const [frame, setFrame] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
   const [paletteIndex, setPaletteIndex] = useState(0);
+  const [characterType, setCharacterType] = useState('human');
   const [quote, setQuote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
 
   useEffect(() => {
@@ -76,8 +79,21 @@ const PixelWalker = ({ className = "" }) => {
   }, []);
 
   useEffect(() => {
+    const transformTimer = setInterval(() => {
+      handleJump();
+      setTimeout(() => {
+        setCharacterType(prev => {
+          const others = TYPES.filter(t => t !== prev);
+          return others[Math.floor(Math.random() * others.length)];
+        });
+      }, 300);
+    }, 15000);
+    return () => clearInterval(transformTimer);
+  }, []);
+
+  useEffect(() => {
     const randomActionTimer = setInterval(() => {
-      if (Math.random() > 0.7) {
+      if (Math.random() > 0.8) {
         handleJump();
       }
     }, 5000);
@@ -90,100 +106,98 @@ const PixelWalker = ({ className = "" }) => {
     
     const nextQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
     setQuote(nextQuote);
-
-    setPaletteIndex((prev) => {
-      let next = Math.floor(Math.random() * PALETTES.length);
-      if (next === prev) next = (next + 1) % PALETTES.length;
-      return next;
-    });
+    setPaletteIndex((prev) => (prev + 1) % PALETTES.length);
 
     setTimeout(() => {
       setIsJumping(false);
     }, 600);
   };
 
-  const colors = PALETTES[paletteIndex];
+  const c = PALETTES[paletteIndex];
+
+  const renderCharacter = () => {
+    switch (characterType) {
+      case 'cat':
+        return (
+          <>
+            <rect x="5" y="8" width="8" height="4" fill={c.p1} />
+            <rect x="9" y="5" width="4" height="4" fill={c.p1} />
+            <rect x="9" y="4" width="1" height="1" fill={c.p1} />
+            <rect x="12" y="4" width="1" height="1" fill={c.p1} />
+            <rect x="12" y="6" width="1" height="1" fill="#000" />
+            <rect x="4" y={frame === 0 ? 7 : 8} width="1" height="3" fill={c.p1} />
+            <rect x="6" y={frame === 0 ? 12 : 11} width="1" height="2" fill={c.p1} />
+            <rect x="8" y={frame === 0 ? 11 : 12} width="1" height="2" fill={c.p1} />
+            <rect x="10" y={frame === 0 ? 12 : 11} width="1" height="2" fill={c.p1} />
+            <rect x="12" y={frame === 0 ? 11 : 12} width="1" height="2" fill={c.p1} />
+          </>
+        );
+      case 'dog':
+        return (
+          <>
+            <rect x="4" y="8" width="9" height="5" fill={c.p2} />
+            <rect x="10" y="5" width="5" height="4" fill={c.p2} />
+            <rect x="10" y="5" width="1" height="2" fill="#000" opacity="0.3" />
+            <rect x="13" y="6" width="1" height="1" fill="#000" />
+            <rect x="15" y="7" width="1" height="1" fill="#000" />
+            <rect x={frame === 0 ? 2 : 3} y="7" width="2" height="2" fill={c.p2} />
+            <rect x="5" y={frame === 0 ? 13 : 12} width="2" height="2" fill={c.p2} />
+            <rect x="8" y={frame === 0 ? 12 : 13} width="2" height="2" fill={c.p2} />
+            <rect x="11" y={frame === 0 ? 13 : 12} width="2" height="2" fill={c.p2} />
+          </>
+        );
+      case 'bird':
+        return (
+          <>
+            <rect x="6" y="8" width="5" height="4" fill={c.p3} />
+            <rect x="9" y="6" width="3" height="3" fill={c.p3} />
+            <rect x="12" y="7" width="2" height="1" fill="#fbbf24" />
+            <rect x="11" y="7" width="1" height="1" fill="#000" />
+            <rect x="7" y={frame === 0 ? 9 : 8} width="3" height="2" fill="#fff" opacity="0.4" />
+            <rect x="7" y={frame === 0 ? 12 : 11} width="1" height="2" fill="#000" opacity="0.5" />
+            <rect x="9" y={frame === 0 ? 12 : 11} width="1" height="2" fill="#000" opacity="0.5" />
+          </>
+        );
+      default:
+        return (
+          <>
+            <rect x="5" y="1" width="6" height="2" fill={c.p1} />
+            <rect x="4" y="2" width="1" height="2" fill={c.p1} />
+            <rect x="11" y="2" width="1" height="2" fill={c.p1} />
+            <rect x="5" y="3" width="6" height="4" fill="#fef3c7" />
+            <rect x="5" y="4" width="7" height="2" fill="#1e293b" />
+            <rect x="6" y="4" width="5" height="1" fill={c.p3} />
+            <rect x="5" y="7" width="6" height="5" fill={c.p1} />
+            <rect x="7" y="8" width="2" height="4" fill={c.p5} />
+            <rect x="4" y="7" width="1" height="4" fill={c.p1} />
+            <rect x={frame === 0 ? 4 : 3} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
+            <rect x="11" y="7" width="1" height="4" fill={c.p1} />
+            <rect x={frame === 0 ? 11 : 12} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
+            <rect x={frame === 0 ? 5 : 6} y="12" width="2" height={frame === 0 ? 3 : 2} fill="#312e81" />
+            <rect x={frame === 0 ? 4 : 7} y={frame === 0 ? 14 : 13} width="2" height="1" fill="#000" />
+            <rect x={frame === 0 ? 9 : 9} y="12" width="2" height={frame === 0 ? 2 : 3} fill="#312e81" />
+            <rect x={frame === 0 ? 8 : 9} y={frame === 0 ? 13 : 14} width="2" height="1" fill="#000" />
+          </>
+        );
+    }
+  };
 
   return (
-    <div 
-      className={`relative ${className} w-24 h-24 cursor-pointer`}
-      onClick={handleJump}
-    >
+    <div className={`relative ${className} w-24 h-24 cursor-pointer`} onClick={handleJump}>
       <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 animate-in fade-in zoom-in duration-300">
         <div className="relative bg-white text-black text-[10px] font-black px-3 py-2 border-2 border-black whitespace-nowrap shadow-[4px_4px_0_rgba(0,0,0,0.2)]">
            {quote.text}
            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-r-2 border-b-2 border-black rotate-45" />
         </div>
       </div>
-
       <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
         <span className="text-[9px] font-black text-white/40 uppercase tracking-widest italic bg-black/20 px-2 py-0.5 rounded-full backdrop-blur-[2px]">
           〜{quote.source}より〜
         </span>
       </div>
-
-      <div className="absolute inset-0 opacity-20 overflow-hidden rounded-xl">
-         <div className="absolute top-4 left-0 w-8 h-[2px] bg-white animate-[slide_1s_infinite_linear]" style={{ animationDelay: '0s' }} />
-         <div className="absolute top-12 left-4 w-12 h-[2px] bg-accent animate-[slide_1.5s_infinite_linear]" style={{ animationDelay: '0.5s' }} />
-         <div className="absolute top-20 left-2 w-6 h-[2px] bg-white animate-[slide_0.8s_infinite_linear]" style={{ animationDelay: '0.2s' }} />
-      </div>
-
-      <svg
-        viewBox="0 0 16 16"
-        className={`w-full h-full transition-transform duration-300 ${isJumping ? '-translate-y-4' : (frame === 1 ? '-translate-y-1' : '')}`}
-        style={{ shapeRendering: 'crispEdges' }}
-      >
-        <rect x="5" y="1" width="6" height="2" fill={colors.hat1} />
-        <rect x="4" y="2" width="1" height="2" fill={colors.hat1} />
-        <rect x="11" y="2" width="1" height="2" fill={colors.hat1} />
-        <rect x="5" y="0" width="2" height="1" fill={colors.hat2} />
-        <rect x="9" y="0" width="2" height="1" fill={colors.hat2} />
-        <rect x="5" y="3" width="6" height="4" fill="#fef3c7" />
-        <rect x="5" y="4" width="7" height="2" fill="#1e293b" />
-        <rect x="6" y="4" width="5" height="1" fill={colors.visor} />
-        <rect x="5" y="7" width="6" height="5" fill={colors.jacket1} />
-        <rect x="7" y="8" width="2" height="4" fill={colors.jacket2} />
-        <rect x="4" y="7" width="1" height="4" fill={colors.jacket1} />
-        {frame === 0 && !isJumping ? (
-          <rect x="4" y="11" width="1" height="1" fill="#fef3c7" />
-        ) : (
-          <rect x="3" y="10" width="1" height="1" fill="#fef3c7" />
-        )}
-        <rect x="11" y="7" width="1" height="4" fill={colors.jacket1} />
-        {frame === 0 && !isJumping ? (
-          <rect x="11" y="11" width="1" height="1" fill="#fef3c7" />
-        ) : (
-          <rect x="12" y="10" width="1" height="1" fill="#fef3c7" />
-        )}
-        {frame === 0 && !isJumping ? (
-          <>
-            <rect x="5" y="12" width="2" height="3" fill={colors.pants} />
-            <rect x="4" y="14" width="2" height="1" fill={colors.shoes} />
-          </>
-        ) : (
-          <>
-            <rect x="6" y="12" width="2" height="2" fill={colors.pants} />
-            <rect x="7" y="13" width="2" height="1" fill={colors.shoes} />
-          </>
-        )}
-        {frame === 0 && !isJumping ? (
-          <>
-            <rect x="9" y="12" width="2" height="2" fill={colors.pants} />
-            <rect x="8" y="13" width="2" height="1" fill={colors.shoes} />
-          </>
-        ) : (
-          <>
-            <rect x="9" y="12" width="2" height="3" fill={colors.pants} />
-            <rect x="9" y="14" width="2" height="1" fill={colors.shoes} />
-          </>
-        )}
+      <svg viewBox="0 0 16 16" className={`w-full h-full transition-all duration-300 ${isJumping ? '-translate-y-4 scale-110' : (frame === 1 ? '-translate-y-1' : '')}`} style={{ shapeRendering: 'crispEdges' }}>
+        {renderCharacter()}
       </svg>
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes slide {
-          from { transform: translateX(100px); }
-          to { transform: translateX(-100px); }
-        }
-      `}} />
     </div>
   );
 };

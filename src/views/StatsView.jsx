@@ -226,17 +226,23 @@ export default function StatsView() {
 
   return (
     <div className="animate-in fade-in duration-700 space-y-4 pb-32">
-      {/* Header */}
-      <div className="flex items-end justify-between px-1 mb-2">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic flex items-center gap-2">
-            <TrendingUp className="text-accent" size={24} />
-            Stats <span className="text-xs text-slate-500 not-italic ml-2 tracking-widest font-bold">/ 統計データ</span>
-          </h1>
+      <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
+        <div className="flex flex-col gap-1">
+          <div className="relative inline-block">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-white/30 drop-shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+              Dashboard
+            </h1>
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-accent via-accent/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+          </div>
+          <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
+            <span className="w-8 h-px bg-slate-800" />
+            Analytics & Stats
+          </p>
         </div>
-        <div className="text-right">
-          <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
-            <span className="text-sm font-black text-slate-400">総作品数</span>
+
+        <div className="flex flex-col items-end gap-3">
+          <div className="inline-flex items-center gap-3 bg-accent/10 px-5 py-2.5 rounded-2xl border border-accent/20 shadow-lg backdrop-blur-sm">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</span>
             <span className="text-3xl font-black text-accent font-mono leading-none">
               <Counter value={stats.totalCount} />
             </span>

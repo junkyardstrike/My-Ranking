@@ -96,38 +96,47 @@ export default function AllRankingsView() {
         }
       `}</style>
       <div className="space-y-6">
-        <div className="flex items-end justify-between px-1 mb-6">
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">Records</h1>
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">全作品マスターリスト</p>
+      <div className="flex items-start justify-between mb-10">
+        <div className="flex flex-col gap-1">
+          <div className="relative inline-block">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-white/30 drop-shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+              Records
+            </h1>
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-accent via-accent/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
           </div>
-          <div className="flex flex-col items-end gap-3">
-            {!isEditMode && (
-              <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
-              >
-                {isActuallyCollapsed ? (
-                  <>
-                    <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">展開する</span>
-                  </>
-                ) : (
-                  <>
-                    <Minimize2 className="w-3.5 h-3.5 text-accent" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">折り畳み</span>
-                  </>
-                )}
-              </button>
-            )}
-            <div className="inline-flex items-center gap-2 bg-accent/10 px-4 py-2 rounded-2xl border border-accent/20">
-              <span className="text-xs font-black text-slate-400">総作品数</span>
-              <span className="text-2xl font-black text-accent font-mono leading-none">
-                {allItems.length}
-              </span>
-            </div>
+          <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
+            <span className="w-8 h-px bg-slate-800" />
+            Master List
+          </p>
+        </div>
+
+        <div className="flex flex-col items-end gap-3">
+          {!isEditMode && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95 shadow-xl backdrop-blur-md"
+            >
+              {isActuallyCollapsed ? (
+                <>
+                  <Maximize2 className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Expand</span>
+                </>
+              ) : (
+                <>
+                  <Minimize2 className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Collapse</span>
+                </>
+              )}
+            </button>
+          )}
+          <div className="inline-flex items-center gap-3 bg-accent/10 px-5 py-2.5 rounded-2xl border border-accent/20 shadow-lg backdrop-blur-sm">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</span>
+            <span className="text-3xl font-black text-accent font-mono leading-none">
+              {allItems.length}
+            </span>
           </div>
         </div>
+      </div>
 
         {/* Search & Genre Filters */}
         <div className="space-y-4">

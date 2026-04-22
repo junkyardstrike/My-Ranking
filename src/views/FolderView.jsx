@@ -316,18 +316,27 @@ export default function FolderView() {
           opacity: 0;
         }
       `}</style>
-      <div className="flex items-end justify-between px-1 mb-2">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">{isRoot ? 'Ranking' : currentFolder?.name}</h1>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">{isRoot ? 'コレクション・アーカイブ' : `フォルダ: ${currentFolder?.name}`}</p>
+      <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
+        <div className="flex flex-col gap-1">
+          <div className="relative inline-block">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-white/30 drop-shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+              {isRoot ? 'Ranking' : currentFolder?.name}
+            </h1>
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-accent via-accent/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+          </div>
+          <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
+            <span className="w-8 h-px bg-slate-800" />
+            {isRoot ? 'Collection Archive' : `Folder: ${currentFolder?.name}`}
+          </p>
         </div>
+
         {!isRoot && (
           <button 
             onClick={() => navigate(currentFolder?.parentId ? `/folder/${currentFolder.parentId}` : '/')}
-            className="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-all duration-300 bg-surface/50 px-3 py-1.5 rounded-lg border border-white/5 hover:bg-surface-light hover:border-white/10 shadow-sm"
+            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-xs font-bold uppercase tracking-widest">Back</span>
+            <ArrowLeft className="w-4 h-4 text-accent" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
           </button>
         )}
       </div>

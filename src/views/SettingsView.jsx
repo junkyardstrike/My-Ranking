@@ -75,14 +75,23 @@ export default function SettingsView() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
-      <div className="flex items-end justify-between px-1 mb-6">
-        <div>
-          <h1 className="text-3xl font-black text-white tracking-tighter uppercase italic">Settings</h1>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">アプリ設定・データ管理</p>
+      <div className="flex items-start justify-between mb-10">
+        <div className="flex flex-col gap-1">
+          <div className="relative inline-block">
+            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-white/30 drop-shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+              Settings
+            </h1>
+            <div className="absolute -bottom-2 left-0 w-24 h-1 bg-gradient-to-r from-accent via-accent/50 to-transparent rounded-full shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
+          </div>
+          <p className="text-[11px] text-slate-500 font-black uppercase tracking-[0.4em] mt-5 ml-1 flex items-center gap-3">
+            <span className="w-8 h-px bg-slate-800" />
+            Control Panel
+          </p>
         </div>
+
         {status && (
-          <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold animate-in slide-in-from-right-4 fade-in ${status.type === 'success' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-400'}`}>
-            {status.type === 'success' ? <CheckCircle2 className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+          <div className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-right-4 fade-in backdrop-blur-md shadow-2xl ${status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
+            {status.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
             {status.message}
           </div>
         )}
