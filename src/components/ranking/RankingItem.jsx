@@ -51,13 +51,12 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     return [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
   });
 
-  const liveItem = liveItemFromStore ? {
-    ...liveItemFromStore,
-    ...propItem, // Ensure local overrides (like currentRank from drag-and-drop) take precedence
-    isSelected: propItem.isSelected || liveItemFromStore.isSelected,
-    rankingId: propItem.rankingId || liveItemFromStore.rankingId,
-    rankingTitle: propItem.rankingTitle || liveItemFromStore.rankingTitle
-  } : propItem;
+  const liveItem = {
+    ...(liveItemFromStore || {}),
+    ...propItem,
+    // Ensure history is preserved from store
+    previousRanks: (liveItemFromStore?.previousRanks || propItem.previousRanks || [])
+  };
 
   const { id, currentRank, title, author, memo, createdAt, imageBase64, isBold = false, color = '#ffffff', fontSize = 16, views = 0, rating = 0, isSelected = false, genre: itemGenre, previousRanks = [], duration, episodes = 1, volumes = 1 } = liveItem;
   
@@ -383,25 +382,27 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       )}
                     </div>
                     
-                    {/* Bottom Row: Metrics, Date, History */}
-                    {(views > 0 || totalLifetimeDuration > 0 || formattedDate || (previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank)) && (
+                    {/* Bottom Row: Metrics, Date */}
+                    {(views > 0 || totalLifetimeDuration > 0 || formattedDate) && (
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
                         {views > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Eye className="w-2.5 h-2.5 text-blue-500" />{views}回</span>}
                         {totalLifetimeDuration > 0 && <span className="flex items-center gap-1 text-[9px] text-slate-400 font-mono"><Clock className="w-2.5 h-2.5 text-purple-500" />{(totalLifetimeDuration / 60).toFixed(1)}時間</span>}
                         {formattedDate && <span className="flex items-center gap-1 text-[9px] text-slate-400"><Calendar className="w-2.5 h-2.5 text-emerald-500" />{formattedDate}</span>}
-                        
-                        {/* Rank history in expanded view (Forced New Line) */}
-                        {previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
-                          <div className="w-full flex items-center mt-1">
-                            <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-full border border-white/5">
-                              <History size={10} className="text-slate-600" />
-                              <div className="flex items-center gap-1">
-                                <span key="prev" className="text-[9px] font-bold text-slate-500">{previousRanks[previousRanks.length - 1].rank} <span className="text-[8px] opacity-40">→</span></span>
-                                <span className="text-[9px] font-black text-accent">{currentRank}</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                      </div>
+                    )}
+
+                    {/* NEW ROW: Rank History (Evolution) */}
+                    {previousRanks.length > 0 && (
+                      <div className="flex items-center gap-2 mt-1.5 pt-1.5 border-t border-white/5">
+                        <History size={10} className="text-slate-600 shrink-0" />
+                        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                          {previousRanks.slice(-3).map((hist, hIdx) => (
+                            <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
+                              {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
+                            </span>
+                          ))}
+                          <span className="text-[9px] font-black text-accent italic whitespace-nowrap">現在({currentRank}位)</span>
+                        </div>
                       </div>
                     )}
                   </div>

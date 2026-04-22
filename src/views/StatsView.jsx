@@ -20,7 +20,8 @@ import {
   Clock,
   Sparkles,
   Award,
-  Info
+  Info,
+  History
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelWalker from '../components/common/PixelWalker';
@@ -424,6 +425,21 @@ export default function StatsView() {
                             <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
                           </div>
                         </div>
+
+                        {/* Ranking Evolution Trend */}
+                        {item.previousRanks && item.previousRanks.length > 0 && (
+                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-yellow-500/10">
+                            <History className="w-3 h-3 text-yellow-500/40" />
+                            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                              {item.previousRanks.slice(-3).map((hist, hIdx) => (
+                                <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
+                                  {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
+                                </span>
+                              ))}
+                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">現在</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -601,12 +617,14 @@ export default function StatsView() {
                 </div>
               </div>
             ))}
+          </div>
+
           <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
             <Info className="w-3.5 h-3.5 text-accent opacity-60" />
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
               ※平均スコアは統計上の理由により、小数点以下を切り上げて表示しています
             </p>
-          </div>          </div>
+          </div>
         </section>
       </div>
     </div>
