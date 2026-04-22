@@ -364,45 +364,45 @@ export default function StatsView() {
                 {stats.hallOfFame.map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-4 rounded-[28px] overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:border-yellow-400/50"
+                    className="group/card relative bg-gradient-to-br from-white/10 to-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_15px_30px_rgba(0,0,0,0.4)] hover:border-yellow-400/50"
                   >
                     {/* Card Shine Effect */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
                     
-                    <div className="flex items-center gap-6 relative z-10">
+                    <div className="flex items-center gap-5 relative z-10">
                       <div className="relative shrink-0">
-                        <div className="absolute -inset-1 bg-yellow-500/30 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                        <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-yellow-500/40 shadow-2xl bg-black relative">
+                        <div className="absolute -inset-1 bg-yellow-500/20 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
+                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-500/30 shadow-xl bg-black relative">
                           {item.imageBase64 ? (
                             <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <Target className="w-8 h-8 text-yellow-500/20" />
+                              <Target className="w-6 h-6 text-yellow-500/20" />
                             </div>
                           )}
-                          <div className="absolute top-2 right-2">
-                             <Crown className="w-4 h-4 text-yellow-400 drop-shadow-md" />
-                          </div>
                         </div>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-black text-red-500 uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-tight mb-2 drop-shadow-lg" style={{ fontSize: '32px' }}>{item.title}</h3>
-                        <div className="flex flex-wrap items-center gap-x-8 gap-y-4 mt-6">
-                          <div className="flex items-center gap-3 px-6 py-2 bg-yellow-500/20 rounded-2xl border-2 border-yellow-500/40 shadow-inner">
-                            <Star className="w-8 h-8 text-yellow-400 fill-yellow-400" />
-                            <span className="font-black text-yellow-400 font-mono leading-none" style={{ fontSize: '28px' }}>{item.rating}</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <Eye className="w-8 h-8 text-yellow-600/80" />
-                            <span className="font-black text-yellow-600/80 font-mono leading-none" style={{ fontSize: '24px' }}>{item.views}回</span>
-                          </div>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md">{item.title}</h3>
+                          <span className="text-[10px] font-bold text-slate-500 font-mono italic shrink-0">#0{idx + 1}</span>
                         </div>
-                        <div className="mt-8 flex items-center justify-between">
-                           <span className="font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-6 py-2 rounded-full border-2 border-yellow-500/20" style={{ fontSize: '14px' }}>
-                             {GENRE_LABELS[item.genre] || 'OTHER'}
-                           </span>
-                           <span className="text-sm font-bold text-slate-500 font-mono italic">MASTER RANK #{idx + 1}</span>
+
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-2 px-3 py-1 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
+                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                            <span className="text-base font-black text-yellow-400 font-mono leading-none">{item.rating}</span>
+                          </div>
+                          <div className="flex items-center gap-4 overflow-hidden">
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <Eye className="w-4 h-4 text-yellow-600/60" />
+                              <span className="text-xs font-black text-yellow-600/80 font-mono leading-none">{item.views}回</span>
+                            </div>
+                            <span className="text-[9px] font-black text-yellow-700/60 uppercase tracking-[0.2em] bg-yellow-500/5 px-2 py-0.5 rounded-lg border border-yellow-500/10 truncate">
+                              {GENRE_LABELS[item.genre] || 'OTHER'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -446,13 +446,13 @@ export default function StatsView() {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-[999]">
-              <span className="text-[12px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <div className="flex items-center justify-center gap-2">
-                <span className="font-black text-white italic font-mono leading-none" style={{ fontSize: '48px' }}>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black text-white italic font-mono leading-none">
                   <Counter value={stats.totalCount} />
                 </span>
-                <span className="font-black text-red-500 italic" style={{ fontSize: '24px' }}>作品</span>
+                <span className="text-[11px] font-black text-accent/80 italic">作品</span>
               </div>
             </div>
           </div>
