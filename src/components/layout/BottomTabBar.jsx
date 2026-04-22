@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 
 const TABS = [
   { id: 'home',     icon: Home,        label: 'HOME',    path: '/' },
@@ -12,7 +12,6 @@ const TABS = [
 export default function BottomTabBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const touchHandled = useRef(false);
 
   const activeTab = TABS.find(t => t.path && t.path !== '/' && location.pathname.startsWith(t.path))?.id
     || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null);
@@ -33,18 +32,7 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
-                  onTouchStart={(e) => {
-                    // Immediately navigate on touch start for iOS responsiveness
-                    touchHandled.current = true;
-                    handleNavigate(tab.path);
-                  }}
-                  onClick={(e) => {
-                    // Fallback for desktop / non-touch devices
-                    if (!touchHandled.current) {
-                      handleNavigate(tab.path);
-                    }
-                    touchHandled.current = false;
-                  }}
+                  onClick={() => handleNavigate(tab.path)}
                   className={`flex flex-col items-center justify-center gap-1.5 py-4 relative ${isActive ? 'text-accent' : 'text-slate-500'}`}
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
