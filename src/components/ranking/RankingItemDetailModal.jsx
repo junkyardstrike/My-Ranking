@@ -245,7 +245,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                  <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-x-4" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
                    {title || 'Untitled'}
                    {(genre === 'manga' || genre === 'anime' || genre === 'drama') && (
-                     <span className="inline-flex items-center px-3 py-1 rounded-xl bg-white/10 border border-white/10 text-[0.3em] not-italic font-black tracking-[0.2em] text-accent uppercase align-middle shadow-lg backdrop-blur-md">
+                     <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-accent text-black text-xs sm:text-sm not-italic font-black tracking-widest uppercase align-middle shadow-xl ml-2 sm:ml-4">
                        {genre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
                      </span>
                    )}
