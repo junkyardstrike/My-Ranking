@@ -193,8 +193,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
                 <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-all ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
                    <div className={`w-3 h-3 rounded-full transition-all ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600'}`} />
-                </div>
-             </div>
+               </div>
+            </div>
           </div>
           <button onClick={handleClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-white transition-all">
             <X size={20} />
@@ -255,7 +255,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
             <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3">
                     {(rankingId || propRankingId) ? (
                       <div className="flex items-center gap-2">
                         <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
@@ -295,9 +295,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <Crown size={14} /> 選出済み
                       </div>
                     )}
-                  </div>
-                </div>
-                <div className="flex flex-wrap items-center gap-3">
                   <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 flex items-center gap-0.5">
                      {isGlobalEditMode ? (
                         Object.entries(GENRE_MAP).map(([key, info]) => {
@@ -326,7 +323,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                <div className="flex flex-wrap items-center gap-6 pl-1">
                   <div className="flex items-center gap-2">
                      <User size={16} className="text-accent/60" />
-                     <span className="text-[10px] font-black text-white uppercase tracking-widest inline-block">作者 / AUTHOR:</span>
+                     <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作者 / AUTHOR</span>
                      {isGlobalEditMode ? (
                         <input 
                           type="text" 
@@ -343,7 +340,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   </div>
                   <div className="flex items-center gap-2 border-l border-white/10 pl-4 sm:pl-6">
                      <Calendar size={16} className="text-emerald-500/60" />
-                     <span className="text-[10px] font-black text-white uppercase tracking-widest inline-block">作成日 / DATE:</span>
+                     <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作成日 / DATE</span>
                      {isGlobalEditMode ? (
                         <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
                      ) : (
@@ -352,8 +349,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   </div>
                </div>
             </div>
-
-
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
                <div className="lg:col-span-5 space-y-4">
                   <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-4 shadow-lg items-center">
@@ -380,7 +376,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                      <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-1 col-span-2 md:col-span-1 pt-4 md:pt-0 bg-white/5 rounded-2xl py-2">
                         <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
                         <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{(totalLifetimeDuration / 60).toFixed(1)}時間</p>
-                        <p className="text-[8px] text-white font-bold text-center">
+                        <p className="text-[10px] text-white font-bold text-center">
                           {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
                             `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
                           ) : (
