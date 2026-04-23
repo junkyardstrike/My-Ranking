@@ -206,9 +206,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         onClick={() => setIsModalOpen(true)}
       >
         {/* Gold glow effect for rank 1 - Premium Gold */}
-        {currentRank === 1 && (
-          <div className="absolute -inset-[1.5px] bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600 rounded-2xl -z-10 animate-pulse blur-[8px] opacity-60" />
-        )}
+        {/* Gold glow effect removed to ensure true transparency */}
         
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
