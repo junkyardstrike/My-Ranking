@@ -120,9 +120,9 @@ export default function AllRankingsView() {
             <PixelItem type="grimoire" size={40} className="mb-1" />
             <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-line-run" style={{ animationDelay: '0.4s' }} />
           </div>
-          <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
-            作品マスターリスト
-            <span className="w-12 h-px bg-slate-800" />
+          <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
+            全ての作品記録
+            <span className="w-12 h-px bg-white/20" />
           </p>
         </div>
 

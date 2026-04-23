@@ -389,10 +389,10 @@ export default function FolderView() {
                 <PixelItem type="sword" size={40} className="mb-1" />
                 <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)] animate-line-run" style={{ animationDelay: '0.4s' }} />
               </div>
-              <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
-                ランキング・アーカイブ
-                <span className="w-12 h-px bg-slate-800" />
-              </p>
+                <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
+                  ランキング・アーカイブ
+                  <span className="w-12 h-px bg-white/20" />
+                </p>
             </div>
           ) : (
             <div className="py-2">
