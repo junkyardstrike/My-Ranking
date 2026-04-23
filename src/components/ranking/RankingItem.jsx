@@ -427,7 +427,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                         {totalLifetimeDuration > 0 && (
                           <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
                             <Clock className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                            {(totalLifetimeDuration / 60).toFixed(1)}h
+                            {(totalLifetimeDuration / 60).toFixed(1)}時間
                           </span>
                         )}
                         {formattedDate && (
