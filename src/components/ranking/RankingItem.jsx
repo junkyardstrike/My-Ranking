@@ -205,8 +205,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         }`} 
         onClick={() => setIsModalOpen(true)}
       >
-        {/* Gold glow effect for rank 1 - Premium Gold */}
         {/* Gold glow effect removed to ensure true transparency */}
+        {/* Absolute Volume/Episode Badge */}
+        {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
+          <div className="absolute top-2 right-2 z-20 pointer-events-none">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/20 border border-white/20 text-[0.6em] font-black tracking-widest text-accent uppercase backdrop-blur-md shadow-lg">
+              {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
+            </span>
+          </div>
+        )}
         
         {isEditMode ? (
           <div className="flex flex-col p-4 gap-4">
@@ -377,11 +384,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 <div className="flex items-center gap-2">
                   <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
                     {title || 'Untitled'}
-                    {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/10 border border-white/10 text-[0.6em] not-italic font-black tracking-widest text-accent/90 uppercase align-middle">
-                        {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
-                      </span>
-                    )}
                   </h3>
                   {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                     <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
@@ -413,9 +415,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       )}
                     </div>
                     
-                    {/* Bottom Row: Metrics, Date */}
+                    {/* Bottom Row: Metrics & Date combined into one line */}
                     {(views > 0 || totalLifetimeDuration > 0 || formattedDate) && (
-                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-0.5">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                         {views > 0 && (
                           <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
                             <Eye className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-blue-500'}`} />
@@ -425,7 +427,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                         {totalLifetimeDuration > 0 && (
                           <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
                             <Clock className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                            {(totalLifetimeDuration / 60).toFixed(1)}時間
+                            {(totalLifetimeDuration / 60).toFixed(1)}h
                           </span>
                         )}
                         {formattedDate && (
