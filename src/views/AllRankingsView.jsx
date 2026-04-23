@@ -110,10 +110,7 @@ export default function AllRankingsView() {
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
             <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text animate-text-flash drop-shadow-[0_15px_30px_rgba(59,130,246,0.4)] pr-6"
-              style={{ 
-                backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom right, #dbeafe, #60a5fa, #1d4ed8)',
-              }}
+              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-blue-400 drop-shadow-[0_0_35px_rgba(59,130,246,0.6)] pr-6"
             >
               Records
             </h1>

@@ -39,10 +39,7 @@ export default function RankingView() {
       <div className="relative mb-6">
         <div className="flex flex-col items-center text-center px-1 mb-6 py-2">
           <h1 
-            className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text animate-text-flash tracking-tighter uppercase italic drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] px-4"
-            style={{ 
-              backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom, #ffffff, #cbd5e1)',
-            }}
+            className="text-3xl sm:text-5xl font-black text-yellow-400 tracking-tighter uppercase italic drop-shadow-[0_0_35px_rgba(234,179,8,0.5)] px-4"
           >
             {ranking.title}
           </h1>

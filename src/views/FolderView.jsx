@@ -379,10 +379,7 @@ export default function FolderView() {
             <div className="flex flex-col gap-1">
               <div className="relative flex items-center gap-1 overflow-visible">
                 <h1 
-                  className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text animate-text-flash drop-shadow-[0_15px_30px_rgba(212,175,55,0.4)] pr-6"
-                  style={{ 
-                    backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom right, #fef3c7, #facc15, #a16207)',
-                  }}
+                  className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-yellow-400 drop-shadow-[0_0_35px_rgba(234,179,8,0.6)] pr-6"
                 >
                   Ranking
                 </h1>

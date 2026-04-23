@@ -230,10 +230,7 @@ export default function StatsView() {
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
             <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)] pr-6"
-              style={{ 
-                backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom right, #d1fae5, #34d399, #047857)',
-              }}
+              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)] pr-6"
             >
               Stats
             </h1>
