@@ -320,10 +320,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                   </div>
                 </div>
 
-               <div className="flex flex-wrap items-center gap-6 pl-1">
-                  <div className="flex items-center gap-2 min-w-[240px]">
-                     <User size={16} className="text-accent/60" />
-                     <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作者 / AUTHOR</span>
+               <div className="flex flex-wrap items-center gap-y-3 gap-x-10 pl-1 pt-2">
+                  <div className="flex items-center gap-3 min-w-[260px]">
+                     <User size={18} className="text-accent" />
+                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest w-24 flex-shrink-0">作者 / AUTHOR</span>
                      {isGlobalEditMode ? (
                         <input 
                           type="text" 
@@ -335,16 +335,20 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           placeholder="作者名" 
                         />
                      ) : (
-                        <span className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{author || '未設定'}</span>
+                        <span className="bg-white/5 px-3 py-1 rounded-lg text-white font-black uppercase tracking-[0.1em] text-xs border border-white/5 shadow-inner">
+                          {author || '未設定'}
+                        </span>
                      )}
                   </div>
-                  <div className="flex items-center gap-2 min-w-[240px]">
-                     <Calendar size={16} className="text-emerald-500/60" />
-                     <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作成日 / DATE</span>
+                  <div className="flex items-center gap-3 min-w-[260px]">
+                     <Calendar size={18} className="text-emerald-400" />
+                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest w-24 flex-shrink-0">作成日 / DATE</span>
                      {isGlobalEditMode ? (
                         <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
                      ) : (
-                        <span className="text-white font-bold text-[10px] tracking-widest">{createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}</span>
+                        <span className="bg-white/5 px-3 py-1 rounded-lg text-white font-bold text-xs tracking-widest border border-white/5 shadow-inner">
+                          {createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}
+                        </span>
                      )}
                   </div>
                </div>
