@@ -262,7 +262,7 @@ export default function StatsView() {
               {/* Left: Pixel Walker */}
               <div className="flex-shrink-0 ml-8 sm:ml-16">
                  <PixelWalker 
-                    className="transform scale-[1.3] origin-center translate-y-3 -translate-x-6 sm:-translate-x-12" 
+                    className="transform scale-[1.3] origin-center translate-y-3 -translate-x-4 sm:-translate-x-9" 
                     stats={{
                       totalCount: stats.totalCount,
                       hallOfFameCount: stats.hallOfFame.length,
