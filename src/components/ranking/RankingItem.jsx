@@ -196,7 +196,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       <div 
         className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
           currentRank === 1 
-            ? 'border-yellow-300/60 bg-gradient-to-br from-yellow-400/50 via-yellow-600/40 to-black/90 shadow-[0_30px_70px_rgba(212,175,55,0.4)] scale-[1.03]' 
+            ? 'border-yellow-400/40 bg-gradient-to-br from-yellow-300/30 via-yellow-500/10 to-black/40 shadow-[0_30px_70px_rgba(212,175,55,0.3)] scale-[1.03]' 
             : currentRank === 2
             ? 'border-slate-300 bg-gradient-to-br from-slate-200/60 via-slate-500/40 to-black/90 hover:from-slate-300/20 hover:border-slate-400 shadow-xl scale-[1.01]' 
             : currentRank === 3
