@@ -377,7 +377,7 @@ export default function FolderView() {
         <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center w-full' : ''}`}>
           {isRoot ? (
             <div className="flex flex-col gap-1">
-              <div className="relative flex items-center gap-1 overflow-visible">
+              <div className="relative flex items-center gap-1 overflow-visible w-fit">
                 <h1 
                   className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-yellow-400 drop-shadow-[0_0_35px_rgba(234,179,8,0.6)] pr-6"
                 >

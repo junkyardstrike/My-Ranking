@@ -101,21 +101,18 @@ export default function SettingsView() {
     <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible">
+          <div className="relative flex items-center gap-1 overflow-visible w-fit">
             <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text animate-text-flash drop-shadow-[0_15px_30px_rgba(168,85,247,0.4)] pr-6"
-              style={{ 
-                backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom right, #f3e8ff, #a855f7, #7e22ce)',
-              }}
+              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-purple-400 drop-shadow-[0_0_35px_rgba(168,85,247,0.6)] pr-6"
             >
               Settings
             </h1>
             <PixelItem type="key" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-purple-500 via-purple-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(168,85,247,0.8)] animate-line-run" style={{ animationDelay: '0.4s' }} />
+            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-purple-500 via-purple-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(168,85,247,0.8)] w-full" />
           </div>
-          <p className="text-[11px] text-slate-500 font-black tracking-[0.3em] mt-3 flex items-center gap-3">
+          <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
             アプリ設定・管理
-            <span className="w-12 h-px bg-slate-800" />
+            <span className="w-12 h-px bg-white/20" />
           </p>
         </div>
 

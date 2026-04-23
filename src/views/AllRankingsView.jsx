@@ -108,7 +108,7 @@ export default function AllRankingsView() {
       <div className="space-y-6">
       <div className="flex items-start justify-between mb-10">
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible">
+          <div className="relative flex items-center gap-1 overflow-visible w-fit">
             <h1 
               className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-blue-400 drop-shadow-[0_0_35px_rgba(59,130,246,0.6)] pr-6"
             >

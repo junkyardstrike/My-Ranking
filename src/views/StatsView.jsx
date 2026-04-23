@@ -228,7 +228,7 @@ export default function StatsView() {
     <div className="animate-in fade-in duration-700 space-y-4 pb-32">
       <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
         <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible">
+          <div className="relative flex items-center gap-1 overflow-visible w-fit">
             <h1 
               className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)] pr-6"
             >
