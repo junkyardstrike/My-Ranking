@@ -46,7 +46,7 @@ export default function RankingView() {
           >
             {ranking.title}
           </h1>
-          <p className="text-[11px] text-yellow-500/60 font-black uppercase tracking-[0.4em] mt-2 italic">{ranking.englishName || 'RANKING SELECTION ARCHIVE'}</p>
+          <p className="text-[10px] text-white/60 font-black uppercase tracking-widest mt-2 italic">{ranking.englishName || 'RANKING SELECTION ARCHIVE'}</p>
         </div>
 
         <div className="absolute left-0 top-0">
