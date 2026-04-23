@@ -198,9 +198,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
           currentRank === 1 
             ? 'border-2 border-yellow-400/80 bg-transparent shadow-[0_0_25px_rgba(255,215,0,0.4),inset_0_0_15px_rgba(255,215,0,0.2)] scale-[1.03]' 
             : currentRank === 2
-            ? 'border-slate-300 bg-gradient-to-br from-slate-200/60 via-slate-500/40 to-black/90 hover:from-slate-300/20 hover:border-slate-400 shadow-xl scale-[1.01]' 
+            ? 'border-2 border-slate-300/80 bg-transparent shadow-[0_0_20px_rgba(203,213,225,0.3),inset_0_0_10px_rgba(203,213,225,0.1)] hover:border-slate-200 shadow-xl scale-[1.01]' 
             : currentRank === 3
-            ? 'border-orange-400 bg-gradient-to-br from-orange-400/60 via-orange-800/40 to-black/90 hover:from-orange-500/20 hover:border-orange-600 shadow-lg scale-[1.01]' 
+            ? 'border-2 border-orange-600/80 bg-transparent shadow-[0_0_15px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] hover:border-orange-500 shadow-lg scale-[1.01]' 
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
         }`} 
         onClick={() => setIsModalOpen(true)}
