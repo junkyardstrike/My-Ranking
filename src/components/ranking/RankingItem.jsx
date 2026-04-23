@@ -370,8 +370,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             </div>
           </div>
         ) : (
-          <div className={`flex flex-row items-stretch ${localIsCollapsed ? 'min-h-[44px]' : 'min-h-[84px]'}`}>
-            <div className={`flex-1 flex flex-row min-w-0 gap-3 ${localIsCollapsed ? 'p-2 items-center' : 'p-3'}`}>
+          <div className={`flex flex-row items-stretch ${localIsCollapsed ? 'min-h-[44px]' : 'min-h-[72px]'}`}>
+            <div className={`flex-1 flex flex-row min-w-0 gap-3 ${localIsCollapsed ? 'p-2 items-center' : 'p-2'}`}>
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex items-center gap-2">
@@ -394,7 +394,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   )}
                 </div>
                 {!localIsCollapsed && (
-                  <div className="flex flex-col gap-1 mt-1.5">
+                  <div className="flex flex-col gap-0.5 mt-0.5">
                     {/* Top Row: Tags, Author, Score */}
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                       {isSelected && !effectiveRankingId && (
@@ -436,10 +436,10 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                         )}
                       </div>
                     )}
-
+ 
                     {/* NEW ROW: Rank History (Evolution) */}
                     {previousRanks.length > 0 && (
-                      <div className={`flex items-center gap-2 mt-2 pt-2 border-t ${currentRank === 1 ? 'border-yellow-300/20' : 'border-white/5'}`}>
+                      <div className={`flex items-center gap-2 mt-1 pt-1 border-t ${currentRank === 1 ? 'border-yellow-300/20' : 'border-white/5'}`}>
                         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${currentRank === 1 ? 'bg-black/60 border-yellow-300/30' : 'bg-black/20 border-white/5'}`}>
                           <History size={10} className={currentRank === 1 ? "text-yellow-400" : "text-slate-600"} />
                           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
