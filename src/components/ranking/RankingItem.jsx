@@ -196,11 +196,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       <div 
         className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
           currentRank === 1 
-            ? 'border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6),0_0_30px_rgba(255,215,0,0.3),inset_0_0_15px_rgba(255,215,0,0.3)] bg-transparent scale-[1.03]' 
+            ? 'border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6),0_0_30px_rgba(255,215,0,0.3),inset_0_0_15px_rgba(255,215,0,0.3)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.03]' 
             : currentRank === 2
-            ? 'border-2 border-slate-200 shadow-[0_0_12px_rgba(255,255,255,0.4),0_0_25px_rgba(203,213,225,0.2),inset_0_0_10px_rgba(255,255,255,0.1)] bg-transparent scale-[1.01]' 
+            ? 'border-2 border-slate-200 shadow-[0_0_12px_rgba(255,255,255,0.4),0_0_25px_rgba(203,213,225,0.2),inset_0_0_10px_rgba(255,255,255,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : currentRank === 3
-            ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-transparent scale-[1.01]' 
+            ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
         }`} 
         onClick={() => setIsModalOpen(true)}
