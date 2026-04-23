@@ -273,7 +273,7 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
                 <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] truncate animate-pulse">
+                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] animate-pulse pr-2">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
@@ -326,7 +326,7 @@ export default function StatsView() {
                         <span className="text-xs font-black text-slate-400 uppercase tracking-widest pl-5 leading-none">{g.id}</span>
                       </div>
                       <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-4xl font-black text-accent font-mono drop-shadow-md leading-none">{g.hours}</span>
+                        <span className="text-4xl font-black text-accent font-mono drop-shadow-md">{g.hours}</span>
                         <span className="text-sm font-black text-accent/80 drop-shadow-md">時間</span>
                       </div>
                     </div>
