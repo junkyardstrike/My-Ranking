@@ -159,32 +159,34 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     let icon = null;
     
     if (rank === 1) { 
-      bgClass = "bg-gradient-to-br from-yellow-200 via-yellow-400 to-yellow-600 text-yellow-950 border-yellow-300/50 shadow-[0_0_15px_rgba(255,215,0,0.4)]"; 
-      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-yellow-900/60" />; 
+      bgClass = "bg-gradient-to-br from-[#FFD700] via-[#FDB931] to-[#917405] text-[#423401] border-[#FFE55C] shadow-[0_0_20px_rgba(255,215,0,0.5)] ring-1 ring-yellow-300/30"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3.5 h-3.5 mx-auto mb-0.5 filter drop-shadow-sm" fill="currentColor" />; 
     }
     else if (rank === 2) { 
-      bgClass = "bg-gradient-to-br from-slate-100 via-slate-300 to-slate-500 text-slate-900 border-slate-200/50 shadow-lg"; 
-      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-slate-700/60" />; 
+      bgClass = "bg-gradient-to-br from-[#E6E6E6] via-[#B3B3B3] to-[#7F7F7F] text-[#1A1A1A] border-[#F2F2F2] shadow-[0_0_15px_rgba(255,255,255,0.2)]"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 filter drop-shadow-sm opacity-80" />; 
     }
     else if (rank === 3) { 
-      bgClass = "bg-gradient-to-br from-orange-200 via-orange-400 to-orange-600 text-orange-950 border-orange-300/50 shadow-md"; 
-      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 text-orange-800/60" />; 
+      bgClass = "bg-gradient-to-br from-[#CD7F32] via-[#A0522D] to-[#5D2906] text-[#FFE4C4] border-[#E39E67] shadow-[0_0_12px_rgba(205,127,50,0.3)]"; 
+      icon = !isActuallyCollapsed && <Crown className="w-3 h-3 mx-auto mb-0.5 filter drop-shadow-sm opacity-70" />; 
     }
-    else if (rank === 4) { bgClass = "bg-gradient-to-br from-slate-400 via-slate-600 to-slate-800 text-white border-white/10 shadow-sm"; }
     
     if (!rank || !effectiveRankingId) {
       return (
-        <div className={`flex-shrink-0 flex flex-col items-center justify-center bg-accent/20 text-accent rounded-lg border border-accent/30 shadow-[0_0_10px_rgba(16,185,129,0.3)] ${size}`}>
-          <span className="text-[8px] font-black uppercase tracking-tighter leading-none mb-0.5">Unranked</span>
-          <Plus size={isActuallyCollapsed ? 10 : 12} />
+        <div className={`flex-shrink-0 flex flex-col items-center justify-center bg-black/40 text-slate-600 rounded-lg border border-white/5 shadow-inner transition-all hover:border-accent/30 group/unranked ${size}`}>
+          <div className="relative">
+             <Plus size={isActuallyCollapsed ? 10 : 12} className="group-hover/unranked:text-accent transition-colors" />
+             <div className="absolute inset-0 blur-sm bg-accent/0 group-hover/unranked:bg-accent/20 transition-all rounded-full" />
+          </div>
+          {!isActuallyCollapsed && <span className="text-[6px] font-black uppercase tracking-tighter leading-none mt-0.5 opacity-40">Add</span>}
         </div>
       );
     }
 
     return (
-      <div className={`flex-shrink-0 flex flex-col items-center justify-center font-bold font-mono rounded-lg border backdrop-blur-md transition-all duration-300 ${size} ${bgClass}`}>
+      <div className={`flex-shrink-0 flex flex-col items-center justify-center font-black font-mono rounded-lg border backdrop-blur-md transition-all duration-500 hover:scale-105 ${size} ${bgClass}`}>
         {icon}
-        <span className={`drop-shadow-sm leading-none ${isActuallyCollapsed ? 'text-xs' : 'text-sm'}`}>{rank}</span>
+        <span className={`drop-shadow-sm leading-none ${isActuallyCollapsed ? 'text-[11px]' : 'text-sm'}`}>{rank}</span>
       </div>
     );
   };
@@ -375,7 +377,14 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex items-center gap-2">
-                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>{title || 'Untitled'}</h3>
+                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
+                    {title || 'Untitled'}
+                    {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
+                      <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-md bg-white/10 border border-white/10 text-[0.6em] not-italic font-black tracking-widest text-accent/90 uppercase align-middle">
+                        {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
+                      </span>
+                    )}
+                  </h3>
                   {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                     <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
                       <History size={8} className="text-slate-500" />

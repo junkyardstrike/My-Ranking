@@ -62,13 +62,10 @@ const QUOTES = [
   { text: "アスタ・ラ・ビスタ、ベイビー", source: "ターミネーター2" }
 ];
 
-const TYPES = ['human', 'cat', 'dog', 'bird'];
-
-const PixelWalker = ({ className = "" }) => {
+const PixelWalker = ({ className = "", stats = { totalCount: 0, hallOfFameCount: 0, totalHours: 0 } }) => {
   const [frame, setFrame] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
   const [paletteIndex, setPaletteIndex] = useState(0);
-  const [characterType, setCharacterType] = useState('human');
   const [quote, setQuote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
 
   useEffect(() => {
@@ -77,28 +74,6 @@ const PixelWalker = ({ className = "" }) => {
     }, 250);
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    const transformTimer = setInterval(() => {
-      handleJump();
-      setTimeout(() => {
-        setCharacterType(prev => {
-          const others = TYPES.filter(t => t !== prev);
-          return others[Math.floor(Math.random() * others.length)];
-        });
-      }, 300);
-    }, 15000);
-    return () => clearInterval(transformTimer);
-  }, []);
-
-  useEffect(() => {
-    const randomActionTimer = setInterval(() => {
-      if (Math.random() > 0.8) {
-        handleJump();
-      }
-    }, 5000);
-    return () => clearInterval(randomActionTimer);
-  }, [isJumping]);
 
   const handleJump = () => {
     if (isJumping) return;
@@ -115,71 +90,105 @@ const PixelWalker = ({ className = "" }) => {
 
   const c = PALETTES[paletteIndex];
 
+  // Equipment logic based on stats
+  const hasSword = stats.totalCount >= 30;
+  const hasMantle = stats.hallOfFameCount >= 3;
+  const hasStaff = stats.totalHours >= 50;
+
+  // Base look variation based on totalCount
+  const baseLook = stats.totalCount < 20 ? 0 : stats.totalCount < 50 ? 1 : 2;
+
   const renderCharacter = () => {
-    switch (characterType) {
-      case 'cat':
-        return (
+    return (
+      <>
+        {/* Mantle (Back) */}
+        {hasMantle && (
           <>
-            <rect x="5" y="8" width="8" height="4" fill={c.p1} />
-            <rect x="9" y="5" width="4" height="4" fill={c.p1} />
-            <rect x="9" y="4" width="1" height="1" fill={c.p1} />
-            <rect x="12" y="4" width="1" height="1" fill={c.p1} />
-            <rect x="12" y="6" width="1" height="1" fill="#000" />
-            <rect x="4" y={frame === 0 ? 7 : 8} width="1" height="3" fill={c.p1} />
-            <rect x="6" y={frame === 0 ? 12 : 11} width="1" height="2" fill={c.p1} />
-            <rect x="8" y={frame === 0 ? 11 : 12} width="1" height="2" fill={c.p1} />
-            <rect x="10" y={frame === 0 ? 12 : 11} width="1" height="2" fill={c.p1} />
-            <rect x="12" y={frame === 0 ? 11 : 12} width="1" height="2" fill={c.p1} />
+            <rect x="4" y="6" width="8" height="7" fill="#be185d" />
+            <rect x="3" y="7" width="10" height="5" fill="#9d174d" />
           </>
-        );
-      case 'dog':
-        return (
-          <>
-            <rect x="4" y="8" width="9" height="5" fill={c.p2} />
-            <rect x="10" y="5" width="5" height="4" fill={c.p2} />
-            <rect x="10" y="5" width="1" height="2" fill="#000" opacity="0.3" />
-            <rect x="13" y="6" width="1" height="1" fill="#000" />
-            <rect x="15" y="7" width="1" height="1" fill="#000" />
-            <rect x={frame === 0 ? 2 : 3} y="7" width="2" height="2" fill={c.p2} />
-            <rect x="5" y={frame === 0 ? 13 : 12} width="2" height="2" fill={c.p2} />
-            <rect x="8" y={frame === 0 ? 12 : 13} width="2" height="2" fill={c.p2} />
-            <rect x="11" y={frame === 0 ? 13 : 12} width="2" height="2" fill={c.p2} />
-          </>
-        );
-      case 'bird':
-        return (
-          <>
-            <rect x="6" y="8" width="5" height="4" fill={c.p3} />
-            <rect x="9" y="6" width="3" height="3" fill={c.p3} />
-            <rect x="12" y="7" width="2" height="1" fill="#fbbf24" />
-            <rect x="11" y="7" width="1" height="1" fill="#000" />
-            <rect x="7" y={frame === 0 ? 9 : 8} width="3" height="2" fill="#fff" opacity="0.4" />
-            <rect x="7" y={frame === 0 ? 12 : 11} width="1" height="2" fill="#000" opacity="0.5" />
-            <rect x="9" y={frame === 0 ? 12 : 11} width="1" height="2" fill="#000" opacity="0.5" />
-          </>
-        );
-      default:
-        return (
+        )}
+
+        {/* Hair - Variation */}
+        {baseLook === 0 && (
           <>
             <rect x="5" y="1" width="6" height="2" fill={c.p1} />
             <rect x="4" y="2" width="1" height="2" fill={c.p1} />
             <rect x="11" y="2" width="1" height="2" fill={c.p1} />
-            <rect x="5" y="3" width="6" height="4" fill="#fef3c7" />
-            <rect x="5" y="4" width="7" height="2" fill="#1e293b" />
-            <rect x="6" y="4" width="5" height="1" fill={c.p3} />
-            <rect x="5" y="7" width="6" height="5" fill={c.p1} />
-            <rect x="7" y="8" width="2" height="4" fill={c.p5} />
-            <rect x="4" y="7" width="1" height="4" fill={c.p1} />
-            <rect x={frame === 0 ? 4 : 3} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
-            <rect x="11" y="7" width="1" height="4" fill={c.p1} />
-            <rect x={frame === 0 ? 11 : 12} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
-            <rect x={frame === 0 ? 5 : 6} y="12" width="2" height={frame === 0 ? 3 : 2} fill="#312e81" />
-            <rect x={frame === 0 ? 4 : 7} y={frame === 0 ? 14 : 13} width="2" height="1" fill="#000" />
-            <rect x={frame === 0 ? 9 : 9} y="12" width="2" height={frame === 0 ? 2 : 3} fill="#312e81" />
-            <rect x={frame === 0 ? 8 : 9} y={frame === 0 ? 13 : 14} width="2" height="1" fill="#000" />
           </>
-        );
-    }
+        )}
+        {baseLook === 1 && (
+          <>
+            <rect x="4" y="1" width="8" height="2" fill="#4a3728" />
+            <rect x="3" y="2" width="1" height="5" fill="#4a3728" />
+            <rect x="12" y="2" width="1" height="5" fill="#4a3728" />
+            <rect x="4" y="3" width="8" height="1" fill="#4a3728" />
+          </>
+        )}
+        {baseLook === 2 && (
+          <>
+            <rect x="5" y="0" width="1" height="2" fill="#fbbf24" />
+            <rect x="7" y="0" width="1" height="2" fill="#fbbf24" />
+            <rect x="9" y="0" width="1" height="2" fill="#fbbf24" />
+            <rect x="5" y="1" width="6" height="2" fill="#d97706" />
+            <rect x="4" y="2" width="8" height="1" fill="#d97706" />
+          </>
+        )}
+
+        {/* Face */}
+        <rect x="5" y="3" width="6" height="4" fill="#fef3c7" />
+        <rect x="5" y="4" width="7" height="2" fill="#1e293b" />
+        <rect x="6" y="4" width="5" height="1" fill={c.p3} />
+        
+        {/* Body - Variation */}
+        {baseLook === 0 && (
+           <rect x="5" y="7" width="6" height="5" fill={c.p1} />
+        )}
+        {baseLook === 1 && (
+           <>
+             <rect x="5" y="7" width="6" height="5" fill="#1e40af" />
+             <rect x="7" y="7" width="2" height="5" fill="#ffffff" opacity="0.3" />
+           </>
+        )}
+        {baseLook === 2 && (
+           <>
+             <rect x="5" y="7" width="6" height="5" fill="#1e293b" />
+             <rect x="5" y="7" width="1" height="5" fill="#fbbf24" />
+             <rect x="10" y="7" width="1" height="5" fill="#fbbf24" />
+             <rect x="7" y="9" width="2" height="1" fill="#fbbf24" />
+           </>
+        )}
+
+        <rect x="7" y="8" width="2" height="4" fill={c.p5} />
+        <rect x="4" y="7" width="1" height="4" fill={c.p1} />
+        <rect x={frame === 0 ? 4 : 3} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
+        <rect x="11" y="7" width="1" height="4" fill={c.p1} />
+        <rect x={frame === 0 ? 11 : 12} y={frame === 0 ? 11 : 10} width="1" height="1" fill="#fef3c7" />
+        <rect x={frame === 0 ? 5 : 6} y="12" width="2" height={frame === 0 ? 3 : 2} fill="#312e81" />
+        <rect x={frame === 0 ? 4 : 7} y={frame === 0 ? 14 : 13} width="2" height="1" fill="#000" />
+        <rect x={frame === 0 ? 9 : 9} y="12" width="2" height={frame === 0 ? 2 : 3} fill="#312e81" />
+        <rect x={frame === 0 ? 8 : 9} y={frame === 0 ? 13 : 14} width="2" height="1" fill="#000" />
+
+        {/* Sword (Lv 2) */}
+        {hasSword && (
+          <g transform={`translate(${frame === 0 ? -1 : -2}, ${frame === 0 ? 0 : -1})`}>
+            <rect x="2" y="5" width="1" height="6" fill="#94a3b8" />
+            <rect x="1" y="10" width="3" height="1" fill="#475569" />
+            <rect x="2" y="11" width="1" height="1" fill="#94a3b8" />
+          </g>
+        )}
+
+        {/* Staff (Lv 4) */}
+        {hasStaff && (
+          <g transform={`translate(${frame === 0 ? 2 : 3}, ${frame === 0 ? 0 : -1})`}>
+            <rect x="12" y="4" width="1" height="8" fill="#78350f" />
+            <rect x="11" y="2" width="3" height="2" fill="#fbbf24">
+              <animate attributeName="opacity" values="1;0.5;1" dur="1s" repeatCount="indefinite" />
+            </rect>
+          </g>
+        )}
+      </>
+    );
   };
 
   return (

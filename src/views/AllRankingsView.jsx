@@ -145,8 +145,8 @@ export default function AllRankingsView() {
               )}
             </button>
           )}
-          <div className="inline-flex items-center gap-3 bg-blue-500/10 px-5 py-2.5 rounded-2xl border border-blue-500/20 shadow-lg backdrop-blur-sm">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
+          <div className="flex items-center gap-3 bg-blue-500/10 px-5 py-2.5 rounded-2xl border border-blue-500/20 shadow-lg backdrop-blur-sm whitespace-nowrap">
+            <span className="text-[12px] sm:text-[14px] font-black text-slate-300 uppercase tracking-[0.2em]">総作品数</span>
             <span className="text-3xl font-black text-blue-400 font-mono leading-none">
               {allItems.length}
             </span>

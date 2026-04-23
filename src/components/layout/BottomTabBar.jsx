@@ -17,8 +17,12 @@ export default function BottomTabBar() {
     || (location.pathname === '/' || location.pathname.startsWith('/folder') || location.pathname.startsWith('/ranking') ? 'home' : null);
 
   const handleNavigate = useCallback((path) => {
-    navigate(path);
-  }, [navigate]);
+    if (location.pathname === path || (path === '/' && location.pathname === '/ranking')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate(path);
+    }
+  }, [navigate, location.pathname]);
 
   return (
     <>

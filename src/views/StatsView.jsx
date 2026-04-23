@@ -230,7 +230,7 @@ export default function StatsView() {
         <div className="flex flex-col gap-1">
           <div className="relative flex items-center gap-1 overflow-visible">
             <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text animate-text-flash drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)] pr-6"
+              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-transparent bg-clip-text drop-shadow-[0_15px_30px_rgba(16,185,129,0.4)] pr-6"
               style={{ 
                 backgroundImage: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.6) 50%, transparent 70%), linear-gradient(to bottom right, #d1fae5, #34d399, #047857)',
               }}
@@ -248,7 +248,7 @@ export default function StatsView() {
 
         <div className="flex flex-col items-end gap-3">
           <div className="inline-flex items-center gap-3 bg-emerald-500/10 px-5 py-2.5 rounded-2xl border border-emerald-500/20 shadow-lg backdrop-blur-sm">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
+            <span className="text-[12px] sm:text-[14px] font-black text-slate-300 uppercase tracking-[0.2em]">総作品数</span>
             <span className="text-3xl font-black text-emerald-400 font-mono leading-none">
               <Counter value={stats.totalCount} />
             </span>
@@ -264,7 +264,14 @@ export default function StatsView() {
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
               {/* Left: Pixel Walker */}
               <div className="flex-shrink-0 ml-8 sm:ml-16">
-                 <PixelWalker className="transform scale-[1.2] origin-center translate-y-3" />
+                 <PixelWalker 
+                    className="transform scale-[1.3] origin-center translate-y-3 -translate-x-6 sm:-translate-x-12" 
+                    stats={{
+                      totalCount: stats.totalCount,
+                      hallOfFameCount: stats.hallOfFame.length,
+                      totalHours: stats.lifetimeStats.totalHours
+                    }}
+                  />
               </div>
 
               {/* Right: Total Time */}

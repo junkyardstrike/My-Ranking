@@ -170,12 +170,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     alert('作品情報をコピーしました');
   };
 
+  const handleClose = () => {
+    setEditMode(false);
+    onClose();
+  };
+
   const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
   const GenreIcon = genreInfo.icon;
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={handleClose} />
       
       <div className="relative w-full max-w-5xl bg-[#0c0a10]/95 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
         <div className="absolute inset-0 z-[-1] opacity-30" style={{ 
@@ -191,7 +196,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                 </div>
              </div>
           </div>
-          <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-white transition-all">
+          <button onClick={handleClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-white transition-all">
             <X size={20} />
           </button>
         </div>

@@ -152,9 +152,25 @@ export const useStore = create((set, get) => ({
 
   deleteFolder: (id) => {
     set((state) => {
-      const folders = state.folders.filter(f => f.id !== id);
+      // Helper for recursive deletion
+      const getAllChildFolderIds = (parentId, allFolders) => {
+        let ids = [parentId];
+        const children = allFolders.filter(f => f.parentId === parentId);
+        children.forEach(child => {
+          ids = [...ids, ...getAllChildFolderIds(child.id, allFolders)];
+        });
+        return ids;
+      };
+
+      const folderIdsToDelete = getAllChildFolderIds(id, state.folders);
+      
+      const folders = state.folders.filter(f => !folderIdsToDelete.includes(f.id));
+      const rankings = state.rankings.filter(r => !folderIdsToDelete.includes(r.folderId));
+      
       saveData('folders', folders);
-      return { folders };
+      saveData('rankings', rankings);
+      
+      return { folders, rankings };
     });
   },
 
