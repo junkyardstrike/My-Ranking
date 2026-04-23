@@ -235,7 +235,7 @@ export default function StatsView() {
               Stats
             </h1>
             <PixelItem type="potion" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)] animate-line-run" />
+            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)] w-full" />
           </div>
           <p className="text-[10px] text-white font-black tracking-wider mt-3 flex items-center gap-3">
             統計・分析ダッシュボード
