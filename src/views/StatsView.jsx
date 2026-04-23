@@ -421,9 +421,9 @@ export default function StatsView() {
                         </div>
 
                         <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
-                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                            <span className="text-base font-black text-yellow-400 font-mono italic">{item.rating}</span>
+                          <div className="flex items-baseline gap-0.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
+                            <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
+                            <span className="text-[10px] font-black text-yellow-500/60 italic uppercase tracking-tighter">点</span>
                           </div>
                           
                           <div className="flex items-center gap-2 shrink-0">
