@@ -208,8 +208,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         {/* Gold glow effect removed to ensure true transparency */}
         {/* Absolute Volume/Episode Badge */}
         {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-          <div className="absolute top-1 right-2 z-20 pointer-events-none scale-90 sm:scale-100">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-accent border border-black/10 text-[0.65em] font-black tracking-widest text-black uppercase shadow-[0_4px_12px_rgba(0,0,0,0.4)]">
+          <div className="absolute top-1 right-2 z-20 pointer-events-none">
+            <span className="inline-flex items-center px-3 py-1 rounded-lg bg-accent border border-black/20 text-[0.85em] font-black tracking-[0.2em] text-black uppercase shadow-[0_6px_15px_rgba(0,0,0,0.5)]">
               {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
             </span>
           </div>
