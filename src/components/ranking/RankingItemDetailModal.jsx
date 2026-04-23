@@ -321,7 +321,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                 </div>
 
                <div className="flex flex-wrap items-center gap-6 pl-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 min-w-[240px]">
                      <User size={16} className="text-accent/60" />
                      <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作者 / AUTHOR</span>
                      {isGlobalEditMode ? (
@@ -338,7 +338,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                         <span className="text-white font-black uppercase tracking-[0.2em] text-[10px]">{author || '未設定'}</span>
                      )}
                   </div>
-                  <div className="flex items-center gap-2 border-l border-white/10 pl-4 sm:pl-6">
+                  <div className="flex items-center gap-2 min-w-[240px]">
                      <Calendar size={16} className="text-emerald-500/60" />
                      <span className="text-[9px] font-black text-white/50 uppercase tracking-widest w-24">作成日 / DATE</span>
                      {isGlobalEditMode ? (
