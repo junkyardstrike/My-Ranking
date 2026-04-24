@@ -69,10 +69,19 @@ const PixelWalker = ({ className = "", stats = { totalCount: 0, hallOfFameCount:
   const [quote, setQuote] = useState(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
+    const frameTimer = setInterval(() => {
       setFrame((prev) => (prev === 0 ? 1 : 0));
     }, 250);
-    return () => clearInterval(timer);
+
+    const quoteTimer = setInterval(() => {
+      setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
+      setPaletteIndex((prev) => (prev + 1) % PALETTES.length);
+    }, 15000);
+
+    return () => {
+      clearInterval(frameTimer);
+      clearInterval(quoteTimer);
+    };
   }, []);
 
   const handleJump = () => {

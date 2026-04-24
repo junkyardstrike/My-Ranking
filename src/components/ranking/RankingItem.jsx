@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useStore } from '../../store/useStore';
-import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
@@ -34,7 +34,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false }) {
+export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false, isSelectable = false, isSelectedForBulk = false, onToggleSelect = null }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
@@ -139,7 +139,22 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   };
 
   const handleTitleSync = () => {
-    if (localTitle !== title) {
+    if (localTitle !== title && localTitle.trim() !== '') {
+      // Overlap Check: same genre, same name
+      const allItems = useStore.getState().getAllItems();
+      const isDuplicate = allItems.some(item => 
+        item.id !== id && 
+        item.genre === effectiveGenre && 
+        item.title?.toLowerCase().trim() === localTitle.toLowerCase().trim()
+      );
+
+      if (isDuplicate) {
+        if (!confirm(`【重複注意】\n「${localTitle}」は既に「${effectiveGenre}」ジャンルに登録されています。このまま登録しますか？`)) {
+          setLocalTitle(title || '');
+          return;
+        }
+      }
+
       const updates = { title: localTitle };
       if (!createdAt && localTitle.trim() !== '') updates.createdAt = new Date().toISOString();
       onUpdate(propItem.id, updates);
@@ -379,86 +394,110 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         ) : (
           <div className={`flex flex-row items-stretch ${localIsCollapsed ? 'min-h-[44px]' : 'min-h-[72px]'}`}>
             <div className={`flex-1 flex flex-row min-w-0 gap-3 ${localIsCollapsed ? 'p-2 items-center' : 'p-2'}`}>
-              <div className="flex-shrink-0">{renderRankBadge(currentRank)}</div>
+              {isSelectable && (
+                <div 
+                  className="flex items-center pr-1 cursor-pointer"
+                  onClick={(e) => { e.stopPropagation(); onToggleSelect && onToggleSelect(id); }}
+                >
+                  <div className={`w-5 h-5 rounded-md border-2 transition-all flex items-center justify-center ${isSelectedForBulk ? 'bg-accent border-accent' : 'bg-white/5 border-white/20'}`}>
+                    {isSelectedForBulk && <CheckCircle2 className="w-3.5 h-3.5 text-black" />}
+                  </div>
+                </div>
+              )}
+              <div className="flex-shrink-0 relative group/rank">
+                {renderRankBadge(currentRank)}
+                {isEditMode && effectiveRankingId && (
+                  <input 
+                    type="number"
+                    min="1"
+                    max="100"
+                    defaultValue={currentRank}
+                    onBlur={(e) => {
+                      const newRank = parseInt(e.target.value);
+                      if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    onClick={e => e.stopPropagation()}
+                  />
+                )}
+              </div>
+              
               <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <div className="flex items-center gap-2">
-                  <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
-                    {title || 'Untitled'}
-                  </h3>
-                  {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
-                    <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">
-                      <History size={8} className="text-slate-500" />
-                      <div className="flex gap-0.5">
-                        <span className="text-[7px] font-bold text-slate-400">{previousRanks[previousRanks.length - 1].rank}→</span>
-                        <span className="text-[7px] font-black text-accent">{currentRank}</span>
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
+                      {title || 'Untitled'}
+                    </h3>
+                    {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
+                      <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5 shrink-0">
+                        <History size={8} className="text-slate-500" />
+                        <span className="text-[7px] font-bold text-slate-400">{previousRanks[previousRanks.length - 1].rank}位→</span>
+                        <span className="text-[7px] font-black text-accent">{currentRank}位</span>
                       </div>
-                    </div>
+                    )}
+                  </div>
+                  {!localIsCollapsed && author && (
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[200px] mb-1">
+                      {author}
+                    </span>
                   )}
                 </div>
+
                 {!localIsCollapsed && (
-                  <div className="flex flex-col gap-0.5 mt-0.5">
-                    {/* Top Row: Tags, Author, Score */}
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                      {isSelected && !effectiveRankingId && (
-                        <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-accent/20 border border-accent/30 text-accent text-[8px] font-black uppercase tracking-widest italic leading-none">
-                          <Crown size={8} /> 選出済み
-                        </span>
-                      )}
-                      {author && <span className="flex items-center gap-1 text-[9px] text-slate-500 font-bold uppercase tracking-wider"><User className="w-2.5 h-2.5 text-accent" />{author}</span>}
-                      {rating > 0 && (
-                        <div className="flex items-center gap-1.5 bg-black/20 px-2 py-0.5 rounded-md border border-white/5">
-                          <span className="text-[7px] font-black text-slate-500 uppercase tracking-widest">Score</span>
-                          <div className="scale-75 origin-left -ml-1">
-                            <ScoreRating rating={rating} readOnly />
-                          </div>
-                        </div>
-                      )}
+                  <div className="flex items-center gap-x-3 whitespace-nowrap overflow-hidden mt-2">
+                    {/* Quick Counter for Views */}
+                    <div className="flex items-center gap-1 bg-black/20 rounded-full border border-white/5 p-0.5 shrink-0">
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: Math.max(0, (views || 0) - 1) }); }}
+                        className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-red-400 transition-colors"
+                      >
+                        <Minus size={10} />
+                      </button>
+                      <span className={`flex items-center gap-1 text-[9px] font-mono px-1 ${currentRank === 1 ? 'text-yellow-100' : 'text-slate-400'}`}>
+                        <Eye className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-blue-500'}`} />
+                        {views}回
+                      </span>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: (views || 0) + 1 }); }}
+                        className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-emerald-400 transition-colors"
+                      >
+                        <Plus size={10} />
+                      </button>
                     </div>
-                    
-                    {/* Bottom Row: Metrics & Date combined into one line */}
-                    {(views > 0 || totalLifetimeDuration > 0 || formattedDate) && (
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        {views > 0 && (
-                          <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
-                            <Eye className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-blue-500'}`} />
-                            {views}回
-                          </span>
-                        )}
-                        {totalLifetimeDuration > 0 && (
-                          <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
-                            <Clock className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                            {(totalLifetimeDuration / 60).toFixed(1)}時間
-                          </span>
-                        )}
-                        {formattedDate && (
-                          <span className={`flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full border ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
-                            <Calendar className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-emerald-500'}`} />
-                            {formattedDate}
-                          </span>
-                        )}
-                      </div>
+
+                    {totalLifetimeDuration > 0 && (
+                      <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
+                        <Clock className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
+                        {(totalLifetimeDuration / 60).toFixed(1)}時間
+                      </span>
                     )}
- 
-                    {/* NEW ROW: Rank History (Evolution) */}
-                    {previousRanks.length > 0 && (
-                      <div className={`flex items-center gap-2 mt-1 pt-1 border-t ${currentRank === 1 ? 'border-yellow-300/20' : 'border-white/5'}`}>
-                        <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${currentRank === 1 ? 'bg-black/60 border-yellow-300/30' : 'bg-black/20 border-white/5'}`}>
-                          <History size={10} className={currentRank === 1 ? "text-yellow-400" : "text-slate-600"} />
-                          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                            {previousRanks.slice(-3).map((hist, hIdx) => (
-                              <span key={hIdx} className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-200/60' : 'text-slate-500'}`}>
-                                {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
-                              </span>
-                            ))}
-                            <span className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-300' : 'text-accent'}`}>現在({currentRank}位)</span>
-                          </div>
-                        </div>
-                      </div>
+                    {formattedDate && (
+                      <span className={`flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
+                        <Calendar className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-emerald-500'}`} />
+                        {formattedDate}
+                      </span>
                     )}
+                  </div>
+                )}
+
+                {!localIsCollapsed && previousRanks.length > 0 && (
+                  <div className={`flex items-center gap-2 mt-2 pt-1 border-t ${currentRank === 1 ? 'border-yellow-300/20' : 'border-white/5'}`}>
+                    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${currentRank === 1 ? 'bg-black/60 border-yellow-300/30' : 'bg-black/20 border-white/5'}`}>
+                      <History size={10} className={currentRank === 1 ? "text-yellow-400" : "text-slate-600"} />
+                      <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                        {previousRanks.slice(-3).map((hist, hIdx) => (
+                          <span key={hIdx} className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-200/60' : 'text-slate-500'}`}>
+                            {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
+                          </span>
+                        ))}
+                        <span className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-300' : 'text-accent'}`}>現在({currentRank}位)</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
+
             {!localIsCollapsed && imageBase64 && (
               <div className="flex-shrink-0 p-1.5 pl-0 flex items-center">
                 <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-black">

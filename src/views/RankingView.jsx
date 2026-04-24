@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import RankingEditor from '../components/ranking/RankingEditor';
 import RankingList from '../components/ranking/RankingList';
-import { ArrowLeft, Maximize2, Minimize2 } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, PlusSquare } from 'lucide-react';
 
 export default function RankingView() {
   const { rankingId } = useParams();
@@ -53,6 +53,16 @@ export default function RankingView() {
           >
             <ArrowLeft className="w-4 h-4 text-accent" />
             <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
+          </button>
+        </div>
+
+        <div className="absolute right-0 top-0">
+          <button 
+            onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
+            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
+          >
+            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-widest">Add from Record</span>
           </button>
         </div>
 

@@ -69,6 +69,12 @@ export default function StatsView() {
   const location = useLocation();
   const { key: locationKey } = location;
   const touchStartPos = useRef(null);
+  const [isHallOfFameExpanded, setIsHallOfFameExpanded] = useState(false);
+
+  // Reset expanded state on tab mount
+  useEffect(() => {
+    setIsHallOfFameExpanded(false);
+  }, [location.pathname]);
 
   const stats = useMemo(() => {
     const allItems = getAllItems();
@@ -222,7 +228,7 @@ export default function StatsView() {
       genreAverages,
       lifetimeStats
     };
-  }, [rankings, unrankedItems, getAllItems]);
+  }, [rankings, unrankedItems, getAllItems, settings]);
 
   return (
     <div className="animate-in fade-in duration-700 space-y-4 pb-32">
@@ -257,12 +263,10 @@ export default function StatsView() {
         {/* 0. Lifetime Counter */}
         <section className="md:col-span-2 relative py-4 premium-section-animate" style={{ animationDelay: '100ms' }}>
           <div className="relative z-10 flex flex-col gap-8">
-            {/* Top: Pixel Walker & Total */}
             <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
-              {/* Left: Pixel Walker */}
-              <div className="flex-shrink-0 ml-8 sm:ml-16">
+              <div className="flex-shrink-0 ml-4 sm:ml-8">
                  <PixelWalker 
-                    className="transform scale-[1.3] origin-center translate-y-3 -translate-x-4 sm:-translate-x-9" 
+                    className="transform scale-[1.3] origin-center translate-y-3 translate-x-2 sm:translate-x-4" 
                     stats={{
                       totalCount: stats.totalCount,
                       hallOfFameCount: stats.hallOfFame.length,
@@ -271,7 +275,6 @@ export default function StatsView() {
                   />
               </div>
 
-              {/* Right: Total Time */}
               <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
@@ -307,7 +310,6 @@ export default function StatsView() {
               </div>
             </div>
 
-            {/* Bottom: Genre Breakdown */}
             <div className="w-full mt-2">
                <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -322,6 +324,9 @@ export default function StatsView() {
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
                       )}
+                      <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 bg-white/10 rounded-md border border-white/5 backdrop-blur-sm">
+                        <span className="text-[9px] font-black text-white/40">{g.count}作品</span>
+                      </div>
                       <div className="relative z-10 flex flex-col justify-start">
                         <div className="flex items-center gap-2 mb-0.5">
                           <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
@@ -343,56 +348,41 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame - Open Design (No Box) */}
+        {/* 3. Hall of Fame */}
         <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
-          {/* Animated Golden Aura */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
           
-          <div className="relative z-10">
-            {/* Background Sparkles Effect */}
-            <div className="absolute -top-10 -right-10 opacity-5">
-              <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
+          <div className="flex flex-col items-center mb-10 relative z-10">
+            <div className="flex items-center gap-4 mb-2">
+              <div className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-yellow-500/50" />
+              <div className="p-3 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
+                <Crown className="w-6 h-6 text-yellow-500" />
+              </div>
+              <div className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-yellow-500/50" />
             </div>
-
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
-                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-2xl border border-yellow-200/50">
-                    <Award className="w-8 h-8 text-yellow-950" />
-                  </div>
-                </div>
-                <div>
-                  <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
-                    殿堂入り 
-                    <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
-                      (現在<Counter value={stats.hallOfFame.length} />作品)
-                    </span>
-                    <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
-                  </h2>
-                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    ９５点以上の評価点かつ５回以上の閲覧実績が達成された作品
-                  </p>
-                </div>
+            <h2 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter uppercase drop-shadow-2xl">Hall of Fame</h2>
+            <div className="mt-4 flex flex-col items-center">
+              <p className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2 drop-shadow-sm">殿堂入り作品</p>
+              <div className="px-4 py-1.5 bg-black/40 border border-yellow-500/20 rounded-full backdrop-blur-md shadow-inner">
+                <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-tighter flex items-center gap-2">
+                  Selection Criteria: 
+                  <span className="text-yellow-400 font-black text-xs tracking-tighter">95</span>pts 
+                  <span className="text-yellow-700/50">/</span> 
+                  <span className="text-yellow-400 font-black text-xs tracking-tighter">5</span>views
+                </p>
               </div>
             </div>
+          </div>
 
+          <div className="relative z-10 px-4">
             {stats.hallOfFame.length === 0 ? (
-              <div className="py-16 text-center border-2 border-dashed border-yellow-500/10 rounded-[32px] bg-yellow-500/5">
-                <div className="relative inline-block mb-4">
-                  <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-black text-slate-900/40">?</span>
-                  </div>
-                </div>
-                <p className="text-sm font-black text-slate-600 uppercase tracking-[0.4em] italic">Legend Awaited</p>
-                <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
+              <div className="flex flex-col items-center justify-center py-20 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
+                <Star className="w-16 h-16 mb-4 text-yellow-500/10" />
+                <p className="text-sm font-black text-slate-500 uppercase tracking-widest">No Legend Registered Yet</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {stats.hallOfFame.map((item, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 5).map((item, idx) => (
                   <div 
                     key={item.id} 
                     className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
@@ -442,7 +432,7 @@ export default function StatsView() {
                                   {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
                                 </span>
                               ))}
-                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">現在</span>
+                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位(現在)</span>
                             </div>
                           </div>
                         )}
@@ -457,6 +447,21 @@ export default function StatsView() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+            
+            {stats.hallOfFame.length > 5 && (
+              <div className="flex justify-center mt-8">
+                <button 
+                  onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
+                  className="group relative px-8 py-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 rounded-2xl transition-all duration-500 active:scale-95 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                  <span className="text-xs font-black text-yellow-500 uppercase tracking-[0.3em] italic flex items-center gap-2">
+                    {isHallOfFameExpanded ? 'Show Less / 閉じる' : `Show More Legends / あと ${stats.hallOfFame.length - 5} 作品を表示`}
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-500 ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
+                  </span>
+                </button>
               </div>
             )}
           </div>

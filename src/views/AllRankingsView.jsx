@@ -1,6 +1,6 @@
 import { useStore } from '../store/useStore';
 import { useState, useMemo, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
@@ -18,6 +18,7 @@ const GENRE_FILTERS = [
 
 export default function AllRankingsView() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { key: locationKey } = location;
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
@@ -25,6 +26,11 @@ export default function AllRankingsView() {
   const rankings = useStore(state => state.rankings);
   const unrankedItems = useStore(state => state.unrankedItems);
   const getAllItems = useStore(state => state.getAllItems);
+  const bulkInsertItemsIntoRanking = useStore(state => state.bulkInsertItemsIntoRanking);
+  
+  const [selectedIds, setSelectedIds] = useState([]);
+  const targetRankingId = location.state?.targetRankingId;
+  const isSelectMode = location.state?.mode === 'select';
   
   const allItems = useMemo(() => getAllItems(), [rankings, unrankedItems, getAllItems]);
   
@@ -97,6 +103,21 @@ export default function AllRankingsView() {
     }
   };
 
+  const handleToggleSelect = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkAdd = () => {
+    if (selectedIds.length === 0 || !targetRankingId) return;
+    const itemsToAdd = allItems.filter(i => selectedIds.includes(i.id));
+    bulkInsertItemsIntoRanking(targetRankingId, itemsToAdd);
+    setSelectedIds([]);
+    window.history.replaceState({}, document.title); // Clear state
+    navigate(`/ranking/${targetRankingId}`);
+  };
+
   const handleSave = () => {
     setHasChanges(false);
     // Zustand store persists to localStorage automatically in this app's current setup
@@ -118,7 +139,7 @@ export default function AllRankingsView() {
             <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)] w-full" />
           </div>
           <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
-            全ての作品記録
+            全作品マスターリスト
             <span className="w-12 h-px bg-white/20" />
           </p>
         </div>
@@ -211,11 +232,27 @@ export default function AllRankingsView() {
                 onMove={handleMove}
                 genre={item.genre || 'music'}
                 rankingId={item.rankingId}
+                isSelectable={isSelectMode}
+                isSelectedForBulk={selectedIds.includes(item.id)}
+                onToggleSelect={handleToggleSelect}
               />
             </div>
           ))}
         </div>
       )}
+
+        {/* Bulk Add Button (Sticky Bottom) */}
+        {isSelectMode && selectedIds.length > 0 && (
+          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-10 duration-500">
+            <button 
+              onClick={handleBulkAdd}
+              className="px-8 py-4 bg-accent text-black font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+            >
+              <Save size={20} />
+              追加する ({selectedIds.length}作品)
+            </button>
+          </div>
+        )}
 
       {/* Floating Save Button for Records Tab */}
       {isEditMode && hasChanges && (

@@ -326,6 +326,12 @@ export default function FolderView() {
   const childRankings = useMemo(() => rankings.filter(r => r.folderId === currentFolderId), [rankings, currentFolderId]);
   const currentFolder = useMemo(() => folders.find(f => f.id === currentFolderId), [folders, currentFolderId]);
 
+  useEffect(() => {
+    if (!isRoot && currentFolderId && !currentFolder) {
+      navigate('/');
+    }
+  }, [isRoot, currentFolderId, currentFolder, navigate]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },

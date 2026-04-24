@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
-import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles } from 'lucide-react';
+import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles, FileText } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelItem from '../components/common/PixelItem';
 
@@ -30,6 +30,35 @@ export default function SettingsView() {
     a.click();
     URL.revokeObjectURL(url);
     showStatus('success', 'データを書き出しました');
+  };
+
+  const handleExportCSV = () => {
+    const allItems = useStore.getState().getAllItems();
+    const headers = ['ID', 'Title', 'Author', 'Genre', 'Rating', 'Views', 'Created At', 'Memo'];
+    const rows = allItems.map(i => [
+      i.id,
+      i.title || '',
+      i.author || '',
+      i.genre || '',
+      i.rating || 0,
+      i.views || 0,
+      i.createdAt || '',
+      (i.memo || '').replace(/\n/g, ' ')
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ranking-data-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showStatus('success', 'CSVを書き出しました');
   };
 
   const handleImportClick = () => {
@@ -157,6 +186,19 @@ export default function SettingsView() {
             <div className="text-left flex-1">
               <p className="text-sm font-black text-white">JSONを書き出す (Export)</p>
               <p className="text-[11px] text-slate-500 font-medium">画像を含む全データのバックアップ</p>
+            </div>
+          </button>
+
+          <button
+            onClick={handleExportCSV}
+            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FileText className="w-5 h-5 text-blue-400" />
+            </div>
+            <div className="text-left flex-1">
+              <p className="text-sm font-black text-white">CSVを書き出す (Export CSV)</p>
+              <p className="text-[11px] text-slate-500 font-medium">Excel等で閲覧可能なデータ出力</p>
             </div>
           </button>
 

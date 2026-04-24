@@ -70,7 +70,8 @@ export const useStore = create((set, get) => ({
     const folders = await loadData('folders', []);
     const rankings = await loadData('rankings', []);
     const unrankedItems = await loadData('unrankedItems', []);
-    const settings = await loadData('settings', {
+    
+    const defaultSettings = {
       defaultDurations: {
         movie: 120,
         music: 3,
@@ -80,7 +81,19 @@ export const useStore = create((set, get) => ({
         game: 60
       },
       useViewCount: true
-    });
+    };
+    
+    const savedSettings = await loadData('settings', defaultSettings);
+    // Merge saved settings with defaults to ensure new fields (like useViewCount) exist
+    const settings = {
+      ...defaultSettings,
+      ...savedSettings,
+      defaultDurations: {
+        ...defaultSettings.defaultDurations,
+        ...(savedSettings?.defaultDurations || {})
+      }
+    };
+
     set({ folders, rankings, unrankedItems, settings, isInitialized: true });
   },
 
@@ -308,6 +321,45 @@ export const useStore = create((set, get) => ({
       const finalItems = newItems.map((item, i) => ({ ...item, currentRank: i + 1 })).slice(0, 100);
       const rankings = state.rankings.map(r => r.id === targetRankingId ? { ...r, items: finalItems } : r);
       const unrankedItems = state.unrankedItems.filter(i => i.id !== itemToInsert.id);
+      saveData('rankings', rankings);
+      saveData('unrankedItems', unrankedItems);
+      return { rankings, unrankedItems };
+    });
+  },
+
+  bulkInsertItemsIntoRanking: (targetRankingId, itemsToInsert) => {
+    set(state => {
+      const ranking = state.rankings.find(r => r.id === targetRankingId);
+      if (!ranking) return state;
+
+      // Filter out items that are already in the ranking
+      const existingIds = new Set(ranking.items.filter(i => i.title).map(i => i.id));
+      const validNewItems = itemsToInsert.filter(i => !existingIds.has(i.id));
+
+      // Get empty slots
+      let currentItems = [...ranking.items];
+      let filledItems = currentItems.filter(i => i.title);
+      let emptyItems = currentItems.filter(i => !i.title);
+
+      // Add new items
+      const newFilledItems = [
+        ...filledItems,
+        ...validNewItems.map((item, idx) => ({
+          ...item,
+          genre: item.genre || ranking.genre,
+          currentRank: filledItems.length + idx + 1
+        }))
+      ];
+
+      // Re-fill to 100
+      const finalItems = [
+        ...newFilledItems,
+        ...emptyItems
+      ].map((item, i) => ({ ...item, currentRank: i + 1 })).slice(0, 100);
+
+      const rankings = state.rankings.map(r => r.id === targetRankingId ? { ...r, items: finalItems } : r);
+      const unrankedItems = state.unrankedItems.filter(i => !itemsToInsert.some(ni => ni.id === i.id));
+
       saveData('rankings', rankings);
       saveData('unrankedItems', unrankedItems);
       return { rankings, unrankedItems };

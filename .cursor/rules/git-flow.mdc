@@ -1,0 +1,8 @@
+---
+description: Gitのコミットおよびセーブに関する絶対ルール
+globs: "**/*"
+---
+# Git Commit Rules
+- **Atomic Commit:** 1つの機能追加、または1つのバグ修正ごとに、必ず `git add .` および `git commit` を実行すること。
+- **Pre-Change Save:** 大規模なコード改変を行う直前には、必ず現在の安定版を一度コミットしてセーブポイントを作ること。
+- **Detailed Message:** コミットメッセージは日本語で、具体的に「何を変更したか」を記述すること。
