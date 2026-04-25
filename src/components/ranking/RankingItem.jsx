@@ -144,12 +144,12 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       const allItems = useStore.getState().getAllItems();
       const isDuplicate = allItems.some(item => 
         item.id !== id && 
-        item.genre === effectiveGenre && 
         item.title?.toLowerCase().trim() === localTitle.toLowerCase().trim()
       );
 
       if (isDuplicate) {
-        if (!confirm(`【重複注意】\n「${localTitle}」は既に「${effectiveGenre}」ジャンルに登録されています。このまま登録しますか？`)) {
+        const dupItem = allItems.find(item => item.id !== id && item.title?.toLowerCase().trim() === localTitle.toLowerCase().trim());
+        if (!confirm(`【重複注意】\n「${localTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
           setLocalTitle(title || '');
           return;
         }
@@ -387,20 +387,20 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
                <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                  <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: parseInt(e.target.value) || 0 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="標準時間" />
-                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">分</span>
+                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="所要時間" />
+                 <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{effectiveGenre === 'game' ? '時間' : '分'}</span>
                </div>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
                  <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                    <Tv className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="1" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: parseInt(e.target.value) || 1 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
+                   <input type="number" min="0" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">話</span>
                  </div>
                )}
                {effectiveGenre === 'manga' && (
                  <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
                    <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="1" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: parseInt(e.target.value) || 1 })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
+                   <input type="number" min="0" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">巻</span>
                  </div>
                )}

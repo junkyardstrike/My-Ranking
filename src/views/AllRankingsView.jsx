@@ -140,7 +140,7 @@ export default function AllRankingsView() {
           <div className="flex items-center gap-3 mt-4 bg-rose-500/10 px-6 py-2 rounded-2xl border border-rose-500/20 shadow-lg backdrop-blur-sm">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
             <span className="text-3xl font-black text-rose-400 font-mono leading-none">
-              <Counter value={allItems.length} />
+              <Counter value={filteredItems.length} />
             </span>
           </div>
 
@@ -210,7 +210,7 @@ export default function AllRankingsView() {
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar px-1">
+          <div className="flex gap-2 overflow-x-auto pb-6 custom-scrollbar px-1">
             {GENRE_FILTERS.map(filter => {
               const Icon = filter.icon;
               return (
@@ -219,9 +219,9 @@ export default function AllRankingsView() {
                   onClick={() => setSelectedGenre(filter.id)}
                   className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all text-[11px] font-black uppercase tracking-tighter ${
                     selectedGenre === filter.id 
-                      ? 'bg-accent text-black border-accent shadow-lg shadow-accent/20' 
+                      ? 'bg-accent text-black border-accent shadow-lg shadow-accent/20 scale-105' 
                       : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'
-                  }`}
+                  } active:scale-95 touch-manipulation transition-transform`}
                 >
                   <Icon size={14} />
                   {filter.label}
@@ -240,7 +240,7 @@ export default function AllRankingsView() {
           <p className="text-xs text-slate-700 uppercase font-bold tracking-widest">条件に一致するレコードがアーカイブにありません</p>
         </div>
       ) : (
-        <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
+        <div className={`mt-8 space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
           {filteredItems.map((item, idx) => (
             <div 
               key={item.id} 

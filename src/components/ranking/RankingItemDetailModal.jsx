@@ -416,8 +416,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                     <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{genre === 'manga' ? '巻数' : '話数'}</label>
                                     <input 
                                       type="number" 
-                                      min="1" 
-                                      value={genre === 'manga' ? (volumes === 0 ? '' : volumes) : (episodes === 0 ? '' : episodes)} 
+                                      min="0" 
+                                      value={genre === 'manga' ? (volumes === 0 || volumes === undefined ? '' : volumes) : (episodes === 0 || episodes === undefined ? '' : episodes)} 
                                       onChange={e => handleUpdate({ [genre === 'manga' ? 'volumes' : 'episodes']: e.target.value === '' ? '' : parseInt(e.target.value) })} 
                                       className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
                                       placeholder="1" 
