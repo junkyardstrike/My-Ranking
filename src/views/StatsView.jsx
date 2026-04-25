@@ -22,7 +22,8 @@ import {
   Sparkles,
   Award,
   Info,
-  History
+  History,
+  ChevronDown
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 
