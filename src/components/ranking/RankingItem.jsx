@@ -252,9 +252,31 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20 active:scale-[0.98] active:bg-white/[0.1]'
         }`} 
-        onClick={() => {
+        onPointerDown={(e) => {
           if (isReorderMode) return;
-          setIsModalOpen(true);
+          const startX = e.clientX;
+          const startY = e.clientY;
+          const startTime = Date.now();
+          
+          const handleUp = (upEvent) => {
+            const moveX = Math.abs(upEvent.clientX - startX);
+            const moveY = Math.abs(upEvent.clientY - startY);
+            const duration = Date.now() - startTime;
+            
+            // わずかな移動ならタップとみなして即座に開く
+            if (moveX < 10 && moveY < 10 && duration < 300) {
+              setIsModalOpen(true);
+            }
+            cleanup();
+          };
+          
+          const cleanup = () => {
+            window.removeEventListener('pointerup', handleUp);
+            window.removeEventListener('pointercancel', cleanup);
+          };
+          
+          window.addEventListener('pointerup', handleUp);
+          window.addEventListener('pointercancel', cleanup);
         }}
       >
         {/* Gold glow effect removed to ensure true transparency */}
