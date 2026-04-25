@@ -158,6 +158,28 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     finally { setIsFetching(false); }
   };
 
+  const handleTitleSync = () => {
+    const newTitle = draftItem.title;
+    if (newTitle !== title && newTitle.trim() !== '') {
+      const allItems = useStore.getState().getAllItems();
+      const isDuplicate = allItems.some(item => 
+        item.id !== id && 
+        item.title?.toLowerCase().trim() === newTitle.toLowerCase().trim()
+      );
+
+      if (isDuplicate) {
+        const dupItem = allItems.find(item => item.id !== id && item.title?.toLowerCase().trim() === newTitle.toLowerCase().trim());
+        const GENRE_LABELS = {
+          anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
+        };
+        if (!confirm(`【重複注意】\n「${newTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
+          handleUpdate({ title: title || '' });
+          return;
+        }
+      }
+    }
+  };
+
   const handleCopy = () => {
     const text = `${title}\n${author ? `by ${author}\n` : ''}\n${memo || ''}`;
     navigator.clipboard.writeText(text);
@@ -239,6 +261,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       type="text" 
                       value={title || ''} 
                       onChange={e => handleUpdate({ title: e.target.value })} 
+                      onBlur={handleTitleSync}
                       className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-3xl sm:text-5xl font-black italic tracking-tighter pb-1" 
                       placeholder="作品名..." 
                     />

@@ -14,6 +14,10 @@ const GENRES = [
   { id: 'music', label: '音楽', icon: Music },
 ];
 
+const GENRE_LABELS = {
+  anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
+};
+
 const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   return new Promise((resolve) => {
     const img = new Image();

@@ -43,7 +43,24 @@ export default function HamburgerMenu() {
 
   const handleRecordItem = () => {
     if (!recordTitle.trim()) return;
-    recordItem({ title: recordTitle.trim(), genre: selectedRecordGenre });
+
+    const allItems = useStore.getState().getAllItems();
+    const cleanTitle = recordTitle.trim();
+    const isDuplicate = allItems.some(item => 
+      item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim()
+    );
+
+    if (isDuplicate) {
+      const dupItem = allItems.find(item => item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim());
+      const GENRE_LABELS = {
+        anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
+      };
+      if (!confirm(`【重複注意】\n「${cleanTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
+        return;
+      }
+    }
+
+    recordItem({ title: cleanTitle, genre: selectedRecordGenre });
     setRecordTitle('');
     setSelectedRecordGenre('music');
     setShowRecordItem(false);
