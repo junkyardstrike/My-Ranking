@@ -449,44 +449,51 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       </div>
                     )}
                   </div>
-                  {!localIsCollapsed && author && (
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[200px] mb-1">
-                      {author}
-                    </span>
+                  {!localIsCollapsed && (
+                    <div className="flex items-center justify-between gap-2 mt-0.5 mb-1">
+                      {author && (
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[150px]">
+                          {author}
+                        </span>
+                      )}
+                      <div className="scale-75 origin-right">
+                        <ScoreRating rating={rating} readOnly />
+                      </div>
+                    </div>
                   )}
                 </div>
 
                 {!localIsCollapsed && (
-                  <div className="flex items-center gap-x-3 whitespace-nowrap overflow-hidden mt-2">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 whitespace-nowrap overflow-hidden mt-1 pr-1">
                     {/* Quick Counter for Views */}
                     <div className="flex items-center gap-1 bg-black/20 rounded-full border border-white/5 p-0.5 shrink-0">
                       <button 
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: Math.max(0, (views || 0) - 1) }); }}
-                        className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-red-400 transition-colors"
+                        className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-red-400 transition-colors"
                       >
-                        <Minus size={10} />
+                        <Minus size={8} />
                       </button>
-                      <span className={`flex items-center gap-1 text-[9px] font-mono px-1 ${currentRank === 1 ? 'text-yellow-100' : 'text-slate-400'}`}>
-                        <Eye className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-blue-500'}`} />
-                        {views}回
+                      <span className={`flex items-center gap-1 text-[8px] font-mono px-0.5 ${currentRank === 1 ? 'text-yellow-100' : 'text-slate-400'}`}>
+                        <Eye className={`w-2 h-2 ${currentRank === 1 ? 'text-yellow-300' : 'text-blue-500'}`} />
+                        {views}
                       </span>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: (views || 0) + 1 }); }}
-                        className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-emerald-400 transition-colors"
+                        className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-emerald-400 transition-colors"
                       >
-                        <Plus size={10} />
+                        <Plus size={8} />
                       </button>
                     </div>
 
                     {totalLifetimeDuration > 0 && (
-                      <span className={`flex items-center gap-1 text-[9px] font-mono px-2 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
-                        <Clock className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                        {(totalLifetimeDuration / 60).toFixed(1)}時間
+                      <span className={`flex items-center gap-1 text-[8px] font-mono px-1.5 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
+                        <Clock className={`w-2 h-2 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
+                        {(totalLifetimeDuration / 60).toFixed(1)}h
                       </span>
                     )}
                     {formattedDate && (
-                      <span className={`flex items-center gap-1 text-[9px] px-2 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
-                        <Calendar className={`w-2.5 h-2.5 ${currentRank === 1 ? 'text-yellow-300' : 'text-emerald-500'}`} />
+                      <span className={`flex items-center gap-1 text-[8px] px-1.5 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
+                        <Calendar className={`w-2 h-2 ${currentRank === 1 ? 'text-yellow-300' : 'text-emerald-500'}`} />
                         {formattedDate}
                       </span>
                     )}
@@ -495,15 +502,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
 
                 {!localIsCollapsed && previousRanks.length > 0 && (
                   <div className={`flex items-center gap-2 mt-2 pt-1 border-t ${currentRank === 1 ? 'border-yellow-300/20' : 'border-white/5'}`}>
-                    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${currentRank === 1 ? 'bg-black/60 border-yellow-300/30' : 'bg-black/20 border-white/5'}`}>
+                    <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-lg border ${currentRank === 1 ? 'bg-black/60 border-yellow-300/30' : 'bg-black/20 border-white/5'}`}>
                       <History size={10} className={currentRank === 1 ? "text-yellow-400" : "text-slate-600"} />
                       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                        {previousRanks.slice(-3).map((hist, hIdx) => (
-                          <span key={hIdx} className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-200/60' : 'text-slate-500'}`}>
+                        {previousRanks.slice(-2).map((hist, hIdx) => (
+                          <span key={hIdx} className={`text-[8px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-200/60' : 'text-slate-500'}`}>
                             {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
                           </span>
                         ))}
-                        <span className={`text-[9px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-300' : 'text-accent'}`}>現在({currentRank}位)</span>
+                        <span className={`text-[8px] font-black italic whitespace-nowrap ${currentRank === 1 ? 'text-yellow-300' : 'text-accent'}`}>現在</span>
                       </div>
                     </div>
                   </div>

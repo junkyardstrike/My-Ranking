@@ -148,17 +148,17 @@ export default function AllRankingsView() {
           {!isEditMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95 shadow-xl backdrop-blur-md"
+              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/5 shadow-xl backdrop-blur-md hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95"
             >
               {isActuallyCollapsed ? (
                 <>
                   <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Expand</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
                 </>
               ) : (
                 <>
                   <Minimize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Collapse</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">最小化</span>
                 </>
               )}
             </button>
@@ -171,6 +171,23 @@ export default function AllRankingsView() {
           </div>
         </div>
       </div>
+
+      {isSelectMode && targetRankingId && (
+        <div className="bg-accent/10 border border-accent/20 rounded-2xl px-6 py-3 flex items-center justify-between shadow-lg shadow-accent/5 mb-6 animate-in slide-in-from-top-4 duration-500">
+           <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <p className="text-[11px] sm:text-[13px] font-black text-white italic tracking-tight">
+                「<span className="text-accent underline underline-offset-4">{rankings.find(r => r.id === targetRankingId)?.title}</span>」への作品を選出中...
+              </p>
+           </div>
+           <button 
+             onClick={() => navigate(`/ranking/${targetRankingId}`)}
+             className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors"
+           >
+             キャンセル
+           </button>
+        </div>
+      )}
 
         {/* Search & Genre Filters */}
         <div className="space-y-4">
