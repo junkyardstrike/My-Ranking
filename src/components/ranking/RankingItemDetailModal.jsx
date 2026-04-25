@@ -219,7 +219,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-[100]">
           <div className="flex items-center gap-4">
-             <div onClick={() => setEditMode(!isGlobalEditMode)} className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all">
+             <div 
+               onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setEditMode(!isGlobalEditMode); }} 
+               className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all active:scale-95"
+             >
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
                 <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-all ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
                    <div className={`w-3 h-3 rounded-full transition-all ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600'}`} />
@@ -234,7 +237,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
               </button>
             )}
           </div>
-          <button onClick={handleClose} className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl active:scale-90">
+          <button 
+            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleClose(); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleClose(); }} 
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl active:scale-90"
+          >
             <X size={24} />
           </button>
         </div>
@@ -312,7 +319,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                  <button 
                                    key={key} 
                                    onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }}
-                                   onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
                                  >
                                     <Icon size={16} />
@@ -403,13 +409,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                   <div className="flex items-center gap-2">
                                      <button 
                                        onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }}
-                                       onClick={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }} 
                                        className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
                                      >-</button>
                                      <span className="font-mono font-black text-2xl tracking-tighter w-12 text-center">{views}</span>
                                      <button 
                                        onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }}
-                                       onClick={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }} 
                                        className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
                                      >+</button>
                                   </div>
@@ -494,7 +498,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                   <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-12 h-12 rounded-xl bg-transparent border-none cursor-pointer p-0" />
                                </div>
                             </div>
-                            <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
+                            <button onPointerDown={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
                                太字設定: {isBold ? 'ON' : 'OFF'}
                             </button>
                          </div>
@@ -503,7 +507,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       {!isSelected && !(rankingId || propRankingId) && (
                         <div className="bg-accent/5 border border-accent/20 p-6 rounded-[40px] space-y-4 shadow-2xl backdrop-blur-md">
                            {!isAddingToRanking ? (
-                             <button onClick={() => setIsAddingToRanking(true)} className="w-full py-5 rounded-[24px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/30 text-xl tracking-tight italic uppercase">
+                             <button 
+                               onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsAddingToRanking(true); }}
+                               className="w-full py-5 rounded-[24px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/30 text-xl tracking-tight italic uppercase"
+                             >
                                 <ListPlus size={24} /> Add to Ranking
                              </button>
                            ) : (
@@ -519,8 +526,15 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                   </div>
                                </div>
                                <div className="flex gap-4 pt-4">
-                                  <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-3 text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest transition-colors">キャンセル</button>
-                                  <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-4 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs shadow-xl transition-all">追加する <ArrowRight size={18} /></button>
+                                  <button 
+                                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsAddingToRanking(false); }} 
+                                    className="flex-1 py-3 text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest transition-colors"
+                                  >キャンセル</button>
+                                  <button 
+                                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToRanking(); }}
+                                    disabled={!selectedRankingId} 
+                                    className="flex-[2] py-4 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs shadow-xl transition-all active:scale-95"
+                                  >追加する <ArrowRight size={18} /></button>
                                </div>
                              </div>
                            )}
@@ -531,7 +545,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                    <div className="lg:col-span-7 space-y-4 flex flex-col h-full">
                       <div className="flex items-center justify-between px-2">
                           <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em] flex items-center gap-2"><AlignLeft size={14} /> メモ・あらすじ / NARRATIVE</p>
-                          <button onClick={handleCopy} className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors">
+                          <button 
+                            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleCopy(); }}
+                            className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95"
+                          >
                              <Copy size={12} /> コピー
                           </button>
                        </div>
