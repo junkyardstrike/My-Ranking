@@ -285,24 +285,24 @@ export default function StatsView() {
                   <span className="text-lg sm:text-xl md:text-2xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[280px]">
-                  <p className="text-[9px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right whitespace-pre-line">
-                    ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
+                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[200px]">
+                  <p className="text-[9px] text-slate-500 font-black leading-tight text-center sm:text-right whitespace-pre-line tracking-tighter">
+                    ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
                   </p>
-                  <p className="text-[8px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
-                    デフォルト設定：アニメ20分 / ドラマ40分 / 映画120分 / 音楽3分 / マンガ30分(1巻)
+                  <p className="text-[7px] text-slate-600 font-bold leading-tight text-center sm:text-right opacity-60">
+                    アニメ20分/ドラマ40分/映画120分
                   </p>
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-5 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[280px]">
-                    <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-[10px] font-black text-cyan-500">約</span>
-                      <span className="text-xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
-                      <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">日</span>
-                      <span className="text-xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
-                      <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">時間</span>
+                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-4 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[220px]">
+                    <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Conversion / 換算</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[9px] font-black text-cyan-500">約</span>
+                      <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.days}</span>
+                      <span className="text-[9px] font-black text-cyan-500 uppercase">日</span>
+                      <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.remainingHours}</span>
+                      <span className="text-[9px] font-black text-cyan-500 uppercase">時間</span>
                     </div>
                   </div>
                 )}
@@ -406,8 +406,8 @@ export default function StatsView() {
                 <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 5).map((item, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
                   <div 
                     key={item.id} 
                     className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
@@ -475,13 +475,13 @@ export default function StatsView() {
               </div>
             )}
 
-            {stats.hallOfFame.length > 5 && (
+            {stats.hallOfFame.length > 6 && (
               <div className="flex justify-center mt-10">
                 <button 
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
                   className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic flex items-center gap-2"
                 >
-                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 5} 作品を表示`}
+                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 6} 作品を表示`}
                   <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
