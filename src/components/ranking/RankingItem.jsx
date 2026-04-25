@@ -305,7 +305,11 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 className={`flex-1 bg-transparent border-b border-white/10 focus:border-accent outline-none text-white pb-1 italic tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} 
                 style={{ color, fontSize: `${localFontSize}px` }} 
               />
-              <button onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} disabled={!localTitle?.trim() || isFetching} className={`p-2.5 rounded-xl border transition-all shadow-lg ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}>
+              <button 
+                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAutoFetch(); }} 
+                disabled={!localTitle?.trim() || isFetching} 
+                className={`p-2.5 rounded-xl border transition-all shadow-lg active:scale-90 ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}
+              >
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
             </div>
