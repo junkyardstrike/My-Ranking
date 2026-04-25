@@ -56,7 +56,15 @@ export default function RankingView() {
           </button>
         </div>
 
-        <div className="absolute right-0 top-0 flex items-center gap-2">
+        <div className="absolute right-0 top-0 flex flex-col items-end gap-2">
+          <button 
+            onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
+            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
+          >
+            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-widest">レコードから追加</span>
+          </button>
+
           {!isEditMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
@@ -75,14 +83,6 @@ export default function RankingView() {
               )}
             </button>
           )}
-
-          <button 
-            onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
-            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
-          >
-            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest">レコードから追加</span>
-          </button>
         </div>
 
         <div className="flex flex-col items-center gap-3">

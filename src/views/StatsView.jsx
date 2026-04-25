@@ -279,15 +279,15 @@ export default function StatsView() {
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
                 
-                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
+                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0 pl-8">
                   <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] animate-pulse pr-2">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1.5 mt-4">
-                  <p className="text-[10px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right">
+                <div className="flex flex-col items-center sm:items-end gap-1.5 mt-4 max-w-[280px]">
+                  <p className="text-[10px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right whitespace-pre-line">
                     ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
                   </p>
                   <p className="text-[9px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
@@ -296,7 +296,7 @@ export default function StatsView() {
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                  <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[280px]">
                     <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
                     <div className="flex items-baseline gap-2">
                       <span className="text-xs font-black text-cyan-500">約</span>
@@ -311,7 +311,7 @@ export default function StatsView() {
             </div>
 
             <div className="w-full mt-2">
-               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none">各ジャンルごとの累計視聴時間</h3>
+               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none uppercase italic">Genre Time Stats / ジャンル別視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
                     <div 
@@ -324,8 +324,10 @@ export default function StatsView() {
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
                       )}
-                      <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 bg-white/10 rounded-md border border-white/5 backdrop-blur-sm">
-                        <span className="text-[9px] font-black text-white/40">{g.count}作品</span>
+                      <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 bg-accent/20 rounded-md border border-accent/30 backdrop-blur-sm">
+                        <span className="text-[9px] font-black text-accent uppercase tracking-tighter">
+                          {stats.genreAverages.find(ga => ga.id === g.id)?.count || 0}作品
+                        </span>
                       </div>
                       <div className="relative z-10 flex flex-col justify-start">
                         <div className="flex items-center gap-2 mb-0.5">
@@ -381,69 +383,52 @@ export default function StatsView() {
                 <p className="text-sm font-black text-slate-500 uppercase tracking-widest">No Legend Registered Yet</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
-                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 5).map((item, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
-                    style={{ animationDelay: `${250 + (idx * 50)}ms` }}
+                    className="group/card relative bg-black/60 border border-yellow-500/20 p-4 rounded-[32px] overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.6)] hover:border-yellow-500/50 backdrop-blur-xl"
                   >
-                    {/* Card Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
                     
-                    <div className="flex items-center gap-5 relative z-10">
-                      <div className="relative shrink-0">
-                        <div className="absolute -inset-1 bg-yellow-500/20 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-500/30 shadow-xl bg-black relative">
-                          {item.imageBase64 ? (
-                            <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Target className="w-6 h-6 text-yellow-500/20" />
-                            </div>
-                          )}
+                    <div className="flex gap-4 relative z-10">
+                      <div className="w-24 h-24 rounded-2xl overflow-hidden border border-yellow-500/30 shadow-2xl bg-black shrink-0 relative">
+                        {item.imageBase64 ? (
+                          <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Target className="w-6 h-6 text-yellow-500/20" />
+                          </div>
+                        )}
+                        <div className="absolute top-0 right-0 p-1 bg-yellow-500 text-black text-[8px] font-black italic rounded-bl-lg shadow-md">
+                           {GENRE_LABELS[item.genre] || 'OTHER'}
                         </div>
                       </div>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2">
-                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md pr-12">{item.title}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-black text-white text-lg sm:text-xl truncate uppercase italic tracking-tighter leading-tight mb-2 pr-2">{item.title}</h3>
+                        
+                        <div className="flex items-center gap-3">
+                           <div className="flex items-baseline gap-0.5 px-3 py-1 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
+                              <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
+                              <span className="text-[8px] font-black text-yellow-500/60 italic">点</span>
+                           </div>
+                           <div className="flex items-center gap-1.5">
+                              <Eye className="w-3.5 h-3.5 text-yellow-600" />
+                              <span className="text-xs font-black text-slate-300 font-mono">{item.views}<span className="text-[9px] ml-0.5 text-slate-500">回</span></span>
+                           </div>
                         </div>
-
-                        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
-                          <div className="flex items-baseline gap-0.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
-                            <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
-                            <span className="text-[10px] font-black text-yellow-500/60 italic uppercase tracking-tighter">点</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 shrink-0">
-                            <Eye className="w-4 h-4 text-yellow-600/60" />
-                            <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
-                          </div>
-                        </div>
-
-                        {/* Ranking Evolution Trend */}
+                        
                         {item.previousRanks && item.previousRanks.length > 0 && (
-                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-yellow-500/10">
-                            <History className="w-3 h-3 text-yellow-500/40" />
-                            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                              {item.previousRanks.slice(-3).map((hist, hIdx) => (
-                                <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
-                                  {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
-                                </span>
-                              ))}
-                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位(現在)</span>
-                            </div>
+                          <div className="mt-3 pt-2 border-t border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+                             <History className="w-3 h-3 text-slate-600" />
+                             {item.previousRanks.slice(-2).map((hist, hIdx) => (
+                               <span key={hIdx} className="text-[8px] font-bold text-slate-500 italic whitespace-nowrap">{hist.rank}位 →</span>
+                             ))}
+                             <span className="text-[8px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位</span>
                           </div>
                         )}
                       </div>
-                    </div>
-
-                    {/* Diagonal Genre Ribbon - Enlarged Text */}
-                    <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
-                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[13px] font-black uppercase tracking-[0.1em] py-2 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
-                          {GENRE_LABELS[item.genre] || 'OTHER'}
-                       </div>
                     </div>
                   </div>
                 ))}

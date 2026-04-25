@@ -223,7 +223,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         {/* Gold glow effect removed to ensure true transparency */}
         {/* Absolute Volume/Episode Badge */}
         {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-          <div className="absolute top-1 right-2 z-20 pointer-events-none">
+          <div className={`absolute right-2 z-20 pointer-events-none transition-all duration-500 ${isEditMode ? 'top-14' : 'top-1'}`}>
             <span className="inline-flex items-center px-3 py-1 rounded-lg bg-accent border border-black/20 text-[0.85em] font-black tracking-[0.2em] text-black uppercase shadow-[0_6px_15px_rgba(0,0,0,0.5)]">
               {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
             </span>
@@ -450,13 +450,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     )}
                   </div>
                   {!localIsCollapsed && (
-                    <div className="flex items-center justify-between gap-2 mt-0.5 mb-1">
+                    <div className="flex items-center gap-3 mt-0.5 mb-1">
                       {author && (
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[150px]">
                           {author}
                         </span>
                       )}
-                      <div className="scale-75 origin-right">
+                      <div className="scale-90 origin-left">
                         <ScoreRating rating={rating} readOnly />
                       </div>
                     </div>
