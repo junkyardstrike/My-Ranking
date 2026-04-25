@@ -47,6 +47,7 @@ export default function AppLayout() {
             <div className="flex items-center gap-1 sm:gap-3">
             <div className="flex items-center gap-1 sm:gap-2 relative z-[10000]">
               <button 
+                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setReorderMode(!isReorderMode); }}
                 onClick={(e) => { e.stopPropagation(); setReorderMode(!isReorderMode); }}
                 className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
               >
@@ -59,6 +60,7 @@ export default function AppLayout() {
               </button>
 
               <button 
+                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setEditMode(!isEditMode); }}
                 onClick={(e) => { e.stopPropagation(); setEditMode(!isEditMode); }}
                 className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
               >
