@@ -276,16 +276,16 @@ export default function StatsView() {
                   />
               </div>
 
-              <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
+              <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none sm:ml-auto">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
-                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0 pl-4">
+                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0 pl-12">
                   <span className="text-3xl sm:text-4xl md:text-6xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse pr-1">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
                   <span className="text-lg sm:text-xl md:text-2xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[200px]">
+                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[180px]">
                   <p className="text-[9px] text-slate-500 font-black leading-tight text-center sm:text-right whitespace-pre-line tracking-tighter">
                     ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
                   </p>
@@ -295,14 +295,14 @@ export default function StatsView() {
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-4 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[220px]">
+                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-3 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-fit max-w-[180px]">
                     <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Conversion / 換算</span>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-[9px] font-black text-cyan-500">約</span>
+                      <span className="text-[8px] font-black text-cyan-500">約</span>
                       <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.days}</span>
-                      <span className="text-[9px] font-black text-cyan-500 uppercase">日</span>
+                      <span className="text-[8px] font-black text-cyan-500 uppercase">日</span>
                       <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.remainingHours}</span>
-                      <span className="text-[9px] font-black text-cyan-500 uppercase">時間</span>
+                      <span className="text-[8px] font-black text-cyan-500 uppercase">時間</span>
                     </div>
                   </div>
                 )}
