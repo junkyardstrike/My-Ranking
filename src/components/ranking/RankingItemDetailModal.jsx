@@ -249,11 +249,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                ) : (
                  <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-y-4 pr-6" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
                    {title || 'Untitled'}
-                   {(genre === 'manga' || genre === 'anime' || genre === 'drama') && (
-                     <span className="inline-flex items-center px-6 py-2 rounded-2xl bg-gradient-to-r from-accent to-yellow-600 text-black text-sm sm:text-base not-italic font-black tracking-[0.2em] uppercase align-middle shadow-[0_10px_40px_rgba(234,179,8,0.3)] ml-2 sm:ml-4 border border-white/20">
-                       {genre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
-                     </span>
-                   )}
                  </h2>
                )}
             </div>
@@ -271,28 +266,41 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       </div>
                     )}
 
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
-                       {isGlobalEditMode ? (
-                          Object.entries(GENRE_MAP).map(([key, info]) => {
-                             const Icon = info.icon;
-                             const isSelectedGenre = genre === key;
-                             return (
-                               <button 
-                                 key={key} 
-                                 onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-                               >
-                                  <Icon size={16} />
-                                  {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
-                               </button>
-                             );
-                          })
-                       ) : (
-                          <div className="flex items-center gap-3 px-5 py-1.5 text-accent">
-                             <GenreIcon size={20} />
-                             <span className="text-xs font-black uppercase tracking-[0.2em]">{genreInfo.label}</span>
-                          </div>
-                       )}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
+                         {isGlobalEditMode ? (
+                            Object.entries(GENRE_MAP).map(([key, info]) => {
+                               const Icon = info.icon;
+                               const isSelectedGenre = genre === key;
+                               return (
+                                 <button 
+                                   key={key} 
+                                   onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
+                                   className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                 >
+                                    <Icon size={16} />
+                                    {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
+                                 </button>
+                               );
+                            })
+                         ) : (
+                            <div className="flex items-center gap-3 px-5 py-1.5 text-accent">
+                               <GenreIcon size={20} />
+                               <span className="text-xs font-black uppercase tracking-[0.2em]">{genreInfo.label}</span>
+                            </div>
+                         )}
+                      </div>
+
+                      {!isGlobalEditMode && (genre === 'manga' || genre === 'anime' || genre === 'drama') && (
+                        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-2.5 flex items-center gap-3 shadow-2xl">
+                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                             {genre === 'manga' ? 'VOLS' : 'EPS'}
+                           </span>
+                           <span className="text-sm font-black text-white font-mono italic tracking-tighter">
+                             {genre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
+                           </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
