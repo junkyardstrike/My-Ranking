@@ -56,28 +56,32 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   const liveItem = itemFromStore || propItem;
 
+  const [draftItem, setDraftItem] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
   const [isAddingToRanking, setIsAddingToRanking] = useState(false);
   const [selectedRankingId, setSelectedRankingId] = useState('');
   const [selectedRank, setSelectedRank] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
 
-  const [localTitle, setLocalTitle] = useState(liveItem?.title || '');
-  const [localAuthor, setLocalAuthor] = useState(liveItem?.author || '');
+  useEffect(() => {
+    if (isOpen && liveItem) {
+      setDraftItem({ ...liveItem });
+      setHasChanges(false);
+    }
+  }, [isOpen, liveItem?.id]);
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      setLocalTitle(liveItem?.title || '');
-      setLocalAuthor(liveItem?.author || '');
     } else {
       document.body.style.overflow = 'auto';
       setIsAddingToRanking(false);
     }
   }, [isOpen, liveItem?.id]);
 
-  if (!isOpen || !liveItem) return null;
+  if (!isOpen || !draftItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = liveItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = draftItem;
 
   const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
   let unitDuration = baseDuration;
@@ -93,23 +97,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const totalLifetimeDuration = totalDurationPerView * finalViewCount;
 
   const handleUpdate = (updates) => {
+    setDraftItem(prev => ({ ...prev, ...updates }));
+    setHasChanges(true);
+  };
+
+  const handleSave = () => {
+    if (!draftItem) return;
     if (onUpdate) {
-      onUpdate(id, updates);
+      onUpdate(id, draftItem);
     } else {
-      updateItemStore(id, updates);
+      updateItemStore(id, draftItem);
     }
-  };
-
-  const handleTitleSync = () => {
-    if (localTitle !== title) {
-      handleUpdate({ title: localTitle });
-    }
-  };
-
-  const handleAuthorSync = () => {
-    if (localAuthor !== author) {
-      handleUpdate({ author: localAuthor });
-    }
+    setHasChanges(false);
+    onClose();
   };
 
   const handleAddToRanking = () => {
@@ -153,7 +153,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         }
         
         handleUpdate(updates);
-        if (result.author) setLocalAuthor(result.author);
       }
     } catch (e) { console.error(e); }
     finally { setIsFetching(false); }
@@ -166,6 +165,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   };
 
   const handleClose = () => {
+    if (hasChanges) {
+      if (!window.confirm('変更が保存されていません。破棄して閉じますか？')) {
+        return;
+      }
+    }
     setEditMode(false);
     onClose();
   };
@@ -174,7 +178,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const GenreIcon = genreInfo.icon;
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={handleClose} />
       
       <div className="relative w-full max-w-5xl bg-[#0c0a10]/95 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
@@ -182,7 +186,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
           backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(124,58,237,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(212,175,55,0.2) 0%, transparent 50%)'
         }} />
         
-        <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-30">
+        <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-[100]">
           <div className="flex items-center gap-4">
              <div onClick={() => setEditMode(!isGlobalEditMode)} className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-all">
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
@@ -190,9 +194,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                    <div className={`w-3 h-3 rounded-full transition-all ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600'}`} />
                </div>
             </div>
+            {hasChanges && (
+              <button 
+                onPointerDown={(e) => { e.stopPropagation(); handleSave(); }}
+                className="flex items-center gap-2 bg-accent text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(234,179,8,0.4)] active:bg-yellow-400 active:scale-95 transition-all animate-in zoom-in-95 touch-none"
+              >
+                <CheckCircle2 size={14} /> 変更を保存
+              </button>
+            )}
           </div>
-          <button onClick={handleClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:text-white transition-all">
-            <X size={20} />
+          <button onClick={handleClose} className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl active:scale-90">
+            <X size={24} />
           </button>
         </div>
 
@@ -225,10 +237,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                  <div className="flex items-center gap-3">
                     <input 
                       type="text" 
-                      value={localTitle} 
-                      onChange={e => setLocalTitle(e.target.value)} 
-                      onBlur={handleTitleSync}
-                      onKeyDown={e => e.key === 'Enter' && handleTitleSync()}
+                      value={title || ''} 
+                      onChange={e => handleUpdate({ title: e.target.value })} 
                       className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-3xl sm:text-5xl font-black italic tracking-tighter pb-1" 
                       placeholder="作品名..." 
                     />
@@ -237,7 +247,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     </button>
                  </div>
                ) : (
-                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-y-4" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
+                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-y-4 pr-6" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
                    {title || 'Untitled'}
                    {(genre === 'manga' || genre === 'anime' || genre === 'drama') && (
                      <span className="inline-flex items-center px-6 py-2 rounded-2xl bg-gradient-to-r from-accent to-yellow-600 text-black text-sm sm:text-base not-italic font-black tracking-[0.2em] uppercase align-middle shadow-[0_10px_40px_rgba(234,179,8,0.3)] ml-2 sm:ml-4 border border-white/20">
@@ -296,10 +306,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                          {isGlobalEditMode ? (
                             <input 
                               type="text" 
-                              value={localAuthor} 
-                              onChange={e => setLocalAuthor(e.target.value)} 
-                              onBlur={handleAuthorSync}
-                              onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
+                              value={author || ''} 
+                              onChange={e => handleUpdate({ author: e.target.value })} 
                               className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-black text-white outline-none focus:border-accent w-full sm:w-[240px]" 
                               placeholder="作者名" 
                             />
@@ -341,7 +349,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                </div>
                             </div>
                             
-                            <div className="flex flex-col items-end space-y-2">
+                            <div className="flex flex-col items-center space-y-2">
                                <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Eye size={12} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
                                {isGlobalEditMode ? (
                                   <div className="flex items-center gap-2">
@@ -350,7 +358,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                      <button onClick={() => handleUpdate({ views: views + 1 })} className="w-8 h-8 bg-white/5 rounded-xl border border-white/10 text-white hover:bg-white/10 transition-all font-bold">+</button>
                                   </div>
                                ) : (
-                                  <p className="text-3xl font-black text-white font-mono tracking-tighter">{views.toLocaleString()}回</p>
+                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
                                )}
                             </div>
                          </div>

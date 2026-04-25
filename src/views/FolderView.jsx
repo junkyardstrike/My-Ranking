@@ -174,10 +174,10 @@ function SortableFolder({ folder, folders, rankings }) {
       )}
 
       <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
-        <h3 className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110">{folder.name}</h3>
-        <div className="flex items-center gap-2 mt-0.5">
+        <h3 className="text-lg sm:text-xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110 pr-6">{folder.name}</h3>
+        <div className="flex items-center gap-2 mt-0.5 pr-4">
           {folder.englishName && (
-            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase leading-tight truncate opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{folder.englishName}</span>
+            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase leading-tight truncate opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pr-2">{folder.englishName}</span>
           )}
           <span className="text-[10px] font-black text-accent/80 italic uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             ({totalItems}作品)
@@ -260,9 +260,9 @@ function SortableRanking({ ranking }) {
         )}
 
         <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
-          <h3 className="text-2xl sm:text-3xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110">{ranking.title}</h3>
+          <h3 className="text-lg sm:text-xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110 pr-6">{ranking.title}</h3>
           {ranking.englishName && (
-            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{ranking.englishName}</span>
+            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pr-4">{ranking.englishName}</span>
           )}
         </div>
 
@@ -364,7 +364,7 @@ export default function FolderView() {
   };
 
   return (
-    <div className="space-y-6 pt-0 pb-20" key={locationKey}>
+    <>
       <style>{`
         @keyframes premiumEntry {
           0% {
@@ -379,35 +379,30 @@ export default function FolderView() {
           }
         }
       `}</style>
-      <div className="relative flex flex-col mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
-        <div className={`flex flex-col gap-1 ${!isRoot ? 'items-center text-center w-full' : ''}`}>
-          {isRoot ? (
-            <div className="flex flex-col gap-1">
-              <div className="relative flex items-center gap-1 overflow-visible w-fit">
-                <h1 
-                  className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-yellow-400 drop-shadow-[0_0_35px_rgba(234,179,8,0.6)] pr-6"
-                >
-                  Ranking
-                </h1>
-                <PixelItem type="sword" size={40} className="mb-1" />
-                <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-yellow-500 via-yellow-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.8)] w-full" />
-              </div>
-                <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
-                  ランキング・アーカイブ
-                  <span className="w-12 h-px bg-white/20" />
-                </p>
-            </div>
-          ) : (
-            <div className="py-2">
-              <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-                {currentFolder?.name}
-              </h1>
-              <p className="text-[11px] text-yellow-500/60 font-black uppercase tracking-[0.4em] mt-2 italic">
-                {currentFolder?.englishName || 'COLLECTION ARCHIVE'}
+      <div className={`flex flex-col pb-20 ${isRoot ? 'pt-8' : 'pt-2 sm:pt-4'}`} key={locationKey}>
+        <div className={`flex flex-col mb-10 relative mt-0 ${isRoot ? 'items-center text-center' : ''}`}>
+        {isRoot ? (
+          <>
+            <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
+              Ranking
+            </h1>
+            <div className="flex flex-col items-center gap-2 mt-4">
+              <p className="text-[11px] text-accent font-black tracking-[0.1em] uppercase italic leading-none opacity-80">
+                Ranking Archive / ランキング
               </p>
+              <div className="h-1 w-20 bg-accent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]" />
             </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div className="py-2 pt-12">
+            <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+              {currentFolder?.name}
+            </h1>
+            <p className="text-[11px] text-accent/60 font-black uppercase tracking-[0.4em] mt-2 italic">
+              {currentFolder?.englishName || 'COLLECTION ARCHIVE'}
+            </p>
+          </div>
+        )}
 
         {!isRoot && (
           <div className="absolute left-0 top-0">
@@ -416,7 +411,7 @@ export default function FolderView() {
               className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
             >
               <ArrowLeft className="w-4 h-4 text-accent" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Go Back</span>
+              <span className="text-[10px] font-black uppercase tracking-widest">戻る</span>
             </button>
           </div>
         )}
@@ -468,9 +463,10 @@ export default function FolderView() {
                 </div>
               </SortableContext>
             )}
-          </div>
-        </DndContext>
-      )}
-    </div>
+           </div>
+         </DndContext>
+       )}
+     </div>
+     </>
   );
 }

@@ -59,19 +59,16 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   const isReorderMode = useStore(state => state.isReorderMode);
   const updateItem = useStore(state => state.updateItem);
   const [items, setItems] = useState(ranking.items);
-  const [hasChanges, setHasChanges] = useState(false);
-  
   // Use location key to FORCE full re-mount on every navigation
   const { key: locationKey } = useLocation();
 
   useEffect(() => {
     setItems(ranking.items);
-    setHasChanges(false);
   }, [ranking.id]);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 20 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 15 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -89,14 +86,14 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
       }));
       
       setItems(updatedWithRanks);
-      setHasChanges(true);
+      if (onSave) onSave(updatedWithRanks);
+      useStore.getState().captureRankHistory(ranking.id);
     }
   };
 
   const handleLocalUpdate = (id, updates) => {
     setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
     updateItem(id, updates);
-    setHasChanges(true);
   };
 
   const handleLocalMove = (id, targetRank) => {
@@ -111,15 +108,10 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
       currentRank: index + 1
     }));
     setItems(updatedWithRanks);
-    setHasChanges(true);
+    if (onSave) onSave(updatedWithRanks);
+    useStore.getState().captureRankHistory(ranking.id);
   };
 
-  const handleSave = () => {
-    if (onSave) onSave(items);
-    useStore.getState().captureRankHistory(ranking.id);
-    setHasChanges(false);
-    alert('ランキングの変更を保存しました。');
-  };
 
   const isActuallyCollapsed = propIsCollapsed;
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
@@ -178,17 +170,6 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
         </SortableContext>
       </DndContext>
 
-      {isEditMode && hasChanges && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[10001] animate-in slide-in-from-bottom-10 fade-in duration-300">
-          <button 
-            onClick={handleSave}
-            className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-            変更を保存
-          </button>
-        </div>
-      )}
     </div>
   );
 }

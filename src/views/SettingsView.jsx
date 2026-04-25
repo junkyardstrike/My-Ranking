@@ -127,27 +127,20 @@ export default function SettingsView() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 pt-2 sm:pt-4 pb-20">
-      <div className="flex items-start justify-between mb-10">
-        <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible w-fit">
-            <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-purple-400 drop-shadow-[0_0_35px_rgba(168,85,247,0.6)] pr-6"
-            >
-              Settings
-            </h1>
-            <PixelItem type="key" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-purple-500 via-purple-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(168,85,247,0.8)] w-full" />
-          </div>
-          <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
-            アプリ設定・管理
-            <span className="w-12 h-px bg-white/20" />
-          </p>
+    <div className="space-y-6 animate-in fade-in duration-700 pt-8 pb-20">
+      <div className="flex flex-col items-center text-center px-4 mb-10 relative">
+        <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
+          Settings
+        </h1>
+        
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <p className="text-[11px] text-purple-400 font-black tracking-[0.1em] uppercase italic leading-none">App Configuration / アプリ設定</p>
+          <div className="h-1 w-20 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.6)]" />
         </div>
 
         {status && (
-          <div className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-right-4 fade-in backdrop-blur-md shadow-2xl ${status.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}`}>
-            {status.type === 'success' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertCircle className="w-3.5 h-3.5" />}
+          <div className={`absolute -bottom-10 flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest animate-in zoom-in-95 fade-in backdrop-blur-xl shadow-2xl z-50 ${status.type === 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+            {status.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
             {status.message}
           </div>
         )}
@@ -190,19 +183,6 @@ export default function SettingsView() {
           </button>
 
           <button
-            onClick={handleExportCSV}
-            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
-          >
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <FileText className="w-5 h-5 text-blue-400" />
-            </div>
-            <div className="text-left flex-1">
-              <p className="text-sm font-black text-white">CSVを書き出す (Export CSV)</p>
-              <p className="text-[11px] text-slate-500 font-medium">Excel等で閲覧可能なデータ出力</p>
-            </div>
-          </button>
-
-          <button
             onClick={handleImportClick}
             className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
           >
@@ -220,6 +200,19 @@ export default function SettingsView() {
               accept=".json" 
               className="hidden" 
             />
+          </button>
+
+          <button
+            onClick={handleExportCSV}
+            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
+          >
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FileText className="w-5 h-5 text-blue-400" />
+            </div>
+            <div className="text-left flex-1">
+              <p className="text-sm font-black text-white">CSVを書き出す (Export CSV)</p>
+              <p className="text-[11px] text-slate-500 font-medium">Excel等で閲覧可能なデータ出力</p>
+            </div>
           </button>
 
           <button

@@ -39,7 +39,7 @@ export default function RankingView() {
       <div className="relative mb-6">
         <div className="flex flex-col items-center text-center px-1 mb-6 py-2">
           <h1 
-            className="text-3xl sm:text-5xl font-black text-yellow-400 tracking-tighter uppercase italic drop-shadow-[0_0_35px_rgba(234,179,8,0.5)] px-4"
+            className="text-3xl sm:text-5xl font-black text-yellow-400 tracking-tighter uppercase italic drop-shadow-[0_0_35px_rgba(234,179,8,0.5)] px-4 pr-6"
           >
             {ranking.title}
           </h1>
@@ -57,14 +57,6 @@ export default function RankingView() {
         </div>
 
         <div className="absolute right-0 top-0 flex flex-col items-end gap-2">
-          <button 
-            onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
-            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
-          >
-            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest">レコードから追加</span>
-          </button>
-
           {!isEditMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
@@ -83,14 +75,27 @@ export default function RankingView() {
               )}
             </button>
           )}
+
+          <button 
+            onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
+            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
+          >
+            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-widest">レコードから追加</span>
+          </button>
         </div>
 
         <div className="flex flex-col items-center gap-3">
           {(isEditMode || isReorderMode) && (
-            <div className="inline-block px-4 py-1.5 bg-accent/20 border border-accent/30 rounded-xl shadow-[0_0_15px_rgba(234,179,8,0.2)]">
-              <p className="text-accent text-[11px] font-black text-center uppercase tracking-widest italic">
+            <div className="inline-block px-6 py-2.5 bg-accent/20 border border-accent/30 rounded-2xl shadow-[0_0_25px_rgba(234,179,8,0.3)]">
+              <p className="text-accent text-[16px] font-black text-center uppercase tracking-widest italic">
                 {isEditMode ? '編集モード実行中' : '並び替えモード実行中'}
               </p>
+              {isEditMode && (
+                <p className="text-[13px] text-accent/80 font-black text-center mt-2 leading-tight">
+                  ※この画面での編集操作は即時保存されます。
+                </p>
+              )}
             </div>
           )}
         </div>

@@ -1,0 +1,8 @@
+---
+description: 作業範囲の厳守と不要な再実装の禁止
+globs: "**/*"
+---
+# Strict Scope Control
+- **No Unsolicited Changes:** 指示されたタスク以外のリファクタリングやデザイン調整を一切禁止する。
+- **No Regression:** 完了済みの修正を「ついで」に再実装したり、元のコードに戻したりしないこと。
+- **Focus Only:** 現在の指示に含まれる内容のみを最小限の範囲で確実に実行すること。

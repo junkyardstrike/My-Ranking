@@ -206,9 +206,32 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     );
   };
 
+  const handleMove = (newRank) => {
+    if (onMove) {
+      onMove(id, newRank);
+      // Follow the item to its new position after a short delay for store/DOM update
+      setTimeout(() => {
+        const element = document.getElementById(`ranking-item-${id}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Brief flash effect
+          element.style.ringWidth = '4px';
+          element.style.ringColor = '#D4AF37';
+          element.classList.add('ring-4', 'ring-accent/50');
+          setTimeout(() => {
+            element.classList.remove('ring-4', 'ring-accent/50');
+          }, 1000);
+        }
+      }, 100);
+    } else {
+      moveItemToRank(rankingId || liveItem.rankingId, id, newRank);
+    }
+  };
+
   return (
     <>
       <div 
+        id={`ranking-item-${id}`}
         className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
           currentRank === 1 
             ? 'border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6),0_0_30px_rgba(255,215,0,0.3),inset_0_0_15px_rgba(255,215,0,0.3)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.03]' 
@@ -243,33 +266,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     </button>
                   ))}
                 </div>
-                {(rankingId || liveItem.rankingId) && (
-                  <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const nextRank = Math.max(1, currentRank - 1);
-                        if (onMove) onMove(id, nextRank); 
-                        else moveItemToRank(rankingId || liveItem.rankingId, id, nextRank);
-                      }} 
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 active:scale-90 transition-all"
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <span className="w-8 text-center text-[13px] font-black text-white italic tabular-nums">{currentRank}</span>
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const nextRank = Math.min(100, currentRank + 1);
-                        if (onMove) onMove(id, nextRank); 
-                        else moveItemToRank(rankingId || liveItem.rankingId, id, nextRank);
-                      }} 
-                      className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/10 text-slate-400 active:scale-90 transition-all"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
-                )}
               </div>
               {(dragHandleProps || isReorderMode) && (
                 <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all">
@@ -322,6 +318,52 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 />
               </div>
             </div>
+
+            {/* Rank Change Row - Between Meta and Metrics */}
+            {(rankingId || liveItem.rankingId) && (
+              <div className="flex items-center gap-4 bg-black/40 p-3 rounded-2xl border border-white/5 shadow-xl" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] italic pr-2">順位変更 / RANK</span>
+                  <div className="flex items-center gap-1 bg-accent/20 p-1 rounded-xl border border-accent/20">
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        const nextRank = Math.max(1, currentRank - 1);
+                        handleMove(nextRank); 
+                      }} 
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-accent/20 text-accent hover:bg-accent/40 active:scale-75 transition-all"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <div className="w-12 h-8 flex items-center justify-center">
+                      <input 
+                        type="number"
+                        min="1"
+                        key={`expanded-${id}-${currentRank}`}
+                        defaultValue={currentRank}
+                        onBlur={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (val > 0 && val !== currentRank) {
+                            handleMove(val);
+                          }
+                        }}
+                        className="w-full h-full bg-accent text-black font-black text-center rounded-md text-sm outline-none focus:ring-2 focus:ring-white"
+                      />
+                    </div>
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        const nextRank = Math.min(100, currentRank + 1);
+                        handleMove(nextRank); 
+                      }} 
+                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-accent/20 text-accent hover:bg-accent/40 active:scale-75 transition-all"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Metrics Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
@@ -404,43 +446,64 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   </div>
                 </div>
               )}
-              <div className="flex-shrink-0 relative group/rank">
-                {isEditMode && effectiveRankingId ? (
-                  <div className="relative w-12 h-12 flex items-center justify-center">
-                    <input 
-                      type="number"
-                      min="1"
-                      max="100"
-                      defaultValue={currentRank}
-                      onBlur={(e) => {
-                        const newRank = parseInt(e.target.value);
-                        if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          const newRank = parseInt(e.target.value);
-                          if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
-                          e.target.blur();
-                        }
-                      }}
-                      className="w-full h-full bg-accent text-black font-black text-center rounded-xl border-2 border-white/20 focus:border-white focus:outline-none text-lg shadow-[0_5px_15px_rgba(234,179,8,0.4)]"
-                      onClick={e => e.stopPropagation()}
-                    />
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[7px] font-black text-accent uppercase tracking-widest whitespace-nowrap opacity-0 group-hover/rank:opacity-100 transition-opacity pointer-events-none">
-                      Edit Rank
-                    </div>
-                  </div>
-                ) : (
-                  renderRankBadge(currentRank)
-                )}
+              <div className="flex flex-col items-center justify-center min-w-[40px] sm:min-w-[60px] px-1 relative z-10">
+                {renderRankBadge(currentRank)}
               </div>
               
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">
-                    <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
+                    <h3 className={`leading-tight truncate ${isBold ? 'font-black' : 'font-extrabold'} text-white italic drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] pr-4`} style={{ color: currentRank <= 3 ? undefined : color, fontSize: localIsCollapsed ? '13px' : `${fontSize}px` }}>
                       {title || 'Untitled'}
                     </h3>
+
+                    {/* NEW RANK EDITOR ROW - Always in Edit Mode */}
+                    {isEditMode && effectiveRankingId && (
+                      <div className="flex items-center gap-2 py-1" onClick={e => e.stopPropagation()}>
+                        <div 
+                          className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 shadow-2xl relative z-50"
+                          onPointerDown={e => e.stopPropagation()}
+                        >
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const r = Number(item.currentRank || currentRank) || 0;
+                              if (r > 1) handleMove(r - 1);
+                            }}
+                            className="w-8 h-8 flex items-center justify-center bg-accent/20 rounded-lg hover:bg-accent/40 active:scale-75 transition-all text-accent"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <div className="relative w-14 h-8">
+                            <input 
+                              type="number"
+                              min="1"
+                              key={`${id}-${item.currentRank || currentRank}`}
+                              defaultValue={item.currentRank || currentRank}
+                              onBlur={(e) => {
+                                const newRank = parseInt(e.target.value);
+                                const r = Number(item.currentRank || currentRank);
+                                if (newRank > 0 && newRank !== r) handleMove(newRank);
+                              }}
+                              className="w-full h-full bg-accent text-black font-black text-center rounded-md text-sm focus:ring-2 focus:ring-white outline-none"
+                            />
+                          </div>
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const r = Number(item.currentRank || currentRank) || 0;
+                              handleMove(r + 1);
+                            }}
+                            className="w-8 h-8 flex items-center justify-center bg-accent/20 rounded-lg hover:bg-accent/40 active:scale-75 transition-all text-accent"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic opacity-50">Rank Change</span>
+                      </div>
+                    )}
                     {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                       <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5 shrink-0">
                         <History size={8} className="text-slate-500" />
@@ -450,12 +513,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     )}
                   </div>
                   {!localIsCollapsed && (
-                    <div className="flex items-center gap-3 mt-0.5 mb-1">
-                      {author && (
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[150px]">
-                          {author}
-                        </span>
-                      )}
+                    <div className="flex flex-col gap-1.5 mt-0.5">
+                      <div className="flex items-center gap-3 pr-4">
+                        {author && (
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate max-w-[150px] pr-2">
+                            {author}
+                          </span>
+                        )}
+                      </div>
+
                       <div className="scale-90 origin-left">
                         <ScoreRating rating={rating} readOnly />
                       </div>

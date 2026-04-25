@@ -12,7 +12,7 @@ function DroppableBreadcrumbItem({ folder, index, isLast }) {
 
   return (
     <div className="flex items-center space-x-1" ref={isEditMode ? setNodeRef : null}>
-      {folder && <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />}
+      {index > 0 && <ChevronRight className="w-4 h-4 text-slate-600 flex-shrink-0" />}
       <Link 
         to={folder ? `/folder/${folder.id}` : "/"} 
         className={`p-1.5 transition-all rounded-md flex items-center ${
@@ -21,7 +21,7 @@ function DroppableBreadcrumbItem({ folder, index, isLast }) {
             : 'hover:text-white hover:bg-surface-light text-slate-400'
         } ${isLast && !isOver ? 'text-white font-semibold' : ''}`}
       >
-        {folder ? folder.name : <Home className="w-5 h-5 sm:w-6 sm:h-6" />}
+        {folder ? folder.name : <span className="text-[10px] font-black uppercase tracking-[0.2em] px-1">Top</span>}
       </Link>
     </div>
   );
@@ -41,11 +41,11 @@ export default function Breadcrumb() {
 
   return (
     <nav className="flex items-center space-x-1 text-sm overflow-x-auto whitespace-nowrap scrollbar-hide py-2">
-      <DroppableBreadcrumbItem folder={null} isLast={path.length === 0} />
       {path.map((folder, index) => (
         <DroppableBreadcrumbItem 
           key={folder.id} 
           folder={folder} 
+          index={index}
           isLast={index === path.length - 1} 
         />
       ))}

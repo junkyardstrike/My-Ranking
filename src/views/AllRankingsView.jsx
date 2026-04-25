@@ -125,30 +125,44 @@ export default function AllRankingsView() {
   };
 
   return (
-    <div className="pt-2 sm:pt-4 pb-32" key={locationKey}>
-      <div className="space-y-6">
-      <div className="flex items-start justify-between mb-10">
-        <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible w-fit">
-            <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-blue-400 drop-shadow-[0_0_35px_rgba(59,130,246,0.6)] pr-6"
-            >
-              Records
-            </h1>
-            <PixelItem type="grimoire" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 via-blue-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(59,130,246,0.8)] w-full" />
+    <div className="pt-8 pb-32" key={locationKey}>
+      <div className="relative mb-4">
+        <div className="flex flex-col items-center text-center px-4">
+          <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
+            Records
+          </h1>
+          
+          <div className="flex flex-col items-center gap-2 mt-4">
+            <p className="text-[11px] text-rose-500 font-black tracking-[0.1em] uppercase italic opacity-80 leading-none">Master List / 全作品</p>
+            <div className="h-1 w-20 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.6)]" />
           </div>
-          <p className="text-[10px] text-white font-black tracking-widest mt-3 flex items-center gap-3">
-            全作品マスターリスト
-            <span className="w-12 h-px bg-white/20" />
-          </p>
+            
+          <div className="flex items-center gap-3 mt-4 bg-rose-500/10 px-6 py-2 rounded-2xl border border-rose-500/20 shadow-lg backdrop-blur-sm">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
+            <span className="text-3xl font-black text-rose-400 font-mono leading-none">
+              <Counter value={allItems.length} />
+            </span>
+          </div>
+
+          {(isEditMode || isReorderMode) && (
+            <div className="mt-6 inline-block px-6 py-2.5 bg-accent/20 border border-accent/30 rounded-2xl shadow-[0_0_25px_rgba(234,179,8,0.3)]">
+              <p className="text-accent text-[16px] font-black text-center uppercase tracking-widest italic">
+                {isEditMode ? '編集モード実行中' : '並び替えモード実行中'}
+              </p>
+              {isEditMode && (
+                <p className="text-[13px] text-accent/80 font-black text-center mt-2 leading-tight">
+                  ※この画面での編集操作は即時保存されます。
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col items-end gap-3">
+        <div className="absolute right-0 top-0 pt-2">
           {!isEditMode && (
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/5 shadow-xl backdrop-blur-md hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 shadow-xl backdrop-blur-md hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95"
             >
               {isActuallyCollapsed ? (
                 <>
@@ -163,12 +177,6 @@ export default function AllRankingsView() {
               )}
             </button>
           )}
-          <div className="flex items-center gap-3 bg-blue-500/10 px-5 py-2.5 rounded-2xl border border-blue-500/20 shadow-lg backdrop-blur-sm whitespace-nowrap">
-            <span className="text-[12px] sm:text-[14px] font-black text-slate-300 uppercase tracking-[0.2em]">総作品数</span>
-            <span className="text-3xl font-black text-blue-400 font-mono leading-none">
-              {allItems.length}
-            </span>
-          </div>
         </div>
       </div>
 
@@ -222,15 +230,14 @@ export default function AllRankingsView() {
             })}
           </div>
         </div>
-      </div>
 
       {filteredItems.length === 0 ? (
         <div className="py-24 text-center space-y-4 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
           <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
             <ListFilter className="w-10 h-10 text-slate-800" />
           </div>
-          <p className="text-lg font-black text-slate-600 italic tracking-tighter">No Matching Records</p>
-          <p className="text-xs text-slate-700 uppercase font-bold tracking-widest">条件に一致する作品が見つかりません</p>
+          <p className="text-lg font-black text-slate-600 italic tracking-tighter">作品が見つかりません</p>
+          <p className="text-xs text-slate-700 uppercase font-bold tracking-widest">条件に一致するレコードがアーカイブにありません</p>
         </div>
       ) : (
         <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
@@ -271,18 +278,6 @@ export default function AllRankingsView() {
           </div>
         )}
 
-      {/* Floating Save Button for Records Tab */}
-      {isEditMode && hasChanges && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[10001] animate-in slide-in-from-bottom-10 fade-in duration-300">
-          <button 
-            onClick={handleSave}
-            className="bg-accent text-black px-8 py-4 rounded-full font-black shadow-2xl shadow-accent/40 flex items-center gap-3 hover:scale-105 active:scale-95 transition-all text-lg italic tracking-tighter"
-          >
-            <Save className="w-5 h-5" strokeWidth={3} />
-            変更を保存
-          </button>
-        </div>
-      )}
     </div>
   );
 }

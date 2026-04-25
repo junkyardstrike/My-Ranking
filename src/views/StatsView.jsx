@@ -23,7 +23,9 @@ import {
   Award,
   Info,
   History,
-  ChevronDown
+  ChevronDown,
+  X,
+  PlusSquare
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 
@@ -66,16 +68,24 @@ export default function StatsView() {
     useViewCount: true
   };
   
-  const navigate = useNavigate();
   const location = useLocation();
-  const { key: locationKey } = location;
-  const touchStartPos = useRef(null);
   const [isHallOfFameExpanded, setIsHallOfFameExpanded] = useState(false);
+  const [selectedHallItem, setSelectedHallItem] = useState(null);
 
   // Reset expanded state on tab mount
   useEffect(() => {
     setIsHallOfFameExpanded(false);
   }, [location.pathname]);
+
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (selectedHallItem) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedHallItem]);
 
   const stats = useMemo(() => {
     const allItems = getAllItems();
@@ -120,85 +130,28 @@ export default function StatsView() {
       }
     });
 
-    // 3. Hall of Fame (>= 95 points & >= 5 views)
+    // 3. Hall of Fame
     const hallOfFame = allItems
       .filter(item => {
         const r = Number(item.rating || 0);
         const v = Number(item.views || 0);
         return r >= 95 && v >= 5;
       })
-      .sort((a, b) => {
-        const rA = Number(a.rating || 0);
-        const rB = Number(b.rating || 0);
-        if (rB !== rA) return rB - rA;
-        const vA = Number(a.views || 0);
-        const vB = Number(b.views || 0);
-        return vB - vA;
-      });
+      .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
 
-    // 4. Genre Average Scores
-    const genreScores = {};
-    allItems.forEach(item => {
-      const r = Number(item.rating || 0);
-      if (r > 0) {
-        const g = item.genre || 'other';
-        if (!genreScores[g]) genreScores[g] = { total: 0, count: 0 };
-        genreScores[g].total += r;
-        genreScores[g].count += 1;
-      }
-    });
-
-    const genreAverages = Object.entries(genreScores)
-      .map(([genre, data]) => {
-        const imgs = genreImages[genre] || [];
-        const randomImg = imgs.length > 0 ? imgs[Math.floor(Math.random() * imgs.length)] : null;
-        
-        return {
-          id: genre,
-          name: GENRE_LABELS[genre] || genre,
-          avg: Math.ceil(data.total / data.count),
-          count: data.count,
-          color: GENRE_COLORS[genre] || GENRE_COLORS.other,
-          bgImage: randomImg
-        };
-      })
-      .sort((a, b) => b.avg - a.avg);
-
-    // 5. Lifetime Counter
-    const genreLifetime = {};
+    // 4. Lifetime Stats
     let totalMinutes = 0;
-    let hasHallOfFameItem = false;
+    const genreLifetime = {};
 
     allItems.forEach(item => {
       const g = item.genre || 'other';
-      const views = Number(item.views || 0);
+      const duration = Number(item.duration) || settings.defaultDurations[g] || 20;
+      const episodes = Number(item.episodes || item.volumes || 1);
+      const views = settings.useViewCount ? Number(item.views || 1) : 1;
+      const mins = duration * episodes * views;
       
-      const baseDuration = (item.duration !== undefined && item.duration !== null && item.duration !== '' && Number(item.duration) > 0) ? Number(item.duration) : null;
-      let unitDuration = baseDuration;
-      if (unitDuration === null) {
-        unitDuration = settings.defaultDurations[g] || settings.defaultDurations.movie || 60;
-      }
-
-      let totalDurationPerView = unitDuration;
-      if (g === 'manga') {
-        const volumes = (item.volumes !== undefined && item.volumes !== null && item.volumes !== '') ? Number(item.volumes) : 1;
-        totalDurationPerView = unitDuration * volumes;
-      } else if (g === 'anime' || g === 'drama') {
-        const episodes = (item.episodes !== undefined && item.episodes !== null && item.episodes !== '') ? Number(item.episodes) : 1;
-        totalDurationPerView = unitDuration * episodes;
-      }
-
-      const durationPerView = totalDurationPerView; 
-      const finalViews = settings.useViewCount ? (views || 1) : 1;
-      const itemTotalMinutes = durationPerView * finalViews;
-      if (itemTotalMinutes > 0) {
-        totalMinutes += itemTotalMinutes;
-        genreLifetime[g] = (genreLifetime[g] || 0) + itemTotalMinutes;
-        
-        if (Number(item.rating || 0) >= 95 && views >= 5) {
-          hasHallOfFameItem = true;
-        }
-      }
+      totalMinutes += mins;
+      genreLifetime[g] = (genreLifetime[g] || 0) + mins;
     });
 
     const lifetimeStats = {
@@ -206,68 +159,63 @@ export default function StatsView() {
       totalHours: Math.floor(totalMinutes / 60),
       days: Math.floor(totalMinutes / (60 * 24)),
       remainingHours: Math.floor((totalMinutes % (60 * 24)) / 60),
-      hasHallOfFameItem,
-      genreLifetime: Object.entries(genreLifetime).map(([genre, mins]) => {
-        const imgs = genreImages[genre] || [];
-        const randomImg = imgs.length > 0 ? imgs[Math.floor(Math.random() * imgs.length)] : null;
-        
-        return {
-          id: genre,
-          name: GENRE_LABELS[genre] || genre,
-          hours: Math.floor(mins / 60),
-          color: GENRE_COLORS[genre] || GENRE_COLORS.other,
-          bgImage: randomImg
-        };
-      }).sort((a, b) => b.hours - a.hours)
+      genreLifetime: Object.entries(genreLifetime).map(([id, mins]) => ({
+        id,
+        name: GENRE_LABELS[id],
+        hours: Math.floor(mins / 60),
+        color: GENRE_COLORS[id],
+        bgImage: genreImages[id] ? genreImages[id][Math.floor(Math.random() * genreImages[id].length)] : null
+      })).sort((a, b) => b.hours - a.hours)
     };
+
+    // 5. Genre Averages
+    const genreAverages = Object.entries(GENRE_LABELS).map(([id, name]) => {
+      const items = allItems.filter(i => i.genre === id);
+      const count = items.length;
+      const avg = count > 0 ? items.reduce((sum, i) => sum + Number(i.rating || 0), 0) / count : 0;
+      return {
+        id,
+        name,
+        avg: parseFloat(avg.toFixed(1)),
+        count,
+        color: GENRE_COLORS[id],
+        bgImage: genreImages[id] ? genreImages[id][Math.floor(Math.random() * genreImages[id].length)] : null
+      };
+    }).filter(g => g.count > 0).sort((a, b) => b.avg - a.avg);
 
     return {
       totalCount: allItems.length,
       genreData,
       scoreBins,
       hallOfFame,
-      genreAverages,
-      lifetimeStats
+      lifetimeStats,
+      genreAverages
     };
   }, [rankings, unrankedItems, getAllItems, settings]);
 
-  return (
-    <div className="animate-in fade-in duration-700 space-y-4 pb-32">
-      <div className="flex items-start justify-between mb-10 premium-section-animate" style={{ animationDelay: '0ms' }}>
-        <div className="flex flex-col gap-1">
-          <div className="relative flex items-center gap-1 overflow-visible w-fit">
-            <h1 
-              className="text-5xl sm:text-7xl font-black tracking-tighter uppercase italic leading-none text-emerald-400 drop-shadow-[0_0_30px_rgba(52,211,153,0.6)] pr-6"
-            >
-              Stats
-            </h1>
-            <PixelItem type="potion" size={40} className="mb-1" />
-            <div className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-transparent rounded-full shadow-[0_0_15px_rgba(16,185,129,0.8)] w-full" />
-          </div>
-          <p className="text-[10px] text-white font-black tracking-wider mt-3 flex items-center gap-3">
-            統計・分析ダッシュボード
-            <span className="w-12 h-px bg-white/20" />
-          </p>
-        </div>
+  if (!stats) return null;
 
-        <div className="flex flex-col items-end gap-3">
-          <div className="inline-flex items-center gap-3 bg-emerald-500/10 px-5 py-2.5 rounded-2xl border border-emerald-500/20 shadow-lg backdrop-blur-sm">
-            <span className="text-[12px] sm:text-[14px] font-black text-slate-300 uppercase tracking-[0.2em]">総作品数</span>
-            <span className="text-3xl font-black text-emerald-400 font-mono leading-none">
-              <Counter value={stats.totalCount} />
-            </span>
-          </div>
+  return (
+    <div className="space-y-8 pb-32 animate-in fade-in duration-700 pt-8">
+      {/* Header */}
+      <div className="flex flex-col items-center text-center px-4 mb-10 relative">
+        <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
+          RANKING STATS
+        </h1>
+        <div className="flex flex-col items-center gap-2 mt-4">
+          <p className="text-[11px] text-cyan-400 font-black uppercase tracking-[0.1em] italic leading-none">Analytics / 統計データ</p>
+          <div className="h-1 w-20 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* 0. Lifetime Counter */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 sm:px-4">
+        {/* Lifetime Stats */}
         <section className="md:col-span-2 relative py-4 premium-section-animate" style={{ animationDelay: '100ms' }}>
           <div className="relative z-10 flex flex-col gap-8">
-            <div className="flex flex-row items-center justify-center gap-4 sm:gap-10 lg:gap-20 w-full px-2">
-              <div className="flex-shrink-0 ml-4 sm:ml-8">
+            <div className="flex flex-row items-center justify-between w-full">
+              <div className="flex-shrink-0 ml-4">
                  <PixelWalker 
-                    className="transform scale-[1.3] origin-center translate-y-3 translate-x-2 sm:translate-x-4" 
+                    className="transform scale-[1.2] sm:scale-[1.3] origin-left translate-y-3" 
                     stats={{
                       totalCount: stats.totalCount,
                       hallOfFameCount: stats.hallOfFame.length,
@@ -276,32 +224,33 @@ export default function StatsView() {
                   />
               </div>
 
-              <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none sm:ml-auto sm:pr-4">
-                <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
-                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0">
-                  <span className="text-3xl sm:text-4xl md:text-6xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse pr-1">
+              <div className="flex flex-col items-end text-right min-w-0 flex-1 pr-6 sm:pr-10">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
+                <div className="flex items-baseline gap-1 justify-end w-full min-w-0">
+                  <span className="text-4xl sm:text-5xl md:text-6xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse pr-1">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
-                  <span className="text-lg sm:text-xl md:text-2xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
+                  <span className="text-lg sm:text-xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[180px] w-full">
-                  <p className="text-[9px] text-slate-500 font-black leading-tight text-center sm:text-right whitespace-pre-line tracking-tighter">
+                <div className="flex flex-col items-end gap-1.5 mt-3 max-w-[220px] w-full">
+                  <p className="text-[10px] text-slate-400 font-black leading-tight text-right whitespace-pre-line tracking-tighter">
                     ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
                   </p>
-                  <p className="text-[7px] text-slate-600 font-bold leading-tight text-center sm:text-right opacity-60">
-                    アニメ20分/ドラマ40分/映画120分
+                  <p className="text-[9px] text-slate-500 font-bold leading-tight text-right opacity-80">
+                    アニメ20分 / ドラマ40分 / 映画120分<br />
+                    漫画30分 / 音楽3分
                   </p>
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-3 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-fit max-w-[180px]">
-                    <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Conversion / 換算</span>
+                  <div className="mt-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-4 py-2.5 rounded-xl inline-flex flex-col items-center gap-1.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-fit">
+                    <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest leading-none">Conversion / 日付換算</span>
                     <div className="flex items-baseline gap-1">
                       <span className="text-[8px] font-black text-cyan-500">約</span>
-                      <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.days}</span>
+                      <span className="text-xl font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.days}</span>
                       <span className="text-[8px] font-black text-cyan-500 uppercase">日</span>
-                      <span className="text-lg font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.remainingHours}</span>
+                      <span className="text-xl font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.remainingHours}</span>
                       <span className="text-[8px] font-black text-cyan-500 uppercase">時間</span>
                     </div>
                   </div>
@@ -309,7 +258,7 @@ export default function StatsView() {
               </div>
             </div>
 
-            <div className="w-full mt-2">
+            <div className="w-full mt-2 px-2">
                <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none uppercase italic">Genre Time Stats / ジャンル別視聴時間</h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                  {stats.lifetimeStats.genreLifetime.map(g => (
@@ -324,17 +273,16 @@ export default function StatsView() {
                         </div>
                       )}
                       
-                      {/* Count Style matching Average Score section */}
                       <div className="absolute top-2.5 right-3 z-20 text-right">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1 drop-shadow-md">Count</p>
                         <p className="text-sm font-black text-white font-mono leading-none drop-shadow-md">
-                          {stats.genreAverages.find(ga => ga.id === g.id)?.count || 0}
+                          {stats.genreData.find(gd => gd.id === g.id)?.value || 0}
                           <span className="text-[9px] ml-0.5 text-slate-400 font-bold">{GENRE_UNITS[g.id] || '作品'}</span>
                         </p>
                       </div>
 
-                      <div className="relative z-10 flex flex-col justify-start">
-                        <div className="flex items-center gap-2 mb-0.5">
+                      <div className="relative z-10 flex flex-col justify-start -mt-1">
+                        <div className="flex items-center gap-2">
                           <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
                           <span className="text-xl font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
                         </div>
@@ -346,142 +294,118 @@ export default function StatsView() {
                       </div>
                     </div>
                   ))}
-                 {stats.lifetimeStats.genreLifetime.length === 0 && (
-                    <p className="text-xs text-slate-600 text-center py-4 font-bold col-span-2 md:col-span-3">データがありません</p>
-                 )}
                </div>
             </div>
           </div>
         </section>
 
-        {/* 3. Hall of Fame - Open Design (Clean) */}
-        <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
-          <div className="relative z-10 px-4 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-12 relative z-10">
-              <div className="flex-1">
-                <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none mb-4">
-                  殿堂入り 
-                  <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
-                    (現在<Counter value={stats.hallOfFame.length} />作品)
-                  </span>
-                  <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
-                </h2>
-                
-                {/* Widen and Clean Criteria Card */}
-                <div className="mt-6 px-6 py-5 bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border-l-4 border-yellow-500 rounded-r-[32px] backdrop-blur-xl shadow-2xl premium-section-animate w-full max-w-4xl" style={{ animationDelay: '400ms' }}>
-                  <div className="flex items-center gap-5">
-                    <div className="p-2 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
-                      <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-black text-yellow-500/60 uppercase tracking-[0.4em] mb-2 italic">Selection Criteria / 選定基準</p>
-                      <div className="text-slate-300 font-bold tracking-tighter leading-tight flex items-center flex-wrap gap-x-6 gap-y-2">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-[10px] text-yellow-600 uppercase font-black">Rating</span>
-                          <span className="text-2xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">95</span>
-                          <span className="text-xs text-yellow-600">点以上</span>
-                        </div>
-                        <div className="w-px h-6 bg-white/10 hidden sm:block" />
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-[10px] text-yellow-600 uppercase font-black">Views</span>
-                          <span className="text-2xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">5</span>
-                          <span className="text-xs text-yellow-600">回以上</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        {/* Hall of Fame - Cinematic Redesign */}
+        <section className="md:col-span-2 relative py-12 px-2 overflow-hidden group premium-section-animate" style={{ animationDelay: '200ms' }}>
+          {/* Section Header */}
+          <div className="flex flex-col items-center mb-10 font-serif">
+            <div className="flex flex-col items-center gap-1 mb-4">
+              <p className="text-[10px] font-black text-yellow-500/60 uppercase tracking-[0.8em] leading-none mb-2">RATING STATS</p>
+              <h2 className="text-4xl sm:text-6xl font-black text-white italic tracking-tighter leading-none drop-shadow-2xl pr-4">殿堂入り</h2>
+            </div>
+            <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent relative">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.8)]" />
+            </div>
+          </div>
+
+          <div className="relative z-10 max-w-7xl mx-auto">
+            {/* Archived Count - Clean Typography */}
+            <div className="flex items-center justify-center mb-6 animate-in slide-in-from-top duration-700 font-serif">
+              <p className="text-xl sm:text-3xl font-black text-white italic tracking-tighter pr-4">
+                選出数：<span className="text-3xl sm:text-5xl text-yellow-500 mx-1 drop-shadow-lg pr-2">{stats.hallOfFame.length}</span>作品
+              </p>
+            </div>
+
+            {/* Selection Criteria - Yellow Framed Box */}
+            <div className="mb-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-4 px-8 py-5 bg-black/60 border-2 border-yellow-500 backdrop-blur-2xl rounded-xl relative font-serif">
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-1">MIN RATING</span>
+                  <span className="text-xs font-black text-white/60 uppercase">最小評価点</span>
                 </div>
+                <span className="text-3xl font-black text-white italic pr-2">95<span className="text-[11px] ml-1 text-yellow-500/60 uppercase">pts</span></span>
+              </div>
+              
+              <div className="w-px h-10 bg-yellow-500/20 hidden sm:block" />
+              
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-start leading-none">
+                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-1">REQ VIEWS</span>
+                  <span className="text-xs font-black text-white/60 uppercase">最低視聴回数</span>
+                </div>
+                <span className="text-3xl font-black text-white italic pr-2">5<span className="text-[11px] ml-1 text-yellow-500/60 uppercase">views</span></span>
               </div>
             </div>
 
             {stats.hallOfFame.length === 0 ? (
-              <div className="py-16 text-center border-2 border-dashed border-yellow-500/10 rounded-[32px] bg-yellow-500/5">
-                <div className="relative inline-block mb-4">
-                  <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-4xl font-black text-slate-900/40">?</span>
-                  </div>
-                </div>
-                <p className="text-sm font-black text-slate-600 uppercase tracking-[0.4em] italic">Legend Awaited</p>
-                <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
+              <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-[48px] bg-white/[0.02] font-serif">
+                <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto mb-4" />
+                <p className="text-sm font-black text-slate-700 uppercase tracking-[0.5em] italic">No Legends Yet</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-6">
                 {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
+                    onClick={() => setSelectedHallItem(item)}
+                    className="group/card relative aspect-square rounded-2xl sm:rounded-[40px] overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 hover:scale-[1.02] active:scale-95 cursor-pointer bg-[#0c0a10] flex flex-col justify-between"
                     style={{ animationDelay: `${250 + (idx * 50)}ms` }}
                   >
-                    {/* Card Shine Effect */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
-                    
-                    <div className="flex items-center gap-5 relative z-10">
-                      <div className="relative shrink-0">
-                        <div className="absolute -inset-1 bg-yellow-500/20 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-500/30 shadow-xl bg-black relative">
-                          {item.imageBase64 ? (
-                            <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Target className="w-6 h-6 text-yellow-500/20" />
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                    {/* Background Image with Cinematic Overlay */}
+                    <div className="absolute inset-0 z-0">
+                      {item.imageBase64 ? (
+                        <img src={item.imageBase64} alt="" className="w-full h-full object-cover opacity-40 transition-all duration-1000" />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-white/5 to-black" />
+                      )}
+                      {/* Lighter Dark Overlay for Title Area */}
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
+                    </div>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-2">
-                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md pr-12">{item.title}</h3>
+                    {/* Top Row: Score Only (Plus Button Removed) */}
+                    <div className="relative z-20 p-4 sm:p-8 flex items-start justify-between w-full">
+                      <div className="flex flex-col pointer-events-none">
+                        <span className="text-[8px] sm:text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] mb-1 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">RATING</span>
+                        <div className="flex items-baseline gap-1 sm:gap-2">
+                          <span className="text-4xl sm:text-8xl font-black text-yellow-500 italic leading-none tracking-tighter drop-shadow-[0_0_25px_rgba(234,179,8,0.8)] font-serif pr-4">
+                            {item.rating}
+                          </span>
+                          <span className="text-sm sm:text-4xl font-black text-yellow-500 italic drop-shadow-[0_0_15px_rgba(234,179,8,0.6)] pr-2">PT</span>
                         </div>
-
-                        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
-                          <div className="flex items-baseline gap-0.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
-                            <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
-                            <span className="text-[10px] font-black text-yellow-500/60 italic uppercase tracking-tighter">点</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 shrink-0">
-                            <Eye className="w-4 h-4 text-yellow-600/60" />
-                            <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
-                          </div>
-                        </div>
-
-                        {/* Ranking Evolution Trend */}
-                        {item.previousRanks && item.previousRanks.length > 0 && (
-                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-yellow-500/10">
-                            <History className="w-3 h-3 text-yellow-500/40" />
-                            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                              {item.previousRanks.slice(-3).map((hist, hIdx) => (
-                                <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
-                                  {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
-                                </span>
-                              ))}
-                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位(現在)</span>
-                            </div>
-                          </div>
-                        )}
                       </div>
                     </div>
 
-                    {/* Diagonal Genre Ribbon - Enlarged Text */}
-                    <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
-                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[13px] font-black uppercase tracking-[0.1em] py-2 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
-                          {GENRE_LABELS[item.genre] || 'OTHER'}
+                    {/* Middle Section: Analytics (Simplified) */}
+                    <div className="relative z-20 px-4 sm:px-8 flex items-center gap-2 sm:gap-4 -mt-4 sm:-mt-8">
+                       <Eye className="w-4 h-4 sm:w-8 h-8 text-accent drop-shadow-[0_0_10px_rgba(165,180,252,0.5)]" />
+                       <div className="flex flex-col">
+                         <span className="text-[7px] sm:text-[10px] font-black text-white/80 uppercase tracking-widest leading-none mb-0.5 sm:mb-1 drop-shadow-[0_0_5px_rgba(255,255,255,0.4)]">Views</span>
+                         <span className="text-xs sm:text-2xl font-black text-white leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.6)] font-serif pr-2">{item.views}</span>
                        </div>
+                    </div>
+
+                    {/* Bottom Section: Title ONLY (Mega Size) */}
+                    <div className="relative z-20 p-4 sm:p-8 w-full mt-auto">
+                      <h3 className="font-black text-yellow-500 text-base sm:text-5xl leading-tight whitespace-nowrap truncate uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(234,179,8,0.8)] pr-6">
+                        {item.title}
+                      </h3>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-
+            
             {stats.hallOfFame.length > 6 && (
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-center mt-12">
                 <button 
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
-                  className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic flex items-center gap-2"
+                  className="px-10 py-4 bg-white text-black rounded-full transition-all duration-300 text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-3 hover:scale-105 active:scale-95 shadow-xl"
                 >
-                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 6} 作品を表示`}
+                  {isHallOfFameExpanded ? 'CLOSE ARCHIVE' : `VIEW FULL ARCHIVE (${stats.hallOfFame.length})`}
                   <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
@@ -489,8 +413,8 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* DASHBOARD DIVIDER */}
-        <div className="md:col-span-2 mt-8 mb-4">
+        {/* DashBoard Header */}
+        <div className="md:col-span-2 mt-4 mb-2 px-4">
           <div className="flex items-center gap-4">
             <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
             <div className="flex flex-col items-center">
@@ -501,17 +425,15 @@ export default function StatsView() {
           </div>
         </div>
 
-        {/* 1. Genre Ratio Chart */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-2 shadow-2xl relative overflow-hidden group premium-section-animate" style={{ animationDelay: '400ms' }}>
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
-                <PieIcon className="w-4 h-4 text-violet-400" />
-              </div>
-              <div>
-                <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
-              </div>
+        {/* Genre Ratio Chart */}
+        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-8 shadow-2xl relative overflow-hidden group premium-section-animate" style={{ animationDelay: '400ms' }}>
+          <div className="flex items-center gap-3 mb-8">
+            <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
+              <PieIcon className="w-4 h-4 text-violet-400" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
             </div>
           </div>
           
@@ -545,9 +467,9 @@ export default function StatsView() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mb-4">
+          <div className="grid grid-cols-2 gap-2 mt-6">
             {stats.genreData.map((genre) => (
-              <div key={genre.name} className="flex items-center justify-between p-2 bg-white/5 rounded-xl border border-white/5">
+              <div key={genre.name} className="flex items-center justify-between p-2 bg-white/10 rounded-xl border border-white/10">
                 <div className="flex items-center gap-1.5 min-w-0">
                   <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: genre.color }} />
                   <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
@@ -560,9 +482,9 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 2. Score Distribution */}
+        {/* Score Distribution */}
         <section className="bg-white/5 rounded-[40px] p-6 border border-white/5 shadow-2xl premium-section-animate" style={{ animationDelay: '300ms' }}>
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex items-start gap-3 mb-8">
             <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
               <BarChart3 className="w-4 h-4 text-emerald-400" />
             </div>
@@ -593,21 +515,20 @@ export default function StatsView() {
              {stats.scoreBins.map(bin => (
                <div key={bin.range} className="flex items-center gap-2">
                   <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
-                  <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-accent transition-all duration-1000" 
                       style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
                     />
                   </div>
-                  <span className="w-10 text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
+                  <span className="text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
                </div>
              ))}
           </div>
         </section>
 
-
-        {/* 4. Genre Average Ranking */}
-        <section className="bg-black/40 backdrop-blur-xl border border-white/5 rounded-[32px] p-6 shadow-2xl md:col-span-2 premium-section-animate" style={{ animationDelay: '600ms' }}>
+        {/* Genre Average Score - Restored Layout */}
+        <section className="bg-black/40 border border-white/5 rounded-[32px] px-2 py-6 sm:p-6 shadow-2xl md:col-span-2 premium-section-animate" style={{ animationDelay: '600ms' }}>
           <div className="flex items-center gap-2 mb-6">
             <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20">
               <Star className="w-4 h-4 text-blue-400" />
@@ -619,34 +540,33 @@ export default function StatsView() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {stats.genreAverages.map((genre, index) => (
-              <div key={genre.id} className="relative bg-white/5 border border-white/5 p-4 rounded-[24px] group overflow-hidden h-36 flex flex-col justify-between shadow-lg">
+            {stats.genreAverages.map((genre) => (
+              <div key={genre.id} className="relative bg-black/40 border border-white/10 p-4 pb-8 rounded-[24px] group h-28 flex flex-col justify-between shadow-lg overflow-hidden">
                 {/* Random Genre Overlay Image */}
                 {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-25 md:group-hover:opacity-40 transition-opacity duration-700">
+                  <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-40 transition-opacity duration-700">
                     <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                   </div>
                 )}
                 
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-black text-accent uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
-                    <div className="w-2.5 h-2.5 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.8)]" style={{ backgroundColor: genre.color }} />
+                <div className="relative z-10 -mt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
+                    <div className="flex flex-col items-end">
+                       <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none mb-0.5 drop-shadow-md">Count</p>
+                       <p className="text-xs font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[9px] ml-0.5 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
+                  <h3 className="text-base font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
                 </div>
 
-                <div className="relative z-10 flex items-end justify-between">
+                <div className="relative z-10 flex items-end justify-between mb-5">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">Average</p>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1.5 mt-0.5">平均点</p>
-                    <p className="text-4xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-sm ml-0.5 italic">点</span></p>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1 drop-shadow-md">平均点</p>
+                    <p className="text-3xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-xs ml-0.5 italic">点</span></p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1 drop-shadow-md">Count</p>
-                    <p className="text-base font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[10px] ml-1 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
-                  </div>
+                  <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: genre.color }} />
                 </div>
               </div>
             ))}
@@ -655,11 +575,74 @@ export default function StatsView() {
           <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
             <Info className="w-3.5 h-3.5 text-accent opacity-60" />
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-              ※平均スコアは統計上の理由により、小数点以下を切り上げて表示しています
+              ※平均スコアは小数点表示しています。
             </p>
           </div>
         </section>
       </div>
+
+      {/* Hall of Fame Modal */}
+      {selectedHallItem && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHallItem(null)} />
+          <div className="relative bg-slate-900 w-full max-w-lg rounded-[32px] overflow-hidden border border-yellow-500/30 shadow-[0_0_50px_rgba(234,179,8,0.2)] animate-in zoom-in-95 duration-300">
+            <div className="relative aspect-video w-full">
+              {selectedHallItem.imageBase64 ? (
+                <img src={selectedHallItem.imageBase64} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                  <Trophy className="w-20 h-20 text-yellow-500/20" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+              <button 
+                onClick={() => setSelectedHallItem(null)}
+                className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur-md rounded-full text-white/60 hover:text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
+                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[selectedHallItem.genre]}</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                  <Eye className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{selectedHallItem.views} VIEWS</span>
+                </div>
+              </div>
+
+              <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter mb-6 leading-tight">{selectedHallItem.title}</h2>
+              
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Rating</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-yellow-400 font-mono italic">{selectedHallItem.rating}</span>
+                    <span className="text-xs font-black text-yellow-500/60">pts</span>
+                  </div>
+                </div>
+                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center">
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Episodes/Volumes</span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-white font-mono italic">{selectedHallItem.episodes || selectedHallItem.volumes || 1}</span>
+                    <span className="text-xs font-black text-slate-500">{selectedHallItem.genre === 'manga' ? '巻' : '話'}</span>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedHallItem(null)}
+                className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-sm uppercase tracking-[0.3em] rounded-2xl transition-all shadow-[0_10px_20px_rgba(234,179,8,0.3)] active:scale-95"
+              >
+                CLOSE DETAIL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

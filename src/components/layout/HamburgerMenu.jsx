@@ -67,23 +67,23 @@ export default function HamburgerMenu() {
             <div className={`bg-surface/90 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${isOpen && !showGenreSelect && !showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-black text-2xl tracking-tighter text-white uppercase italic">Add Content</h2>
+                  <h2 className="font-black text-2xl tracking-tighter text-white uppercase italic">コンテンツ追加</h2>
                   <button onClick={toggleMenu} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
                 </div>
                 
-                <button onClick={() => setShowGenreSelect(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-accent text-black shadow-xl shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
-                  <Plus className="w-6 h-6" strokeWidth={3} />
-                  <span className="font-black text-lg tracking-tight uppercase">New Ranking</span>
+                <button onClick={() => setShowRecordItem(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-accent text-black shadow-xl shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                  <FileText className="w-6 h-6" />
+                  <span className="font-black text-lg tracking-tight uppercase">レコード作成</span>
                 </button>
                 
-                <button onClick={() => setShowRecordItem(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
-                  <FileText className="w-6 h-6 text-accent" />
-                  <span className="font-black text-lg tracking-tight uppercase">Record Item</span>
+                <button onClick={() => setShowGenreSelect(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
+                  <Plus className="w-6 h-6 text-accent" strokeWidth={3} />
+                  <span className="font-black text-lg tracking-tight uppercase">ランキング作成</span>
                 </button>
 
                 <button onClick={handleCreateFolder} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
                   <FolderPlus className="w-6 h-6 text-emerald-500" strokeWidth={3} />
-                  <span className="font-black text-lg tracking-tight uppercase">New Folder</span>
+                  <span className="font-black text-lg tracking-tight uppercase">フォルダ作成</span>
                 </button>
               </div>
             </div>
@@ -94,10 +94,10 @@ export default function HamburgerMenu() {
             <div className={`bg-surface/95 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${showGenreSelect ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">Create Ranking</h2>
+                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">ランキングを新規作成</h2>
                   <button onClick={() => setShowGenreSelect(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
                 </div>
-                <input type="text" value={rankingTitle} onChange={e => setRankingTitle(e.target.value)} placeholder="Enter title..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
+                <input type="text" value={rankingTitle} onChange={e => setRankingTitle(e.target.value)} placeholder="ランキングのタイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
                 <div className="grid grid-cols-2 gap-2.5">
                   {GENRES.map(genre => (
                     <button key={genre.id} onClick={() => handleSelectRankingGenre(genre.id)} disabled={!rankingTitle.trim()} className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${rankingTitle.trim() ? `bg-gradient-to-br ${genre.color} border-transparent text-white shadow-lg hover:scale-105 active:scale-95` : 'bg-white/5 border-white/5 text-slate-800 cursor-not-allowed'}`}>
@@ -115,11 +115,11 @@ export default function HamburgerMenu() {
             <div className={`bg-surface/95 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">Record Content</h2>
+                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">レコードを作成</h2>
                   <button onClick={() => setShowRecordItem(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
                 </div>
                 <div className="space-y-4">
-                  <input type="text" value={recordTitle} onChange={e => setRecordTitle(e.target.value)} placeholder="Title..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
+                  <input type="text" value={recordTitle} onChange={e => setRecordTitle(e.target.value)} placeholder="タイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
                   
                   <div className="grid grid-cols-5 gap-2">
                     {GENRES.map(genre => (
@@ -136,7 +136,7 @@ export default function HamburgerMenu() {
                   </div>
 
                   <button onClick={handleRecordItem} disabled={!recordTitle.trim()} className="w-full py-5 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-3 disabled:opacity-30 shadow-xl shadow-accent/10 hover:scale-[1.02] active:scale-95 transition-all text-lg tracking-tighter">
-                    COMPLETE RECORD <Sparkles className="w-5 h-5" />
+                    作成を完了 <Sparkles className="w-5 h-5" />
                   </button>
                 </div>
               </div>

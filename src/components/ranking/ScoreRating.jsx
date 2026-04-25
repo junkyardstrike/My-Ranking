@@ -12,7 +12,7 @@ export default function ScoreRating({ rating = 0, onRatingChange, readOnly = fal
             style={{ width: `${rating}%` }}
           />
         </div>
-        <span className="text-[10px] font-black text-accent font-mono leading-none">{rating}</span>
+        <span className="text-[10px] font-black text-accent font-mono leading-none">{rating}pt</span>
       </div>
     );
   }
@@ -34,7 +34,7 @@ export default function ScoreRating({ rating = 0, onRatingChange, readOnly = fal
           }}
           className="w-10 bg-transparent border-none outline-none text-white font-black text-xs font-mono text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
-        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">pts</span>
+        <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest italic">pt</span>
       </div>
       <div className="w-px h-3 bg-white/10 flex-shrink-0" />
       <div className="min-w-[30px] flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
