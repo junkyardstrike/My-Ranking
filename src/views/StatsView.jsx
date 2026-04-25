@@ -371,10 +371,13 @@ export default function StatsView() {
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
                   <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2 tracking-tighter">
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    <span className="font-black text-yellow-500 text-xs">95</span>点以上の評価点かつ<span className="font-black text-yellow-500 text-xs">5</span>回以上の閲覧実績が達成された作品
-                  </p>
+                  <div className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-start gap-2 tracking-tighter leading-relaxed">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping mt-1.5 shrink-0" />
+                    <p>
+                      <span className="font-black text-yellow-500 text-xs">95</span>点以上の評価点かつ<br />
+                      <span className="font-black text-yellow-500 text-xs">5</span>回以上の閲覧実績が達成された作品
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -460,7 +463,7 @@ export default function StatsView() {
               </div>
             )}
 
-            {stats.hallOfFame.length > 6 && (
+            {stats.hallOfFame.length > 5 && (
               <div className="flex justify-center mt-10">
                 <button 
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
