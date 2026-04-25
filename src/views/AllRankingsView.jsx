@@ -216,14 +216,15 @@ export default function AllRankingsView() {
               return (
                 <button
                   key={filter.id}
+                  onPointerDown={() => setSelectedGenre(filter.id)}
                   onClick={() => setSelectedGenre(filter.id)}
-                  className={`flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all text-[11px] font-black uppercase tracking-tighter ${
+                  className={`flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border transition-[transform,background-color,border-color,box-shadow] duration-200 text-[11px] font-black uppercase tracking-tighter ${
                     selectedGenre === filter.id 
                       ? 'bg-accent text-black border-accent shadow-lg shadow-accent/20 scale-105' 
-                      : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10'
-                  } active:scale-95 touch-manipulation transition-transform`}
+                      : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10 active:bg-white/20'
+                  } active:scale-95 touch-manipulation`}
                 >
-                  <Icon size={14} />
+                  <Icon size={16} />
                   {filter.label}
                 </button>
               );

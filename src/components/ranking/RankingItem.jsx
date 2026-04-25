@@ -241,7 +241,10 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
         }`} 
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => {
+          if (isReorderMode) return;
+          setIsModalOpen(true);
+        }}
       >
         {/* Gold glow effect removed to ensure true transparency */}
         {/* Absolute Volume/Episode Badge - Hidden in Edit Mode */}
@@ -259,10 +262,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {renderRankBadge(currentRank)}
-                <div className="flex gap-1 bg-black/40 p-1 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
+                <div className="flex gap-1.5 bg-black/40 p-1.5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
                   {GENRES.map(g => (
-                    <button key={g.id} onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }} className={`p-1.5 rounded-lg transition-all ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}>
-                      <g.icon size={14} />
+                    <button 
+                      key={g.id} 
+                      onPointerDown={e => e.stopPropagation()}
+                      onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }} 
+                      className={`p-2.5 rounded-lg transition-all active:scale-90 touch-manipulation ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}
+                    >
+                      <g.icon size={16} />
                     </button>
                   ))}
                 </div>
@@ -294,17 +302,18 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
 
             {/* Meta Row */}
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
+              <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5 active:bg-white/5 transition-colors">
                 <User className="w-3.5 h-3.5 text-accent" />
                 <input 
                   type="text" 
                   value={localAuthor} 
                   onClick={e => e.stopPropagation()} 
+                  onPointerDown={e => e.stopPropagation()}
                   onChange={e => setLocalAuthor(e.target.value)} 
                   onBlur={handleAuthorSync}
                   onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
                   placeholder="作者名" 
-                  className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" 
+                  className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full h-full" 
                 />
               </div>
               <div className="flex items-center gap-2 bg-black/40 p-2.5 rounded-xl border border-white/5">
@@ -385,22 +394,22 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
 
             {/* Time & Episodes Row */}
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-               <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+               <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                  <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="所要時間" />
+                 <input type="number" min="0" value={duration || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="所要時間" />
                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{effectiveGenre === 'game' ? '時間' : '分'}</span>
                </div>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                    <Tv className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="0" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
+                   <input type="number" min="0" value={episodes || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">話</span>
                  </div>
                )}
                {effectiveGenre === 'manga' && (
-                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2">
+                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                    <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="0" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
+                   <input type="number" min="0" value={volumes || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">巻</span>
                  </div>
                )}
@@ -554,7 +563,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     {totalLifetimeDuration > 0 && (
                       <span className={`flex items-center gap-1 text-[8px] font-mono px-1.5 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
                         <Clock className={`w-2 h-2 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                        {(totalLifetimeDuration / 60).toFixed(1)}h
+                        {effectiveGenre === 'game' ? totalLifetimeDuration.toFixed(1) : (totalLifetimeDuration / 60).toFixed(1)}h
                       </span>
                     )}
                     {formattedDate && (

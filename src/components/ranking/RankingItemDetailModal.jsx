@@ -275,10 +275,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                return (
                                  <button 
                                    key={key} 
+                                   onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }}
                                    onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                                   className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                                   className={`flex items-center gap-2 px-5 py-3 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
                                  >
-                                    <Icon size={16} />
+                                    <Icon size={18} />
                                     {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
                                  </button>
                                );
@@ -361,9 +362,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Eye size={12} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
                                {isGlobalEditMode ? (
                                   <div className="flex items-center gap-2">
-                                     <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-8 h-8 bg-white/5 rounded-xl border border-white/10 text-white hover:bg-white/10 transition-all font-bold">-</button>
+                                     <button 
+                                       onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }}
+                                       onClick={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }} 
+                                       className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
+                                     >-</button>
                                      <span className="font-mono font-black text-2xl tracking-tighter w-10 text-center">{views}</span>
-                                     <button onClick={() => handleUpdate({ views: views + 1 })} className="w-8 h-8 bg-white/5 rounded-xl border border-white/10 text-white hover:bg-white/10 transition-all font-bold">+</button>
+                                     <button 
+                                       onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }}
+                                       onClick={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }} 
+                                       className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
+                                     >+</button>
                                   </div>
                                ) : (
                                   <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
@@ -406,8 +415,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                     min="0" 
                                     step={genre === 'game' ? '0.1' : '1'}
                                     value={baseDuration === null ? '' : baseDuration} 
+                                    onPointerDown={e => e.stopPropagation()}
                                     onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : (genre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} 
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                     placeholder={unitDuration.toString()} 
                                   />
                                </div>
@@ -418,8 +428,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                       type="number" 
                                       min="0" 
                                       value={genre === 'manga' ? (volumes === 0 || volumes === undefined ? '' : volumes) : (episodes === 0 || episodes === undefined ? '' : episodes)} 
+                                      onPointerDown={e => e.stopPropagation()}
                                       onChange={e => handleUpdate({ [genre === 'manga' ? 'volumes' : 'episodes']: e.target.value === '' ? '' : parseInt(e.target.value) })} 
-                                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
+                                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                       placeholder="1" 
                                     />
                                  </div>
