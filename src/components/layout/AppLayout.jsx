@@ -47,8 +47,8 @@ export default function AppLayout() {
             <div className="flex items-center gap-1 sm:gap-3">
             <div className="flex items-center gap-1 sm:gap-2 relative z-[10000]">
               <button 
-                onPointerDown={(e) => { e.stopPropagation(); setReorderMode(!isReorderMode); }}
-                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95 touch-none"
+                onClick={(e) => { e.stopPropagation(); setReorderMode(!isReorderMode); }}
+                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
               >
                 <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isReorderMode ? 'text-blue-400' : 'text-slate-500'}`}>
                   並び替えモード
@@ -59,8 +59,8 @@ export default function AppLayout() {
               </button>
 
               <button 
-                onPointerDown={(e) => { e.stopPropagation(); setEditMode(!isEditMode); }}
-                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95 touch-none"
+                onClick={(e) => { e.stopPropagation(); setEditMode(!isEditMode); }}
+                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
               >
                 <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isEditMode ? 'text-accent' : 'text-slate-500'}`}>
                   編集モード

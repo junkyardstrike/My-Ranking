@@ -36,9 +36,7 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
-                  onTouchStart={() => handleNavigate(tab.path)}
                   onClick={(e) => {
-                    // Click as fallback but primary is onTouchStart
                     e.preventDefault();
                     handleNavigate(tab.path);
                   }}

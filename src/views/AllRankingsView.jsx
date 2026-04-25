@@ -216,7 +216,6 @@ export default function AllRankingsView() {
               return (
                 <button
                   key={filter.id}
-                  onPointerDown={() => setSelectedGenre(filter.id)}
                   onClick={() => setSelectedGenre(filter.id)}
                   className={`flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border transition-[transform,background-color,border-color,box-shadow] duration-200 text-[11px] font-black uppercase tracking-tighter ${
                     selectedGenre === filter.id 

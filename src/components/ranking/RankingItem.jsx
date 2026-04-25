@@ -152,10 +152,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
       );
 
       if (duplicateItems.length > 0) {
-        const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
-        const genreString = duplicateGenres.map(g => `「${g}」`).join('');
+        const duplicateDetails = duplicateItems.map(item => {
+          const gLabel = GENRE_LABELS[item.genre] || item.genre;
+          const rTitle = item.rankingTitle || 'レコード一覧';
+          return `・「${gLabel}」の「${rTitle}」`;
+        });
         
-        if (!confirm(`【重複注意】\n「${localTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
+        const detailString = duplicateDetails.join('\n');
+        
+        if (!confirm(`【重複注意】\n「${localTitle}」は既に以下の場所に登録されています：\n\n${detailString}\n\nこのまま登録しますか？`)) {
           setLocalTitle(title || '');
           return;
         }
@@ -245,7 +250,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             ? 'border-2 border-slate-200 shadow-[0_0_12px_rgba(255,255,255,0.4),0_0_25px_rgba(203,213,225,0.2),inset_0_0_10px_rgba(255,255,255,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : currentRank === 3
             ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
-            : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20'
+            : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20 active:scale-[0.98] active:bg-white/[0.1]'
         }`} 
         onClick={() => {
           if (isReorderMode) return;
@@ -268,11 +273,10 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {renderRankBadge(currentRank)}
-                <div className="flex gap-1.5 bg-black/40 p-1.5 rounded-xl border border-white/5" onClick={e => e.stopPropagation()}>
+                <div className="flex gap-1.5 bg-black/40 p-1.5 rounded-xl border border-white/5">
                   {GENRES.map(g => (
                     <button 
                       key={g.id} 
-                      onPointerDown={e => e.stopPropagation()}
                       onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }} 
                       className={`p-2.5 rounded-lg transition-all active:scale-90 touch-manipulation ${effectiveGenre === g.id ? 'bg-accent/20 text-accent border border-accent/30 shadow-lg shadow-accent/10' : 'text-slate-600 hover:text-slate-400'}`}
                     >

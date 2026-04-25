@@ -109,6 +109,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       updateItemStore(id, draftItem);
     }
     setHasChanges(false);
+    setEditMode(false);
     onClose();
   };
 
@@ -134,10 +135,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   };
 
   const handleAutoFetch = async () => {
-    if (!localTitle || !localTitle.trim() || isFetching) return;
+    if (!draftItem.title || !draftItem.title.trim() || isFetching) return;
     setIsFetching(true);
     try {
-      const result = await fetchMetadata(localTitle.trim(), genre);
+      const result = await fetchMetadata(draftItem.title.trim(), genre);
       if (result) {
         const updates = { memo: result.memo, author: result.author || author };
         
@@ -171,10 +172,16 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         const GENRE_LABELS = {
           anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
         };
-        const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
-        const genreString = duplicateGenres.map(g => `「${g}」`).join('');
         
-        if (!confirm(`【重複注意】\n「${newTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
+        const duplicateDetails = duplicateItems.map(item => {
+          const gLabel = GENRE_LABELS[item.genre] || item.genre;
+          const rTitle = item.rankingTitle || 'レコード一覧';
+          return `・「${gLabel}」の「${rTitle}」`;
+        });
+        
+        const detailString = duplicateDetails.join('\n');
+        
+        if (!confirm(`【重複注意】\n「${newTitle}」は既に以下の場所に登録されています：\n\n${detailString}\n\nこのまま登録しますか？`)) {
           handleUpdate({ title: title || '' });
           return;
         }
@@ -302,9 +309,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                    key={key} 
                                    onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }}
                                    onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                                   className={`flex items-center gap-2 px-5 py-3 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
+                                   className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
                                  >
-                                    <Icon size={18} />
+                                    <Icon size={16} />
                                     {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
                                  </button>
                                );
@@ -375,16 +382,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       <div className="bg-white/5 p-6 rounded-[40px] border border-white/5 grid grid-cols-1 gap-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
                          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-50" />
                          
-                         <div className="flex items-center justify-between relative z-10">
+                         <div className="flex flex-col sm:flex-row items-center justify-between relative z-10 gap-6 sm:gap-4">
                             <div className="space-y-3">
-                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Star size={12} className="text-accent" /> スコア / SCORE</p>
-                               <div className="flex justify-start w-full scale-125 origin-left">
+                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center justify-center sm:justify-start gap-2"><Star size={12} className="text-accent" /> スコア / SCORE</p>
+                               <div className="flex justify-center sm:justify-start w-full scale-110 sm:scale-125 origin-center sm:origin-left">
                                   <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                                </div>
                             </div>
                             
-                            <div className="flex flex-col items-center space-y-2">
-                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Eye size={12} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
+                            <div className="flex flex-col items-center space-y-2 flex-1 w-full sm:w-auto">
+                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                                 <Eye size={12} className="text-blue-500" /> 
+                                 {genre === 'game' ? 'プレイ時間 / PLAYTIME' : '閲覧回数 / VIEWS'}
+                               </p>
                                {isGlobalEditMode ? (
                                   <div className="flex items-center gap-2">
                                      <button 
@@ -392,7 +402,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                        onClick={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }} 
                                        className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
                                      >-</button>
-                                     <span className="font-mono font-black text-2xl tracking-tighter w-10 text-center">{views}</span>
+                                     <span className="font-mono font-black text-2xl tracking-tighter w-12 text-center">{views}</span>
                                      <button 
                                        onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }}
                                        onClick={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }} 
@@ -400,7 +410,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                      >+</button>
                                   </div>
                                ) : (
-                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
+                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}{genre === 'game' ? '時間' : '回'}</p>
                                )}
                             </div>
                          </div>

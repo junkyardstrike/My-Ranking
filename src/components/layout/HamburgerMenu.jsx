@@ -55,11 +55,15 @@ export default function HamburgerMenu() {
         anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
       };
       
-      // Get unique list of genres
-      const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
-      const genreString = duplicateGenres.map(g => `「${g}」`).join('');
+      const duplicateDetails = duplicateItems.map(item => {
+        const gLabel = GENRE_LABELS[item.genre] || item.genre;
+        const rTitle = item.rankingTitle || 'レコード一覧';
+        return `・「${gLabel}」の「${rTitle}」`;
+      });
       
-      if (!confirm(`【重複注意】\n「${cleanTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
+      const detailString = duplicateDetails.join('\n');
+      
+      if (!confirm(`【重複注意】\n「${cleanTitle}」は既に以下の場所に登録されています：\n\n${detailString}\n\nこのまま登録しますか？`)) {
         return;
       }
     }
