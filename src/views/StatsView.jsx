@@ -145,10 +145,13 @@ export default function StatsView() {
 
     allItems.forEach(item => {
       const g = item.genre || 'other';
-      const duration = Number(item.duration) || settings.defaultDurations[g] || 0.35;
-      const episodes = Number(item.episodes || item.volumes || 1);
+      const isGame = g === 'game';
+      const duration = Number(item.duration) || settings.defaultDurations[g] || (isGame ? 0 : 20);
+      const episodes = isGame ? 1 : Number(item.episodes || item.volumes || 1);
       const views = settings.useViewCount ? Number(item.views || 1) : 1;
-      const hrs = duration * episodes * views;
+      
+      // Game is already in hours, others are in minutes
+      const hrs = isGame ? (duration * views) : (duration * episodes * views / 60);
       
       totalHours += hrs;
       genreLifetime[g] = (genreLifetime[g] || 0) + hrs;
@@ -237,8 +240,8 @@ export default function StatsView() {
                     ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
                   </p>
                   <p className="text-[9px] text-slate-500 font-bold leading-tight text-right opacity-80">
-                    アニメ0.35h / ドラマ0.7h / 映画2h<br />
-                    漫画0.5h / 音楽0.05h
+                    アニメ20分 / ドラマ40分 / 映画120分<br />
+                    漫画30分 / 音楽3分 (ゲームは時間入力)
                   </p>
                 </div>
                 

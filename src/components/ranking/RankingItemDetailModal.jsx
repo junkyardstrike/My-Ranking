@@ -374,15 +374,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                          <div className="relative z-10 pt-6 border-t border-white/5 flex flex-col items-center gap-3">
                             <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} className="text-purple-500" /> 累計所要時間 / TOTAL TIME</p>
                             <div className="flex items-baseline gap-2">
-                               <p className="text-5xl font-black text-white font-mono tracking-tighter">{totalLifetimeDuration.toFixed(1)}</p>
+                               <p className="text-5xl font-black text-white font-mono tracking-tighter">
+                                 {genre === 'game' ? totalLifetimeDuration.toFixed(1) : (totalLifetimeDuration / 60).toFixed(1)}
+                               </p>
                                <p className="text-sm font-black text-slate-500 uppercase tracking-widest">時間 / HOURS</p>
                             </div>
                             <div className="w-full bg-black/40 px-4 py-3 rounded-2xl border border-white/5 flex items-center justify-center gap-3 shadow-inner">
                                <span className="text-[11px] sm:text-[13px] font-black text-accent tracking-widest uppercase italic">
-                                  {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                                    `${unitDuration}時間 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回`
-                                  ) : (
+                                  {genre === 'game' ? (
                                     `${unitDuration}時間 × ${finalViewCount}回`
+                                  ) : (genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
+                                    `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回`
+                                  ) : (
+                                    `${unitDuration}分 × ${finalViewCount}回`
                                   )}
                                </span>
                             </div>
@@ -394,13 +398,15 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                             <p className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Clock size={14} /> 詳細設定 / DETAILS</p>
                             <div className="grid grid-cols-2 gap-4">
                                <div className="space-y-2">
-                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">所要時間 (時間)</label>
+                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                    {genre === 'game' ? '所要時間 (時間)' : '時間 (分)'}
+                                  </label>
                                   <input 
                                     type="number" 
                                     min="0" 
-                                    step="0.1"
+                                    step={genre === 'game' ? '0.1' : '1'}
                                     value={baseDuration === null ? '' : baseDuration} 
-                                    onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : parseFloat(e.target.value) })} 
+                                    onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : (genre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} 
                                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
                                     placeholder={unitDuration.toString()} 
                                   />

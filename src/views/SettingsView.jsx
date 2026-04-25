@@ -106,8 +106,8 @@ export default function SettingsView() {
   };
 
   const handleDurationChange = (genre, value) => {
-    const val = parseFloat(value) || 0;
-    if (confirm(`このジャンルのデフォルト時間を ${val} 時間に変更しますか？統計データに即座に反映されます。`)) {
+    const val = parseInt(value) || 0;
+    if (confirm(`このジャンルのデフォルト時間を ${val} 分に変更しますか？統計データに即座に反映されます。`)) {
       updateSettings({
         defaultDurations: {
           ...settings.defaultDurations,
@@ -309,15 +309,14 @@ export default function SettingsView() {
                           type="number" 
                           defaultValue={settings.defaultDurations?.[genre.id] || 0}
                           onBlur={(e) => {
-                            const val = parseFloat(e.target.value);
+                            const val = parseInt(e.target.value);
                             if (val !== settings.defaultDurations?.[genre.id]) {
                               handleDurationChange(genre.id, e.target.value);
                             }
                           }}
-                          step="0.1"
                           className="bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono font-black text-lg outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 w-full transition-all"
                         />
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">hrs</span>
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">min</span>
                       </div>
                     </div>
                   ))}
