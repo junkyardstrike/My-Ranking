@@ -351,17 +351,9 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame - Open Design (No Box) */}
+        {/* 3. Hall of Fame - Open Design (Clean) */}
         <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
-          {/* Animated Golden Aura */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
-          
           <div className="relative z-10">
-            {/* Background Sparkles Effect */}
-            <div className="absolute -top-10 -right-10 opacity-5">
-              <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
-            </div>
-
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
               <div className="flex items-center gap-6">
                 <div className="relative shrink-0">
@@ -379,9 +371,9 @@ export default function StatsView() {
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
                   <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
+                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2 tracking-tighter">
                     <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
-                    ９５点以上の評価点かつ５回以上の閲覧実績が達成された作品
+                    <span className="font-black text-yellow-500 text-xs">95</span>点以上の評価点かつ<span className="font-black text-yellow-500 text-xs">5</span>回以上の閲覧実績が達成された作品
                   </p>
                 </div>
               </div>
@@ -400,7 +392,7 @@ export default function StatsView() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
+                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 5).map((item, idx) => (
                   <div 
                     key={item.id} 
                     className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
@@ -474,7 +466,7 @@ export default function StatsView() {
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
                   className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic flex items-center gap-2"
                 >
-                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 6} 作品を表示`}
+                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 5} 作品を表示`}
                   <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
