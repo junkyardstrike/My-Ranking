@@ -205,7 +205,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     setTimeout(() => {
       setEditMode(false);
       onClose();
-    }, 50);
+    }, 100);
   };
 
   const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
