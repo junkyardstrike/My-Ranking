@@ -40,7 +40,7 @@ const GENRE_LABELS = {
 };
 
 const GENRE_UNITS = {
-  manga: '冊',
+  manga: '作品',
   anime: '作品',
   movie: '作品',
   drama: '作品',
@@ -575,7 +575,7 @@ export default function StatsView() {
           <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
             <Info className="w-3.5 h-3.5 text-accent opacity-60" />
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-              ※平均スコアは小数点表示しています。
+              ※平均スコアは統計上の理由により小数点表示しています。
             </p>
           </div>
         </section>
@@ -604,11 +604,19 @@ export default function StatsView() {
             </div>
 
             <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2 mb-4">
                 <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
                   <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[selectedHallItem.genre]}</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full">
+                <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full flex items-center gap-1.5">
+                  <span className="text-[10px] font-black text-slate-300 font-mono italic">
+                    {selectedHallItem.episodes || selectedHallItem.volumes || 1}
+                  </span>
+                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                    {selectedHallItem.genre === 'manga' ? '巻' : '話'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full ml-auto">
                   <Eye className="w-3.5 h-3.5 text-slate-400" />
                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{selectedHallItem.views} VIEWS</span>
                 </div>
@@ -616,19 +624,12 @@ export default function StatsView() {
 
               <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter mb-6 leading-tight">{selectedHallItem.title}</h2>
               
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 mb-8">
                 <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center">
                   <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Rating</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-black text-yellow-400 font-mono italic">{selectedHallItem.rating}</span>
                     <span className="text-xs font-black text-yellow-500/60">pts</span>
-                  </div>
-                </div>
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Episodes/Volumes</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-white font-mono italic">{selectedHallItem.episodes || selectedHallItem.volumes || 1}</span>
-                    <span className="text-xs font-black text-slate-500">{selectedHallItem.genre === 'manga' ? '巻' : '話'}</span>
                   </div>
                 </div>
               </div>
