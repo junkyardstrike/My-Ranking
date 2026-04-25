@@ -274,7 +274,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-3xl sm:text-5xl font-black italic tracking-tighter pb-1" 
                       placeholder="作品名..." 
                     />
-                    <button onClick={handleAutoFetch} disabled={isFetching} className="p-3 rounded-xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20">
+                    <button 
+                      onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAutoFetch(); }} 
+                      disabled={isFetching} 
+                      className="p-3 rounded-xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20 active:scale-90"
+                    >
                        {isFetching ? <Loader size={20} className="animate-spin" /> : <Sparkles size={20} />}
                     </button>
                  </div>
