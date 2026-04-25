@@ -56,12 +56,11 @@ export const useStore = create((set, get) => ({
   currentFolderId: null,
   settings: {
     defaultDurations: {
-      movie: 120,
-      music: 3,
-      anime: 20,
-      drama: 40,
-      manga: 30,
-      game: 60
+      movie: 2,
+      music: 0.05,
+      anime: 0.35,
+      drama: 0.7,
+      manga: 0.5
     },
     useViewCount: true
   },
@@ -73,12 +72,11 @@ export const useStore = create((set, get) => ({
     
     const defaultSettings = {
       defaultDurations: {
-        movie: 120,
-        music: 3,
-        anime: 20,
-        drama: 40,
-        manga: 30,
-        game: 60
+        movie: 2,
+        music: 0.05,
+        anime: 0.35,
+        drama: 0.7,
+        manga: 0.5
       },
       useViewCount: true
     };
@@ -443,12 +441,11 @@ export const useStore = create((set, get) => ({
       currentFolderId: null,
       settings: {
         defaultDurations: {
-          movie: 120,
-          music: 3,
-          anime: 20,
-          drama: 40,
-          manga: 30,
-          game: 60
+          movie: 2,
+          music: 0.05,
+          anime: 0.35,
+          drama: 0.7,
+          manga: 0.5
         },
         useViewCount: true
       }

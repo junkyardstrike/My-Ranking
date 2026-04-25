@@ -140,29 +140,28 @@ export default function StatsView() {
       .sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
 
     // 4. Lifetime Stats
-    let totalMinutes = 0;
+    let totalHours = 0;
     const genreLifetime = {};
 
     allItems.forEach(item => {
       const g = item.genre || 'other';
-      const duration = Number(item.duration) || settings.defaultDurations[g] || 20;
+      const duration = Number(item.duration) || settings.defaultDurations[g] || 0.35;
       const episodes = Number(item.episodes || item.volumes || 1);
       const views = settings.useViewCount ? Number(item.views || 1) : 1;
-      const mins = duration * episodes * views;
+      const hrs = duration * episodes * views;
       
-      totalMinutes += mins;
-      genreLifetime[g] = (genreLifetime[g] || 0) + mins;
+      totalHours += hrs;
+      genreLifetime[g] = (genreLifetime[g] || 0) + hrs;
     });
 
     const lifetimeStats = {
-      totalMinutes,
-      totalHours: Math.floor(totalMinutes / 60),
-      days: Math.floor(totalMinutes / (60 * 24)),
-      remainingHours: Math.floor((totalMinutes % (60 * 24)) / 60),
-      genreLifetime: Object.entries(genreLifetime).map(([id, mins]) => ({
+      totalHours: Math.floor(totalHours),
+      days: Math.floor(totalHours / 24),
+      remainingHours: Math.floor(totalHours % 24),
+      genreLifetime: Object.entries(genreLifetime).map(([id, hrs]) => ({
         id,
         name: GENRE_LABELS[id],
-        hours: Math.floor(mins / 60),
+        hours: Math.floor(hrs),
         color: GENRE_COLORS[id],
         bgImage: genreImages[id] ? genreImages[id][Math.floor(Math.random() * genreImages[id].length)] : null
       })).sort((a, b) => b.hours - a.hours)
@@ -238,8 +237,8 @@ export default function StatsView() {
                     ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
                   </p>
                   <p className="text-[9px] text-slate-500 font-bold leading-tight text-right opacity-80">
-                    アニメ20分 / ドラマ40分 / 映画120分<br />
-                    漫画30分 / 音楽3分
+                    アニメ0.35h / ドラマ0.7h / 映画2h<br />
+                    漫画0.5h / 音楽0.05h
                   </p>
                 </div>
                 
