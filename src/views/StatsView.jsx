@@ -370,13 +370,25 @@ export default function StatsView() {
                     </span>
                     <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
                   </h2>
-                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
-                  <div className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-start gap-2 tracking-tighter leading-relaxed">
-                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping mt-1.5 shrink-0" />
-                    <p>
-                      <span className="font-black text-yellow-500 text-xs">95</span>点以上の評価点かつ<br />
-                      <span className="font-black text-yellow-500 text-xs">5</span>回以上の閲覧実績が達成された作品
-                    </p>
+                  <div className="mt-5 px-5 py-4 bg-gradient-to-br from-yellow-500/10 via-yellow-500/5 to-transparent border-l-4 border-yellow-500 rounded-r-3xl backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.3)] premium-section-animate" style={{ animationDelay: '400ms' }}>
+                    <div className="flex items-start gap-4">
+                      <div className="mt-1 p-1.5 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
+                        <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[9px] font-black text-yellow-500/60 uppercase tracking-[0.4em] mb-1.5 italic">Selection Criteria / 選定基準</p>
+                        <div className="text-[11px] sm:text-xs text-slate-300 font-bold tracking-tighter leading-tight">
+                          <p className="flex items-center flex-wrap gap-x-2 gap-y-1">
+                            評価点 <span className="text-xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">95</span><span className="text-[10px] text-yellow-600">点以上</span>
+                            <span className="text-slate-700 font-black px-1">/</span>
+                            閲覧実績 <span className="text-xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">5</span><span className="text-[10px] text-yellow-600">回以上</span>
+                          </p>
+                          <p className="text-[9px] text-slate-500 font-medium mt-2 pt-2 border-t border-white/5 italic tracking-normal">
+                            These exceptional works have achieved eternal legendary status.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
