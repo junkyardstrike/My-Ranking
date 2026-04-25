@@ -384,16 +384,14 @@ export default function StatsView() {
                 <p className="text-sm font-black text-slate-500 uppercase tracking-widest">No Legend Registered Yet</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
                 {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-black/60 border border-yellow-500/20 p-4 rounded-[32px] overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.6)] hover:border-yellow-500/50 backdrop-blur-xl"
+                    className="group/card relative bg-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-white/10"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity" />
-                    
-                    <div className="flex gap-4 relative z-10">
-                      <div className="w-24 h-24 rounded-2xl overflow-hidden border border-yellow-500/30 shadow-2xl bg-black shrink-0 relative">
+                    <div className="flex items-center gap-4 relative z-10">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden border border-yellow-500/30 bg-black shrink-0">
                         {item.imageBase64 ? (
                           <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
                         ) : (
@@ -401,34 +399,22 @@ export default function StatsView() {
                             <Target className="w-6 h-6 text-yellow-500/20" />
                           </div>
                         )}
-                        <div className="absolute top-0 right-0 p-1 bg-yellow-500 text-black text-[8px] font-black italic rounded-bl-lg shadow-md">
-                           {GENRE_LABELS[item.genre] || 'OTHER'}
-                        </div>
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-black text-white text-lg sm:text-xl truncate uppercase italic tracking-tighter leading-tight mb-2 pr-2">{item.title}</h3>
-                        
-                        <div className="flex items-center gap-3">
-                           <div className="flex items-baseline gap-0.5 px-3 py-1 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
-                              <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
-                              <span className="text-[8px] font-black text-yellow-500/60 italic">点</span>
-                           </div>
-                           <div className="flex items-center gap-1.5">
-                              <Eye className="w-3.5 h-3.5 text-yellow-600" />
-                              <span className="text-xs font-black text-slate-300 font-mono">{item.views}<span className="text-[9px] ml-0.5 text-slate-500">回</span></span>
-                           </div>
-                        </div>
-                        
-                        {item.previousRanks && item.previousRanks.length > 0 && (
-                          <div className="mt-3 pt-2 border-t border-white/5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                             <History className="w-3 h-3 text-slate-600" />
-                             {item.previousRanks.slice(-2).map((hist, hIdx) => (
-                               <span key={hIdx} className="text-[8px] font-bold text-slate-500 italic whitespace-nowrap">{hist.rank}位 →</span>
-                             ))}
-                             <span className="text-[8px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[item.genre] || 'OTHER'}</span>
+                          <div className="flex items-center gap-1">
+                             <Eye className="w-3 h-3 text-slate-600" />
+                             <span className="text-[10px] font-bold text-slate-500 font-mono">{item.views}</span>
                           </div>
-                        )}
+                        </div>
+                        <h3 className="font-black text-white text-lg truncate uppercase italic tracking-tighter leading-none mb-2">{item.title}</h3>
+                        
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
+                          <span className="text-[10px] font-black text-yellow-500/60 italic">pts</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -436,17 +422,14 @@ export default function StatsView() {
               </div>
             )}
             
-            {stats.hallOfFame.length > 5 && (
-              <div className="flex justify-center mt-8">
+            {stats.hallOfFame.length > 6 && (
+              <div className="flex justify-center mt-10">
                 <button 
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
-                  className="group relative px-8 py-3 bg-yellow-500/10 hover:bg-yellow-500/20 border border-yellow-500/30 rounded-2xl transition-all duration-500 active:scale-95 overflow-hidden"
+                  className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic flex items-center gap-2"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  <span className="text-xs font-black text-yellow-500 uppercase tracking-[0.3em] italic flex items-center gap-2">
-                    {isHallOfFameExpanded ? 'Show Less / 閉じる' : `Show More Legends / あと ${stats.hallOfFame.length - 5} 作品を表示`}
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-500 ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
-                  </span>
+                  {isHallOfFameExpanded ? 'Show Less' : `Show More (+${stats.hallOfFame.length - 6})`}
+                  <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
             )}
