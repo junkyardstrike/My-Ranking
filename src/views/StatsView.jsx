@@ -351,84 +351,130 @@ export default function StatsView() {
           </div>
         </section>
 
-        {/* 3. Hall of Fame */}
+        {/* 3. Hall of Fame - Open Design (No Box) */}
         <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
+          {/* Animated Golden Aura */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-yellow-500/10 rounded-full blur-[120px] opacity-20 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse" />
           
-          <div className="flex flex-col items-center mb-10 relative z-10">
-            <div className="flex items-center gap-4 mb-2">
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-r from-transparent to-yellow-500/50" />
-              <div className="p-3 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
-                <Crown className="w-6 h-6 text-yellow-500" />
-              </div>
-              <div className="h-px w-8 sm:w-16 bg-gradient-to-l from-transparent to-yellow-500/50" />
+          <div className="relative z-10">
+            {/* Background Sparkles Effect */}
+            <div className="absolute -top-10 -right-10 opacity-5">
+              <Sparkles className="w-48 h-48 text-yellow-500 animate-spin-slow" />
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter uppercase drop-shadow-2xl">Hall of Fame</h2>
-            <div className="mt-4 flex flex-col items-center">
-              <p className="text-[10px] text-yellow-500 font-black uppercase tracking-[0.4em] mb-2 drop-shadow-sm">殿堂入り作品</p>
-              <div className="px-4 py-1.5 bg-black/40 border border-yellow-500/20 rounded-full backdrop-blur-md shadow-inner">
-                <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-tighter flex items-center gap-2">
-                  Selection Criteria: 
-                  <span className="text-yellow-400 font-black text-xs tracking-tighter">95</span>pts 
-                  <span className="text-yellow-700/50">/</span> 
-                  <span className="text-yellow-400 font-black text-xs tracking-tighter">5</span>views
-                </p>
-              </div>
-            </div>
-          </div>
 
-          <div className="relative z-10 px-4">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
+              <div className="flex items-center gap-6">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
+                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-2xl border border-yellow-200/50">
+                    <Award className="w-8 h-8 text-yellow-950" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
+                    殿堂入り 
+                    <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
+                      (現在<Counter value={stats.hallOfFame.length} />作品)
+                    </span>
+                    <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
+                  </h2>
+                  <p className="text-[11px] text-yellow-600/80 font-black uppercase tracking-[0.3em] mt-2 italic">The Golden Archive / Hall of Fame</p>
+                  <p className="text-[10px] text-slate-500 font-medium font-sans mt-2.5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-ping" />
+                    ９５点以上の評価点かつ５回以上の閲覧実績が達成された作品
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {stats.hallOfFame.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
-                <Star className="w-16 h-16 mb-4 text-yellow-500/10" />
-                <p className="text-sm font-black text-slate-500 uppercase tracking-widest">No Legend Registered Yet</p>
+              <div className="py-16 text-center border-2 border-dashed border-yellow-500/10 rounded-[32px] bg-yellow-500/5">
+                <div className="relative inline-block mb-4">
+                  <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-4xl font-black text-slate-900/40">?</span>
+                  </div>
+                </div>
+                <p className="text-sm font-black text-slate-600 uppercase tracking-[0.4em] italic">Legend Awaited</p>
+                <p className="text-[10px] text-slate-700 font-bold mt-2 uppercase tracking-widest">まだ伝説は刻まれていません</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
                   <div 
                     key={item.id} 
-                    className="group/card relative bg-white/5 border border-yellow-500/20 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:bg-white/10"
+                    className="group/card relative bg-gradient-to-br from-yellow-500/15 via-black/80 to-black/95 border border-yellow-500/30 p-3 rounded-[24px] overflow-hidden transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-yellow-400/60 backdrop-blur-xl premium-section-animate"
+                    style={{ animationDelay: `${250 + (idx * 50)}ms` }}
                   >
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className="w-20 h-20 rounded-xl overflow-hidden border border-yellow-500/30 bg-black shrink-0">
-                        {item.imageBase64 ? (
-                          <img src={item.imageBase64} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Target className="w-6 h-6 text-yellow-500/20" />
-                          </div>
-                        )}
+                    {/* Card Shine Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-yellow-400/5 to-transparent -translate-x-full group-hover/card:translate-x-full transition-transform duration-1000" />
+                    
+                    <div className="flex items-center gap-5 relative z-10">
+                      <div className="relative shrink-0">
+                        <div className="absolute -inset-1 bg-yellow-500/20 rounded-2xl blur-md opacity-0 group-hover/card:opacity-100 transition-opacity" />
+                        <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-yellow-500/30 shadow-xl bg-black relative">
+                          {item.imageBase64 ? (
+                            <img src={item.imageBase64} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Target className="w-6 h-6 text-yellow-500/20" />
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <span className="text-[9px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[item.genre] || 'OTHER'}</span>
-                          <div className="flex items-center gap-1">
-                             <Eye className="w-3 h-3 text-slate-600" />
-                             <span className="text-[10px] font-bold text-slate-500 font-mono">{item.views}</span>
+                        <div className="mb-2">
+                          <h3 className="font-black text-white text-xl sm:text-2xl truncate uppercase italic tracking-tight group-hover/card:text-yellow-200 transition-colors leading-none drop-shadow-md pr-12">{item.title}</h3>
+                        </div>
+
+                        <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
+                          <div className="flex items-baseline gap-0.5 px-3 py-1.5 bg-yellow-500/10 rounded-xl border border-yellow-500/20 shadow-inner shrink-0">
+                            <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
+                            <span className="text-[10px] font-black text-yellow-500/60 italic uppercase tracking-tighter">点</span>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 shrink-0">
+                            <Eye className="w-4 h-4 text-yellow-600/60" />
+                            <span className="text-sm font-black text-yellow-600/80 font-mono italic">{item.views}回</span>
                           </div>
                         </div>
-                        <h3 className="font-black text-white text-lg truncate uppercase italic tracking-tighter leading-none mb-2">{item.title}</h3>
-                        
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-black text-yellow-400 font-mono italic leading-none">{item.rating}</span>
-                          <span className="text-[10px] font-black text-yellow-500/60 italic">pts</span>
-                        </div>
+
+                        {/* Ranking Evolution Trend */}
+                        {item.previousRanks && item.previousRanks.length > 0 && (
+                          <div className="flex items-center gap-2 mt-2 pt-2 border-t border-yellow-500/10">
+                            <History className="w-3 h-3 text-yellow-500/40" />
+                            <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                              {item.previousRanks.slice(-3).map((hist, hIdx) => (
+                                <span key={hIdx} className="text-[9px] font-black text-slate-500 italic whitespace-nowrap">
+                                  {hist.rank}位 <span className="mx-0.5 opacity-20">→</span>
+                                </span>
+                              ))}
+                              <span className="text-[9px] font-black text-yellow-500 italic whitespace-nowrap">{item.currentRank}位(現在)</span>
+                            </div>
+                          </div>
+                        )}
                       </div>
+                    </div>
+
+                    {/* Diagonal Genre Ribbon - Enlarged Text */}
+                    <div className="absolute top-0 right-0 w-32 h-32 overflow-hidden pointer-events-none">
+                       <div className="absolute top-0 right-0 bg-yellow-500/30 text-yellow-200 text-[13px] font-black uppercase tracking-[0.1em] py-2 px-12 translate-x-[25%] translate-y-[25%] rotate-45 border-b-2 border-yellow-400/50 backdrop-blur-md shadow-[0_5px_20px_rgba(0,0,0,0.4)] whitespace-nowrap">
+                          {GENRE_LABELS[item.genre] || 'OTHER'}
+                       </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-            
+
             {stats.hallOfFame.length > 6 && (
               <div className="flex justify-center mt-10">
                 <button 
                   onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
                   className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 text-xs font-black text-slate-400 uppercase tracking-[0.2em] italic flex items-center gap-2"
                 >
-                  {isHallOfFameExpanded ? 'Show Less' : `Show More (+${stats.hallOfFame.length - 6})`}
+                  {isHallOfFameExpanded ? 'Show Less' : `Show More Legends / あと ${stats.hallOfFame.length - 6} 作品を表示`}
                   <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
                 </button>
               </div>
