@@ -146,14 +146,16 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     if (localTitle !== title && localTitle.trim() !== '') {
       // Overlap Check: same genre, same name
       const allItems = useStore.getState().getAllItems();
-      const isDuplicate = allItems.some(item => 
+      const duplicateItems = allItems.filter(item => 
         item.id !== id && 
         item.title?.toLowerCase().trim() === localTitle.toLowerCase().trim()
       );
 
-      if (isDuplicate) {
-        const dupItem = allItems.find(item => item.id !== id && item.title?.toLowerCase().trim() === localTitle.toLowerCase().trim());
-        if (!confirm(`【重複注意】\n「${localTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
+      if (duplicateItems.length > 0) {
+        const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
+        const genreString = duplicateGenres.map(g => `「${g}」`).join('');
+        
+        if (!confirm(`【重複注意】\n「${localTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
           setLocalTitle(title || '');
           return;
         }

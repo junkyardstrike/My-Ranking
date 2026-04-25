@@ -46,16 +46,20 @@ export default function HamburgerMenu() {
 
     const allItems = useStore.getState().getAllItems();
     const cleanTitle = recordTitle.trim();
-    const isDuplicate = allItems.some(item => 
+    const duplicateItems = allItems.filter(item => 
       item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim()
     );
 
-    if (isDuplicate) {
-      const dupItem = allItems.find(item => item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim());
+    if (duplicateItems.length > 0) {
       const GENRE_LABELS = {
         anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
       };
-      if (!confirm(`【重複注意】\n「${cleanTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
+      
+      // Get unique list of genres
+      const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
+      const genreString = duplicateGenres.map(g => `「${g}」`).join('');
+      
+      if (!confirm(`【重複注意】\n「${cleanTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
         return;
       }
     }
@@ -69,8 +73,12 @@ export default function HamburgerMenu() {
 
   return (
     <>
-      <button onClick={toggleMenu} className="p-2 hover:bg-white/10 rounded-full transition-colors relative z-50 focus:outline-none bg-accent/20 border border-accent/30">
-        <Plus className="w-5 h-5 text-accent" />
+      <button 
+        onPointerDown={(e) => { e.stopPropagation(); toggleMenu(); }}
+        onClick={(e) => { e.stopPropagation(); toggleMenu(); }} 
+        className="p-3 hover:bg-white/10 rounded-full transition-all relative z-[99999] focus:outline-none bg-accent/20 border border-accent/30 active:scale-90 touch-manipulation"
+      >
+        <Plus className="w-6 h-6 text-accent" />
       </button>
 
       {typeof document !== 'undefined' && createPortal(

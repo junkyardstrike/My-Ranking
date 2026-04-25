@@ -162,17 +162,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     const newTitle = draftItem.title;
     if (newTitle !== title && newTitle.trim() !== '') {
       const allItems = useStore.getState().getAllItems();
-      const isDuplicate = allItems.some(item => 
+      const duplicateItems = allItems.filter(item => 
         item.id !== id && 
         item.title?.toLowerCase().trim() === newTitle.toLowerCase().trim()
       );
 
-      if (isDuplicate) {
-        const dupItem = allItems.find(item => item.id !== id && item.title?.toLowerCase().trim() === newTitle.toLowerCase().trim());
+      if (duplicateItems.length > 0) {
         const GENRE_LABELS = {
           anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
         };
-        if (!confirm(`【重複注意】\n「${newTitle}」は既に「${GENRE_LABELS[dupItem.genre] || dupItem.genre}」ジャンルに登録されています。このまま登録しますか？`)) {
+        const duplicateGenres = [...new Set(duplicateItems.map(item => GENRE_LABELS[item.genre] || item.genre))];
+        const genreString = duplicateGenres.map(g => `「${g}」`).join('');
+        
+        if (!confirm(`【重複注意】\n「${newTitle}」は既に${genreString}ジャンルに登録されています。このまま登録しますか？`)) {
           handleUpdate({ title: title || '' });
           return;
         }
