@@ -278,33 +278,31 @@ export default function StatsView() {
 
               <div className="flex flex-col items-center sm:items-end text-center sm:text-right min-w-0 flex-1 sm:flex-none">
                 <h2 className="text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] mb-4">Lifetime Spent</p>
-                
-                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0 pl-8">
-                  <span className="text-4xl sm:text-5xl md:text-7xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.6)] animate-pulse pr-2">
+                <div className="flex items-baseline gap-2 justify-center sm:justify-end w-full min-w-0 pl-4">
+                  <span className="text-3xl sm:text-4xl md:text-6xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse pr-1">
                     <Counter value={stats.lifetimeStats.totalHours} />
                   </span>
-                  <span className="text-xl sm:text-2xl md:text-3xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
+                  <span className="text-lg sm:text-xl md:text-2xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
                 </div>
                 
-                <div className="flex flex-col items-center sm:items-end gap-1.5 mt-4 max-w-[280px]">
-                  <p className="text-[10px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right whitespace-pre-line">
+                <div className="flex flex-col items-center sm:items-end gap-1 mt-3 max-w-[280px]">
+                  <p className="text-[9px] text-slate-500 font-medium font-sans leading-tight text-center sm:text-right whitespace-pre-line">
                     ※各作品の(所要時間×話数/巻数)×閲覧回数を合算したものになります。
                   </p>
-                  <p className="text-[9px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
+                  <p className="text-[8px] text-slate-600 font-medium font-sans leading-tight text-center sm:text-right">
                     デフォルト設定：アニメ20分 / ドラマ40分 / 映画120分 / 音楽3分 / マンガ30分(1巻)
                   </p>
                 </div>
                 
                 {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-6 py-3 rounded-2xl inline-flex flex-col items-center sm:items-end gap-1 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[280px]">
-                    <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-xs font-black text-cyan-500">約</span>
-                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
-                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">日</span>
-                      <span className="text-2xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
-                      <span className="text-xs font-black text-cyan-500 uppercase tracking-widest">時間</span>
+                  <div className="mt-4 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-5 py-2 rounded-2xl inline-flex flex-col items-center sm:items-end gap-0.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-full max-w-[280px]">
+                    <span className="text-[9px] font-black text-cyan-400 uppercase tracking-widest leading-none mb-1">Time Conversion / 日付換算</span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-[10px] font-black text-cyan-500">約</span>
+                      <span className="text-xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.days}</span>
+                      <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">日</span>
+                      <span className="text-xl font-black text-accent font-mono italic leading-none drop-shadow-md">{stats.lifetimeStats.remainingHours}</span>
+                      <span className="text-[10px] font-black text-cyan-500 uppercase tracking-widest">時間</span>
                     </div>
                   </div>
                 )}
@@ -325,11 +323,16 @@ export default function StatsView() {
                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                         </div>
                       )}
-                      <div className="absolute top-2 right-2 z-20 px-1.5 py-0.5 bg-accent/20 rounded-md border border-accent/30 backdrop-blur-sm">
-                        <span className="text-[9px] font-black text-accent uppercase tracking-tighter">
-                          {stats.genreAverages.find(ga => ga.id === g.id)?.count || 0}作品
-                        </span>
+                      
+                      {/* Count Style matching Average Score section */}
+                      <div className="absolute top-2.5 right-3 z-20 text-right">
+                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1 drop-shadow-md">Count</p>
+                        <p className="text-sm font-black text-white font-mono leading-none drop-shadow-md">
+                          {stats.genreAverages.find(ga => ga.id === g.id)?.count || 0}
+                          <span className="text-[9px] ml-0.5 text-slate-400 font-bold">{GENRE_UNITS[g.id] || '作品'}</span>
+                        </p>
                       </div>
+
                       <div className="relative z-10 flex flex-col justify-start">
                         <div className="flex items-center gap-2 mb-0.5">
                           <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
@@ -353,39 +356,36 @@ export default function StatsView() {
 
         {/* 3. Hall of Fame - Open Design (Clean) */}
         <section className="md:col-span-2 relative group py-12 premium-section-animate overflow-hidden" style={{ animationDelay: '200ms' }}>
-          <div className="relative z-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
-              <div className="flex items-center gap-6">
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 bg-yellow-400 blur-lg opacity-40 animate-pulse" />
-                  <div className="relative p-4 bg-gradient-to-br from-yellow-300 via-yellow-500 to-yellow-700 rounded-2xl shadow-2xl border border-yellow-200/50">
-                    <Award className="w-8 h-8 text-yellow-950" />
-                  </div>
-                </div>
-                <div>
-                  <h2 className="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none">
-                    殿堂入り 
-                    <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
-                      (現在<Counter value={stats.hallOfFame.length} />作品)
-                    </span>
-                    <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
-                  </h2>
-                  <div className="mt-5 px-5 py-4 bg-gradient-to-br from-yellow-500/10 via-yellow-500/5 to-transparent border-l-4 border-yellow-500 rounded-r-3xl backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.3)] premium-section-animate" style={{ animationDelay: '400ms' }}>
-                    <div className="flex items-start gap-4">
-                      <div className="mt-1 p-1.5 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
-                        <Sparkles className="w-4 h-4 text-yellow-500 animate-pulse" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-[9px] font-black text-yellow-500/60 uppercase tracking-[0.4em] mb-1.5 italic">Selection Criteria / 選定基準</p>
-                        <div className="text-[11px] sm:text-xs text-slate-300 font-bold tracking-tighter leading-tight">
-                          <p className="flex items-center flex-wrap gap-x-2 gap-y-1">
-                            評価点 <span className="text-xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">95</span><span className="text-[10px] text-yellow-600">点以上</span>
-                            <span className="text-slate-700 font-black px-1">/</span>
-                            閲覧実績 <span className="text-xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_10px_rgba(234,179,8,0.4)]">5</span><span className="text-[10px] text-yellow-600">回以上</span>
-                          </p>
-                          <p className="text-[9px] text-slate-500 font-medium mt-2 pt-2 border-t border-white/5 italic tracking-normal">
-                            These exceptional works have achieved eternal legendary status.
-                          </p>
+          <div className="relative z-10 px-4 max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-12 relative z-10">
+              <div className="flex-1">
+                <h2 className="text-3xl sm:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-yellow-500 to-yellow-700 uppercase tracking-tighter italic flex items-center flex-wrap gap-x-4 gap-y-1 drop-shadow-sm leading-none mb-4">
+                  殿堂入り 
+                  <span className="text-lg sm:text-xl text-yellow-600/80 font-bold tracking-normal italic normal-case">
+                    (現在<Counter value={stats.hallOfFame.length} />作品)
+                  </span>
+                  <Sparkles className="w-5 h-5 text-yellow-400 animate-bounce" />
+                </h2>
+                
+                {/* Widen and Clean Criteria Card */}
+                <div className="mt-6 px-6 py-5 bg-gradient-to-r from-yellow-500/10 via-yellow-500/5 to-transparent border-l-4 border-yellow-500 rounded-r-[32px] backdrop-blur-xl shadow-2xl premium-section-animate w-full max-w-4xl" style={{ animationDelay: '400ms' }}>
+                  <div className="flex items-center gap-5">
+                    <div className="p-2 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
+                      <Sparkles className="w-5 h-5 text-yellow-500 animate-pulse" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] font-black text-yellow-500/60 uppercase tracking-[0.4em] mb-2 italic">Selection Criteria / 選定基準</p>
+                      <div className="text-slate-300 font-bold tracking-tighter leading-tight flex items-center flex-wrap gap-x-6 gap-y-2">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[10px] text-yellow-600 uppercase font-black">Rating</span>
+                          <span className="text-2xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">95</span>
+                          <span className="text-xs text-yellow-600">点以上</span>
+                        </div>
+                        <div className="w-px h-6 bg-white/10 hidden sm:block" />
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-[10px] text-yellow-600 uppercase font-black">Views</span>
+                          <span className="text-2xl font-black text-yellow-400 font-mono italic drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]">5</span>
+                          <span className="text-xs text-yellow-600">回以上</span>
                         </div>
                       </div>
                     </div>

@@ -221,9 +221,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         onClick={() => setIsModalOpen(true)}
       >
         {/* Gold glow effect removed to ensure true transparency */}
-        {/* Absolute Volume/Episode Badge */}
-        {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-          <div className={`absolute right-2 z-20 pointer-events-none transition-all duration-500 ${isEditMode ? 'top-14' : 'top-1'}`}>
+        {/* Absolute Volume/Episode Badge - Hidden in Edit Mode */}
+        {(effectiveGenre === 'manga' || effectiveGenre === 'anime' || effectiveGenre === 'drama') && !isEditMode && (
+          <div className="absolute right-2 top-1 z-20 pointer-events-none">
             <span className="inline-flex items-center px-3 py-1 rounded-lg bg-accent border border-black/20 text-[0.85em] font-black tracking-[0.2em] text-black uppercase shadow-[0_6px_15px_rgba(0,0,0,0.5)]">
               {effectiveGenre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
             </span>
