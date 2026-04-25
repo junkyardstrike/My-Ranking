@@ -141,19 +141,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       if (result) {
         const updates = { memo: result.memo, author: result.author || author };
         
-        // Automatic extraction for volumes/episodes
         if (result.memo) {
           const currentGenre = genre || 'music';
           if (currentGenre === 'manga') {
             const volMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || result.memo.match(/全(\d+)巻/) || result.memo.match(/(\d+)巻/);
-            if (volMatch && volMatch[1]) {
-              updates.volumes = parseInt(volMatch[1]);
-            }
+            if (volMatch && volMatch[1]) updates.volumes = parseInt(volMatch[1]);
           } else if (currentGenre === 'anime' || currentGenre === 'drama') {
             const epMatch = result.memo.match(/EPISODES:\s*(\d+)話/i) || result.memo.match(/全(\d+)話/) || result.memo.match(/(\d+)話/);
-            if (epMatch && epMatch[1]) {
-              updates.episodes = parseInt(epMatch[1]);
-            }
+            if (epMatch && epMatch[1]) updates.episodes = parseInt(epMatch[1]);
           }
         }
         
@@ -242,10 +237,10 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     </button>
                  </div>
                ) : (
-                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-x-4" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
+                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-y-4" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
                    {title || 'Untitled'}
                    {(genre === 'manga' || genre === 'anime' || genre === 'drama') && (
-                     <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-accent text-black text-xs sm:text-sm not-italic font-black tracking-widest uppercase align-middle shadow-xl ml-2 sm:ml-4">
+                     <span className="inline-flex items-center px-6 py-2 rounded-2xl bg-gradient-to-r from-accent to-yellow-600 text-black text-sm sm:text-base not-italic font-black tracking-[0.2em] uppercase align-middle shadow-[0_10px_40px_rgba(234,179,8,0.3)] ml-2 sm:ml-4 border border-white/20">
                        {genre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
                      </span>
                    )}
@@ -253,237 +248,229 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                )}
             </div>
 
-            <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-wrap items-center gap-4">
                     {(rankingId || propRankingId) ? (
-                      <div className="flex items-center gap-2">
-                        <div className="px-4 py-2 bg-accent text-black font-black text-[10px] uppercase tracking-widest rounded-lg shadow-lg shadow-accent/20 italic flex items-center gap-2">
-                          <Crown size={14} /> Rank {currentRank}
-                        </div>
-                        {isGlobalEditMode && (
-                          <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-0.5">
-                             <button 
-                               onClick={(e) => { 
-                                 e.stopPropagation(); 
-                                 const nextRank = Math.max(1, currentRank - 1);
-                                 if (onMove) onMove(id, nextRank);
-                                 else moveItemToRank(rankingId || propRankingId, id, nextRank);
-                               }}
-                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-white hover:text-white transition-all"
-                             >
-                               <Minus size={14} />
-                             </button>
-                             <div className="w-10 text-center text-white font-black text-sm">{currentRank}</div>
-                             <button 
-                               onClick={(e) => { 
-                                 e.stopPropagation(); 
-                                 const nextRank = Math.min(100, currentRank + 1);
-                                 if (onMove) onMove(id, nextRank);
-                                 else moveItemToRank(rankingId || propRankingId, id, nextRank);
-                               }}
-                               className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/10 text-white hover:text-white transition-all"
-                             >
-                               <Plus size={14} />
-                             </button>
-                             <span className="text-[7px] font-black text-white uppercase tracking-widest px-2">順位 / POS</span>
-                          </div>
-                        )}
+                      <div className="px-5 py-2.5 bg-accent text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_30px_rgba(234,179,8,0.3)] italic flex items-center gap-2 border border-white/20">
+                        <Crown size={16} /> Rank {currentRank}
                       </div>
                     ) : isSelected && (
-                      <div className="px-4 py-2 bg-accent/20 border border-accent/30 text-accent font-black text-[10px] uppercase tracking-widest rounded-lg shadow-sm italic flex items-center gap-2">
-                        <Crown size={14} /> 選出済み
+                      <div className="px-5 py-2.5 bg-accent/20 border border-accent/30 text-accent font-black text-xs uppercase tracking-[0.2em] rounded-xl shadow-sm italic flex items-center gap-2">
+                        <Crown size={16} /> 選出済み
                       </div>
                     )}
-                  <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-1 flex items-center gap-0.5">
-                     {isGlobalEditMode ? (
-                        Object.entries(GENRE_MAP).map(([key, info]) => {
-                           const Icon = info.icon;
-                           const isSelectedGenre = genre === key;
-                           return (
-                             <button 
-                               key={key} 
-                               onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
-                               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-sm' : 'text-white hover:text-white'}`}
-                             >
-                                <Icon size={14} />
-                                {isSelectedGenre && <span className="text-[9px] font-black uppercase tracking-widest">{info.label}</span>}
-                             </button>
-                           );
-                        })
-                     ) : (
-                        <div className="flex items-center gap-2 px-4 py-1.5 text-accent">
-                           <GenreIcon size={16} />
-                           <span className="text-[9px] font-black uppercase tracking-widest">{genreInfo.label}</span>
-                        </div>
-                     )}
+
+                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
+                       {isGlobalEditMode ? (
+                          Object.entries(GENRE_MAP).map(([key, info]) => {
+                             const Icon = info.icon;
+                             const isSelectedGenre = genre === key;
+                             return (
+                               <button 
+                                 key={key} 
+                                 onClick={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }} 
+                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl transition-all ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                               >
+                                  <Icon size={16} />
+                                  {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
+                               </button>
+                             );
+                          })
+                       ) : (
+                          <div className="flex items-center gap-3 px-5 py-1.5 text-accent">
+                             <GenreIcon size={20} />
+                             <span className="text-xs font-black uppercase tracking-[0.2em]">{genreInfo.label}</span>
+                          </div>
+                       )}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 pl-1 pt-6 border-t border-white/5 mt-2">
+                    <div className="flex items-center gap-4">
+                       <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 shadow-lg shadow-accent/5">
+                         <User size={24} className="text-accent" />
+                       </div>
+                       <div className="flex flex-col">
+                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">作者 / AUTHOR</span>
+                         {isGlobalEditMode ? (
+                            <input 
+                              type="text" 
+                              value={localAuthor} 
+                              onChange={e => setLocalAuthor(e.target.value)} 
+                              onBlur={handleAuthorSync}
+                              onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
+                              className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-black text-white outline-none focus:border-accent w-full sm:w-[240px]" 
+                              placeholder="作者名" 
+                            />
+                         ) : (
+                            <span className="text-xl font-black text-white tracking-wider leading-none">
+                              {author || '---'}
+                            </span>
+                         )}
+                       </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
+                         <Calendar size={24} className="text-emerald-400" />
+                       </div>
+                       <div className="flex flex-col">
+                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">作成日 / DATE</span>
+                         {isGlobalEditMode ? (
+                            <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-black text-white outline-none focus:border-accent" />
+                         ) : (
+                            <span className="text-xl font-black text-white tracking-widest leading-none">
+                              {createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}
+                            </span>
+                         )}
+                       </div>
+                    </div>
                   </div>
                 </div>
 
-               <div className="flex flex-wrap items-center gap-y-3 gap-x-10 pl-1 pt-2">
-                  <div className="flex items-center gap-3 min-w-[260px]">
-                     <User size={18} className="text-accent" />
-                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest w-24 flex-shrink-0">作者 / AUTHOR</span>
-                     {isGlobalEditMode ? (
-                        <input 
-                          type="text" 
-                          value={localAuthor} 
-                          onChange={e => setLocalAuthor(e.target.value)} 
-                          onBlur={handleAuthorSync}
-                          onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
-                          className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs font-bold text-white outline-none focus:border-accent w-[160px]" 
-                          placeholder="作者名" 
-                        />
-                     ) : (
-                        <span className="bg-white/5 px-3 py-1 rounded-lg text-white font-black uppercase tracking-[0.1em] text-xs border border-white/5 shadow-inner">
-                          {author || '未設定'}
-                        </span>
-                     )}
-                  </div>
-                  <div className="flex items-center gap-3 min-w-[260px]">
-                     <Calendar size={18} className="text-emerald-400" />
-                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest w-24 flex-shrink-0">作成日 / DATE</span>
-                     {isGlobalEditMode ? (
-                        <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-[10px] font-bold text-white outline-none focus:border-accent" />
-                     ) : (
-                        <span className="bg-white/5 px-3 py-1 rounded-lg text-white font-bold text-xs tracking-widest border border-white/5 shadow-inner">
-                          {createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}
-                        </span>
-                     )}
-                  </div>
-               </div>
-            </div>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2">
-               <div className="lg:col-span-5 space-y-4">
-                  <div className="bg-white/5 p-4 sm:p-6 rounded-[32px] border border-white/5 grid grid-cols-2 md:grid-cols-3 gap-4 shadow-lg items-center">
-                     <div className="space-y-3 text-center">
-                       <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> スコア / SCORE</p>
-                       <div className="flex justify-center w-full">
-                          <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
-                       </div>
-                     </div>
-                     
-                     <div className="flex flex-col items-center border-l border-white/10 space-y-2">
-                       <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Eye size={10} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
-                       {isGlobalEditMode ? (
-                          <div className="flex items-center gap-2 justify-center w-full">
-                             <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">-</button>
-                             <span className="text-center font-mono font-black text-xl tracking-tighter w-8">{views}</span>
-                             <button onClick={() => handleUpdate({ views: views + 1 })} className="w-7 h-7 bg-white/5 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all">+</button>
-                          </div>
-                       ) : (
-                          <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
-                       )}
-                     </div>
-
-                     <div className="flex flex-col items-center border-t md:border-t-0 md:border-l border-white/10 space-y-1 col-span-2 md:col-span-1 pt-4 md:pt-0 bg-white/5 rounded-2xl py-2">
-                        <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2"><Clock size={10} className="text-purple-500" /> 累計所要時間 / TOTAL</p>
-                        <p className="text-2xl font-black text-white font-mono tracking-tighter text-center">{(totalLifetimeDuration / 60).toFixed(1)}時間</p>
-                        <p className="text-[10px] text-white font-bold text-center">
-                          {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
-                            `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
-                          ) : (
-                            `${unitDuration}分 × ${finalViewCount}回 = ${(totalLifetimeDuration / 60).toFixed(1)}時間`
-                          )}
-                        </p>
-                     </div>
-                  </div>
-
-                  {isGlobalEditMode && (
-                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                           <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Clock size={12} /> 所要時間・話数 / TIME & EPISODES</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                           <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-white">
-                                {genre === 'movie' ? '所要時間 (分)' : '1話/1巻あたりの時間 (分)'}
-                              </label>
-                              <input 
-                                type="number" 
-                                min="0" 
-                                value={baseDuration === null ? '' : baseDuration} 
-                                onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : parseInt(e.target.value) })} 
-                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" 
-                                placeholder={unitDuration.toString()} 
-                              />
-                           </div>
-                           {(genre === 'anime' || genre === 'drama') && (
-                             <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-white">話数</label>
-                                <input type="number" min="1" value={episodes === 0 ? '' : episodes} onChange={e => handleUpdate({ episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ episodes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
-                             </div>
-                           )}
-                           {genre === 'manga' && (
-                             <div className="space-y-1">
-                                <label className="text-[10px] font-bold text-white">巻数</label>
-                                <input type="number" min="1" value={volumes === 0 ? '' : volumes} onChange={e => handleUpdate({ volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} onBlur={e => { if (!e.target.value || isNaN(parseInt(e.target.value))) handleUpdate({ volumes: 1 }); }} className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-mono text-sm outline-none focus:border-accent" placeholder="1" />
-                             </div>
-                           )}
-                        </div>
-                     </div>
-                  )}
-
-                  {isGlobalEditMode && (
-                     <div className="bg-white/5 p-4 rounded-[24px] border border-white/5 space-y-4 shadow-lg">
-                        <div className="flex items-center justify-between gap-4">
-                           <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Type size={12} /> 書体スタイル / STYLE</p>
-                           <div className="flex items-center gap-4 flex-1">
-                              <span className="text-[10px] font-mono font-black text-accent w-6 text-center">{fontSize}</span>
-                              <input type="range" min="14" max="80" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="flex-1 h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
-                              <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-8 h-8 rounded-lg bg-transparent border-none cursor-pointer" />
-                           </div>
-                        </div>
-                        <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-3 rounded-xl border font-black text-[10px] tracking-widest transition-all ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
-                           太字設定 / BOLD FONT: {isBold ? 'ON' : 'OFF'}
-                        </button>
-                     </div>
-                  )}
-
-                  {!isSelected && !(rankingId || propRankingId) && (
-                    <div className="bg-accent/5 border border-accent/10 p-6 rounded-[32px] space-y-4 shadow-xl">
-                       {!isAddingToRanking ? (
-                         <button onClick={() => setIsAddingToRanking(true)} className="w-full py-4 rounded-[20px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-accent/20 text-xl tracking-tight italic">
-                            <ListPlus size={24} /> ランキングに追加 / ADD TO RANKING
-                         </button>
-                       ) : (
-                         <div className="space-y-4 animate-in slide-in-from-bottom-4">
-                           <div className="grid grid-cols-1 gap-2">
-                              <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-bold outline-none focus:border-accent appearance-none text-sm">
-                                 <option value="">ランキングを選択... / Select Ranking...</option>
-                                 {rankings.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
-                              </select>
-                              <div className="relative">
-                                 <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-3 text-white font-black outline-none focus:border-accent text-lg" placeholder="順位 / Pos" />
-                                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[9px] font-black text-white uppercase tracking-widest">順位 / Rank</span>
-                              </div>
-                           </div>
-                           <div className="flex gap-4 pt-2">
-                              <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-2 text-white font-black uppercase text-[10px] tracking-widest">キャンセル / Cancel</button>
-                              <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-3 rounded-xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-30 tracking-tight text-sm shadow-lg">追加する / INSERT NOW <ArrowRight size={18} /></button>
-                           </div>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
+                   <div className="lg:col-span-5 space-y-6">
+                      <div className="bg-white/5 p-6 rounded-[40px] border border-white/5 grid grid-cols-1 gap-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+                         <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-50" />
+                         
+                         <div className="flex items-center justify-between relative z-10">
+                            <div className="space-y-3">
+                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Star size={12} className="text-accent" /> スコア / SCORE</p>
+                               <div className="flex justify-start w-full scale-125 origin-left">
+                                  <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
+                               </div>
+                            </div>
+                            
+                            <div className="flex flex-col items-end space-y-2">
+                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Eye size={12} className="text-blue-500" /> 閲覧回数 / VIEWS</p>
+                               {isGlobalEditMode ? (
+                                  <div className="flex items-center gap-2">
+                                     <button onClick={() => handleUpdate({ views: Math.max(0, views - 1) })} className="w-8 h-8 bg-white/5 rounded-xl border border-white/10 text-white hover:bg-white/10 transition-all font-bold">-</button>
+                                     <span className="font-mono font-black text-2xl tracking-tighter w-10 text-center">{views}</span>
+                                     <button onClick={() => handleUpdate({ views: views + 1 })} className="w-8 h-8 bg-white/5 rounded-xl border border-white/10 text-white hover:bg-white/10 transition-all font-bold">+</button>
+                                  </div>
+                               ) : (
+                                  <p className="text-3xl font-black text-white font-mono tracking-tighter">{views.toLocaleString()}回</p>
+                               )}
+                            </div>
                          </div>
-                       )}
-                    </div>
-                  )}
-               </div>
 
-               <div className="lg:col-span-7 space-y-3 flex flex-col h-full">
-                  <div className="flex items-center justify-between px-1">
-                      <p className="text-[9px] text-white font-black uppercase tracking-widest flex items-center gap-2"><AlignLeft size={12} /> メモ・あらすじ / NARRATIVE</p>
-                      <button onClick={handleCopy} className="text-[9px] text-accent/60 hover:text-accent font-black uppercase tracking-widest flex items-center gap-1.5 transition-colors">
-                         <Copy size={10} /> コピー / COPY TEXT
-                      </button>
+                         <div className="relative z-10 pt-6 border-t border-white/5 flex flex-col items-center gap-3">
+                            <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} className="text-purple-500" /> 累計所要時間 / TOTAL TIME</p>
+                            <div className="flex items-baseline gap-2">
+                               <p className="text-5xl font-black text-white font-mono tracking-tighter">{(totalLifetimeDuration / 60).toFixed(1)}</p>
+                               <p className="text-sm font-black text-slate-500 uppercase tracking-widest">時間 / HOURS</p>
+                            </div>
+                            <div className="w-full bg-black/40 px-4 py-3 rounded-2xl border border-white/5 flex items-center justify-center gap-3 shadow-inner">
+                               <span className="text-[11px] sm:text-[13px] font-black text-accent tracking-widest uppercase italic">
+                                  {(genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
+                                    `${unitDuration}分 × ${genre === 'manga' ? (volumes || 1) + '巻' : (episodes || 1) + '話'} × ${finalViewCount}回`
+                                  ) : (
+                                    `${unitDuration}分 × ${finalViewCount}回`
+                                  )}
+                               </span>
+                            </div>
+                         </div>
+                      </div>
+
+                      {isGlobalEditMode && (
+                         <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 space-y-6 shadow-xl">
+                            <p className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Clock size={14} /> 詳細設定 / DETAILS</p>
+                            <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-2">
+                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">時間 (分)</label>
+                                  <input 
+                                    type="number" 
+                                    min="0" 
+                                    value={baseDuration === null ? '' : baseDuration} 
+                                    onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : parseInt(e.target.value) })} 
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
+                                    placeholder={unitDuration.toString()} 
+                                  />
+                               </div>
+                               {(genre === 'anime' || genre === 'drama' || genre === 'manga') && (
+                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{genre === 'manga' ? '巻数' : '話数'}</label>
+                                    <input 
+                                      type="number" 
+                                      min="1" 
+                                      value={genre === 'manga' ? (volumes === 0 ? '' : volumes) : (episodes === 0 ? '' : episodes)} 
+                                      onChange={e => handleUpdate({ [genre === 'manga' ? 'volumes' : 'episodes']: e.target.value === '' ? '' : parseInt(e.target.value) })} 
+                                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent" 
+                                      placeholder="1" 
+                                    />
+                                 </div>
+                               )}
+                            </div>
+                         </div>
+                      )}
+
+                      {isGlobalEditMode && (
+                         <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 space-y-6 shadow-xl">
+                            <p className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Type size={14} /> スタイルカスタマイズ / STYLE</p>
+                            <div className="flex items-center gap-6">
+                               <div className="flex-1 space-y-2">
+                                  <div className="flex justify-between">
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">サイズ</label>
+                                    <span className="text-[10px] font-mono font-black text-accent">{fontSize}px</span>
+                                  </div>
+                                  <input type="range" min="14" max="100" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="w-full h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
+                               </div>
+                               <div className="space-y-2">
+                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block text-center">カラー</label>
+                                  <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-12 h-12 rounded-xl bg-transparent border-none cursor-pointer p-0" />
+                               </div>
+                            </div>
+                            <button onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
+                               太字設定: {isBold ? 'ON' : 'OFF'}
+                            </button>
+                         </div>
+                      )}
+
+                      {!isSelected && !(rankingId || propRankingId) && (
+                        <div className="bg-accent/5 border border-accent/20 p-6 rounded-[40px] space-y-4 shadow-2xl backdrop-blur-md">
+                           {!isAddingToRanking ? (
+                             <button onClick={() => setIsAddingToRanking(true)} className="w-full py-5 rounded-[24px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/30 text-xl tracking-tight italic uppercase">
+                                <ListPlus size={24} /> Add to Ranking
+                             </button>
+                           ) : (
+                             <div className="space-y-4 animate-in slide-in-from-bottom-4">
+                               <div className="grid grid-cols-1 gap-3">
+                                  <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white font-black outline-none focus:border-accent appearance-none text-sm shadow-inner">
+                                     <option value="">ランキングを選択... / Select...</option>
+                                     {rankings.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
+                                  </select>
+                                  <div className="relative">
+                                     <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white font-black outline-none focus:border-accent text-xl shadow-inner" placeholder="順位 / Pos" />
+                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/30 uppercase tracking-widest pointer-events-none">順位 / Rank</span>
+                                  </div>
+                               </div>
+                               <div className="flex gap-4 pt-4">
+                                  <button onClick={() => setIsAddingToRanking(false)} className="flex-1 py-3 text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest transition-colors">キャンセル</button>
+                                  <button onClick={handleAddToRanking} disabled={!selectedRankingId} className="flex-[2] py-4 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs shadow-xl transition-all">追加する <ArrowRight size={18} /></button>
+                               </div>
+                             </div>
+                           )}
+                        </div>
+                      )}
                    </div>
-                  {isGlobalEditMode ? (
-                     <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-6 rounded-[32px] border border-white/5 text-white text-lg min-h-[200px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
-                  ) : (
-                     <div className="flex-1 bg-white/5 p-6 rounded-[32px] border border-white/5 text-white text-base leading-relaxed italic shadow-inner min-h-[150px] whitespace-pre-wrap custom-scrollbar">
-                        {memo || <span className="opacity-10 text-3xl not-italic font-black">記述なし / NO NARRATIVE.</span>}
-                     </div>
-                  )}
-               </div>
+
+                   <div className="lg:col-span-7 space-y-4 flex flex-col h-full">
+                      <div className="flex items-center justify-between px-2">
+                          <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em] flex items-center gap-2"><AlignLeft size={14} /> メモ・あらすじ / NARRATIVE</p>
+                          <button onClick={handleCopy} className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors">
+                             <Copy size={12} /> コピー
+                          </button>
+                       </div>
+                      {isGlobalEditMode ? (
+                         <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-8 rounded-[48px] border border-white/5 text-white text-xl min-h-[300px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
+                      ) : (
+                         <div className="flex-1 bg-white/5 p-8 rounded-[48px] border border-white/5 text-white text-lg leading-relaxed italic shadow-inner min-h-[250px] whitespace-pre-wrap custom-scrollbar">
+                            {memo || <span className="opacity-10 text-4xl not-italic font-black flex items-center justify-center h-full">記述なし</span>}
+                         </div>
+                      )}
+                   </div>
+                </div>
             </div>
           </div>
         </div>

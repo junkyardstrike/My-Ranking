@@ -405,20 +405,33 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 </div>
               )}
               <div className="flex-shrink-0 relative group/rank">
-                {renderRankBadge(currentRank)}
-                {isEditMode && effectiveRankingId && (
-                  <input 
-                    type="number"
-                    min="1"
-                    max="100"
-                    defaultValue={currentRank}
-                    onBlur={(e) => {
-                      const newRank = parseInt(e.target.value);
-                      if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
-                    }}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                    onClick={e => e.stopPropagation()}
-                  />
+                {isEditMode && effectiveRankingId ? (
+                  <div className="relative w-12 h-12 flex items-center justify-center">
+                    <input 
+                      type="number"
+                      min="1"
+                      max="100"
+                      defaultValue={currentRank}
+                      onBlur={(e) => {
+                        const newRank = parseInt(e.target.value);
+                        if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const newRank = parseInt(e.target.value);
+                          if (newRank > 0 && newRank !== currentRank) onMove(id, newRank);
+                          e.target.blur();
+                        }
+                      }}
+                      className="w-full h-full bg-accent text-black font-black text-center rounded-xl border-2 border-white/20 focus:border-white focus:outline-none text-lg shadow-[0_5px_15px_rgba(234,179,8,0.4)]"
+                      onClick={e => e.stopPropagation()}
+                    />
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-[7px] font-black text-accent uppercase tracking-widest whitespace-nowrap opacity-0 group-hover/rank:opacity-100 transition-opacity pointer-events-none">
+                      Edit Rank
+                    </div>
+                  </div>
+                ) : (
+                  renderRankBadge(currentRank)
                 )}
               </div>
               
