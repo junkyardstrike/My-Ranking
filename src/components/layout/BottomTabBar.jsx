@@ -36,6 +36,10 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    handleNavigate(tab.path);
+                  }}
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavigate(tab.path);
