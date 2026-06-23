@@ -11,7 +11,15 @@ export default {
         surface: '#111111', // Very Dark Gray
         'surface-light': '#222222', // Dark Charcoal
         accent: '#D4AF37', // Metallic Gold
-      }
+      },
+      screens: {
+        'xs': '375px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
     },
   },
   plugins: [],

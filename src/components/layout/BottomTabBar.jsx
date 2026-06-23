@@ -3,7 +3,7 @@ import { Trophy, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
 import { useCallback } from 'react';
 
 const TABS = [
-  { id: 'home',     icon: Trophy,      label: 'RANKING', path: '/' },
+  { id: 'home',     icon: Trophy,      label: 'MASTERPIECE', path: '/' },
   { id: 'all',      icon: Archive,     label: 'RECORDS', path: '/all' },
   { id: 'stats',    icon: BarChart3,   label: 'STATS',   path: '/stats' },
   { id: 'settings', icon: Settings,    label: 'SETTINGS',path: '/settings' },
@@ -27,8 +27,8 @@ export default function BottomTabBar() {
   return (
     <>
       {/* Bottom tab bar - Raised slightly for iOS Home bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-[80] flex items-end justify-center pointer-events-none">
-        <div className="w-full max-w-4xl mx-auto pb-6 sm:pb-8">
+      <nav className="fixed bottom-0 left-0 right-0 z-[80] flex items-end justify-center pointer-events-none pb-[env(safe-area-inset-bottom)]">
+        <div className="w-full max-w-4xl mx-auto pb-4 sm:pb-8">
           <div className="mx-4 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] grid grid-cols-4 pointer-events-auto overflow-hidden">
             {TABS.map(tab => {
               const Icon = tab.icon;

@@ -35,43 +35,44 @@ export default function AppLayout() {
 
       <div className="relative min-h-screen text-slate-100 flex flex-col">
         {/* Header — colorful gradient */}
-        <header className="sticky top-0 z-[2147483647] backdrop-blur-xl border-b border-white/10 shadow-lg"
+        <header className="sticky top-0 z-[2147483647] backdrop-blur-xl border-b border-white/10 shadow-lg pt-[env(safe-area-inset-top)]"
           style={{
             background: 'linear-gradient(135deg, rgba(124,58,237,0.35) 0%, rgba(10,10,20,0.85) 40%, rgba(212,175,55,0.20) 100%)',
           }}
         >
-          <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-            <div className="flex-1 min-w-0 max-w-[40%] sm:max-w-[50%] relative z-0">
+          <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
+            <div className="flex-1 min-w-0 max-w-[35%] sm:max-w-[50%] relative z-0">
               <Breadcrumb />
             </div>
             <div className="flex items-center gap-1 sm:gap-3">
-            <div className="flex items-center gap-1 sm:gap-2 relative z-[10000]">
-              <button 
-                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setReorderMode(!isReorderMode); }}
-                onClick={(e) => { e.stopPropagation(); setReorderMode(!isReorderMode); }}
-                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
-              >
-                <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isReorderMode ? 'text-blue-400' : 'text-slate-500'}`}>
-                  並び替えモード
-                </span>
-                <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 flex items-center ${isReorderMode ? 'bg-blue-400/30 border border-blue-400/50 shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'bg-white/20 border border-white/10'}`}>
-                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${isReorderMode ? 'bg-blue-400 translate-x-5' : 'bg-slate-400'}`} />
-                </div>
-              </button>
+              <div className="flex items-center gap-1 sm:gap-2 relative z-[10000]">
+                <button 
+                  onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setReorderMode(!isReorderMode); }}
+                  onClick={(e) => { e.stopPropagation(); setReorderMode(!isReorderMode); }}
+                  className="relative flex items-center gap-1 sm:gap-2 group focus:outline-none py-1.5 px-2 sm:px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
+                >
+                  <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-tight sm:tracking-widest transition-colors ${isReorderMode ? 'text-blue-400' : 'text-slate-500'}`}>
+                    <span className="hidden xs:inline">並び替え</span>
+                    <span className="xs:hidden">順序</span>
+                  </span>
+                  <div className={`w-8 h-4 sm:w-10 sm:h-5 rounded-full p-0.5 sm:p-1 transition-all duration-300 flex items-center ${isReorderMode ? 'bg-blue-400/30 border border-blue-400/50 shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'bg-white/20 border border-white/10'}`}>
+                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${isReorderMode ? 'bg-blue-400 translate-x-4 sm:translate-x-5' : 'bg-slate-400'}`} />
+                  </div>
+                </button>
 
-              <button 
-                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setEditMode(!isEditMode); }}
-                onClick={(e) => { e.stopPropagation(); setEditMode(!isEditMode); }}
-                className="relative flex items-center gap-2 group focus:outline-none py-2 px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
-              >
-                <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isEditMode ? 'text-accent' : 'text-slate-500'}`}>
-                  編集モード
-                </span>
-                <div className={`w-10 h-5 rounded-full p-1 transition-all duration-300 flex items-center ${isEditMode ? 'bg-accent/30 border border-accent/50 shadow-[0_0_8px_rgba(212,175,55,0.3)]' : 'bg-white/20 border border-white/10'}`}>
-                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${isEditMode ? 'bg-accent translate-x-5' : 'bg-slate-400'}`} />
-                </div>
-              </button>
-            </div>
+                <button 
+                  onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setEditMode(!isEditMode); }}
+                  onClick={(e) => { e.stopPropagation(); setEditMode(!isEditMode); }}
+                  className="relative flex items-center gap-1 sm:gap-2 group focus:outline-none py-1.5 px-2 sm:px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-all cursor-pointer active:scale-95"
+                >
+                  <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-tight sm:tracking-widest transition-colors ${isEditMode ? 'text-accent' : 'text-slate-500'}`}>
+                    編集
+                  </span>
+                  <div className={`w-8 h-4 sm:w-10 sm:h-5 rounded-full p-0.5 sm:p-1 transition-all duration-300 flex items-center ${isEditMode ? 'bg-accent/30 border border-accent/50 shadow-[0_0_8_rgba(212,175,55,0.3)]' : 'bg-white/20 border border-white/10'}`}>
+                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${isEditMode ? 'bg-accent translate-x-4 sm:translate-x-5' : 'bg-slate-400'}`} />
+                  </div>
+                </button>
+              </div>
               <HamburgerMenu />
             </div>
           </div>

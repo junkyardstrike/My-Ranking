@@ -11,8 +11,8 @@ export default defineConfig({
       injectRegister: 'auto',
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'RANKING - Cinematic Rank Manager',
-        short_name: 'RANKING',
+        name: 'MasterPiece - Cinematic Rank Manager',
+        short_name: 'MasterPiece',
         description: 'Premium personal ranking management with cinematic UI and metadata auto-fetch.',
         theme_color: '#080808',
         background_color: '#080808',

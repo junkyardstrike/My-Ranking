@@ -202,7 +202,7 @@ export default function StatsView() {
       {/* Header */}
       <div className="flex flex-col items-center text-center px-4 mb-10 relative">
         <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
-          RANKING STATS
+          MASTERPIECE STATS
         </h1>
         <div className="flex flex-col items-center gap-2 mt-4">
           <p className="text-[11px] text-cyan-400 font-black uppercase tracking-[0.1em] italic leading-none">Analytics / 統計データ</p>

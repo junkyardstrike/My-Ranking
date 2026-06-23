@@ -43,7 +43,7 @@ export default function RankingView() {
           >
             {ranking.title}
           </h1>
-          <p className="text-[10px] text-white/60 font-black uppercase tracking-widest mt-2 italic">{ranking.englishName || 'RANKING SELECTION ARCHIVE'}</p>
+          <p className="text-[10px] text-white/60 font-black uppercase tracking-widest mt-2 italic">{ranking.englishName || 'MASTERPIECE SELECTION ARCHIVE'}</p>
         </div>
 
         <div className="absolute left-0 top-0">
@@ -52,7 +52,7 @@ export default function RankingView() {
             className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 text-accent" />
-            <span className="text-[10px] font-black uppercase tracking-widest">戻る</span>
+            <span className="text-[10px] font-black uppercase tracking-widest hidden xs:inline">戻る</span>
           </button>
         </div>
 

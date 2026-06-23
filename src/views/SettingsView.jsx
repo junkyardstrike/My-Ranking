@@ -332,7 +332,7 @@ export default function SettingsView() {
             <Info className="w-5 h-5 text-accent" />
           </div>
           <div>
-            <p className="text-sm font-black text-white tracking-widest uppercase">RANKING PWA</p>
+            <p className="text-sm font-black text-white tracking-widest uppercase">MASTERPIECE PWA</p>
             <p className="text-[11px] text-slate-500 font-medium">Premium Cinematic Experience</p>
           </div>
         </div>

@@ -8,6 +8,10 @@
     @apply bg-background text-slate-100 antialiased min-h-screen overflow-x-hidden;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     background-image:
       /* Colorful noise-like diagonal lines */
       repeating-linear-gradient(
