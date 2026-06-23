@@ -78,8 +78,18 @@ export default function HamburgerMenu() {
   return (
     <>
       <button 
-        onClick={(e) => { e.stopPropagation(); toggleMenu(); }} 
+        onPointerDown={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleMenu();
+        }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleMenu();
+        }}
         className="p-3 hover:bg-white/10 rounded-full transition-all relative z-[99999] focus:outline-none bg-accent/20 border border-accent/30 active:scale-90"
+        style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
       >
         <Plus className="w-6 h-6 text-accent" />
       </button>
