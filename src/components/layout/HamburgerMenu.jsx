@@ -106,7 +106,14 @@ export default function HamburgerMenu() {
               <div className="p-8 space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-black text-2xl tracking-tighter text-white uppercase italic">コンテンツ追加</h2>
-                  <button onClick={toggleMenu} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
+                  <button 
+                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); }}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
                 
                 <button onClick={() => setShowRecordItem(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-accent text-black shadow-xl shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
@@ -133,7 +140,14 @@ export default function HamburgerMenu() {
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">ランキングを新規作成</h2>
-                  <button onClick={() => setShowGenreSelect(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
+                  <button 
+                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowGenreSelect(false); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowGenreSelect(false); }}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
                 <input type="text" value={rankingTitle} onChange={e => setRankingTitle(e.target.value)} placeholder="ランキングのタイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
                 <div className="grid grid-cols-2 gap-2.5">
@@ -154,7 +168,14 @@ export default function HamburgerMenu() {
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">レコードを作成</h2>
-                  <button onClick={() => setShowRecordItem(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"><X className="w-5 h-5" /></button>
+                  <button 
+                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowRecordItem(false); }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRecordItem(false); }}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
+                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
                 <div className="space-y-4">
                   <input type="text" value={recordTitle} onChange={e => setRecordTitle(e.target.value)} placeholder="タイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
