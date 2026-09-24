@@ -201,11 +201,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         return;
       }
     }
-    // ゴーストクリック防止のため、わずかに遅延させて閉じる
-    setTimeout(() => {
-      setEditMode(false);
-      onClose();
-    }, 100);
+    setEditMode(false);
+    onClose();
   };
 
   const genreInfo = GENRE_MAP[genre] || GENRE_MAP.music;
@@ -222,39 +219,36 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-[100]">
           <div className="flex items-center gap-4">
-             <div 
-               onPointerDown={(e) => { 
-                 e.preventDefault(); 
-                 e.stopPropagation(); 
-                 // 即座にステート更新
-                 setEditMode(!isGlobalEditMode); 
-               }} 
+             <button 
+               type="button"
+               onClick={() => setEditMode(!useStore.getState().isEditMode)} 
                className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-colors duration-100 active:scale-95"
              >
                 <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-100 ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
                 <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-100 ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
                    <div className={`w-3 h-3 rounded-full transition-transform duration-150 ease-out ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600 translate-x-0'}`} />
                </div>
-            </div>
+            </button>
             {hasChanges && (
               <button 
-                onPointerDown={(e) => { e.stopPropagation(); handleSave(); }}
-                className="flex items-center gap-2 bg-accent text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(234,179,8,0.4)] active:bg-yellow-400 active:scale-95 transition-all animate-in zoom-in-95 touch-none"
+                type="button"
+                onClick={handleSave}
+                className="flex items-center gap-2 bg-accent text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(234,179,8,0.4)] active:bg-yellow-400 active:scale-95 transition-all animate-in zoom-in-95"
               >
                 <CheckCircle2 size={14} /> 変更を保存
               </button>
             )}
           </div>
           <button 
-            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleClose(); }}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleClose(); }} 
+            type="button"
+            onClick={handleClose} 
             className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl active:scale-90"
           >
             <X size={24} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar">
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
              {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
@@ -290,7 +284,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       placeholder="作品名..." 
                     />
                     <button 
-                      onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAutoFetch(); }} 
+                      type="button"
+                      onClick={handleAutoFetch} 
                       disabled={isFetching} 
                       className="p-3 rounded-xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20 active:scale-90"
                     >
@@ -318,7 +313,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     )}
 
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
+                      <div className="bg-white/5 border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
                          {isGlobalEditMode ? (
                             Object.entries(GENRE_MAP).map(([key, info]) => {
                                const Icon = info.icon;
@@ -326,7 +321,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                return (
                                  <button 
                                    key={key} 
-                                   onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ genre: key }); }}
+                                   type="button"
+                                   onClick={() => handleUpdate({ genre: key })}
                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
                                  >
                                     <Icon size={16} />
@@ -343,7 +339,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       </div>
 
                       {!isGlobalEditMode && (genre === 'manga' || genre === 'anime' || genre === 'drama') && (
-                        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl px-5 py-2.5 flex items-center gap-3 shadow-2xl">
+                        <div className="bg-white/5 border border-white/10 rounded-2xl px-5 py-2.5 flex items-center gap-3 shadow-2xl">
                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                              {genre === 'manga' ? 'VOLS' : 'EPS'}
                            </span>
@@ -397,7 +393,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
                    <div className="lg:col-span-5 space-y-6">
-                      <div className="bg-white/5 p-6 rounded-[40px] border border-white/5 grid grid-cols-1 gap-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
+                      <div className="bg-white/5 p-6 rounded-[40px] border border-white/5 grid grid-cols-1 gap-6 shadow-2xl relative overflow-hidden">
                          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-50" />
                          
                          <div className="flex flex-col sm:flex-row items-center justify-between relative z-10 gap-6 sm:gap-4">
@@ -416,12 +412,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                {isGlobalEditMode ? (
                                   <div className="flex items-center gap-2">
                                      <button 
-                                       onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: Math.max(0, views - 1) }); }}
+                                       type="button"
+                                       onClick={() => handleUpdate({ views: Math.max(0, views - 1) })}
                                        className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
                                      >-</button>
                                      <span className="font-mono font-black text-2xl tracking-tighter w-12 text-center">{views}</span>
                                      <button 
-                                       onPointerDown={(e) => { e.stopPropagation(); handleUpdate({ views: views + 1 }); }}
+                                       type="button"
+                                       onClick={() => handleUpdate({ views: views + 1 })}
                                        className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
                                      >+</button>
                                   </div>
@@ -466,7 +464,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                     min="0" 
                                     step={genre === 'game' ? '0.1' : '1'}
                                     value={baseDuration === null ? '' : baseDuration} 
-                                    onPointerDown={e => e.stopPropagation()}
                                     onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : (genre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} 
                                     className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                     placeholder={unitDuration.toString()} 
@@ -479,7 +476,6 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                       type="number" 
                                       min="0" 
                                       value={genre === 'manga' ? (volumes === 0 || volumes === undefined ? '' : volumes) : (episodes === 0 || episodes === undefined ? '' : episodes)} 
-                                      onPointerDown={e => e.stopPropagation()}
                                       onChange={e => handleUpdate({ [genre === 'manga' ? 'volumes' : 'episodes']: e.target.value === '' ? '' : parseInt(e.target.value) })} 
                                       className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                       placeholder="1" 
@@ -506,17 +502,18 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                   <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-12 h-12 rounded-xl bg-transparent border-none cursor-pointer p-0" />
                                </div>
                             </div>
-                            <button onPointerDown={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
+                            <button type="button" onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
                                太字設定: {isBold ? 'ON' : 'OFF'}
                             </button>
                          </div>
                       )}
 
                       {!isSelected && !(rankingId || propRankingId) && (
-                        <div className="bg-accent/5 border border-accent/20 p-6 rounded-[40px] space-y-4 shadow-2xl backdrop-blur-md">
+                        <div className="bg-accent/5 border border-accent/20 p-6 rounded-[40px] space-y-4 shadow-2xl">
                            {!isAddingToRanking ? (
                              <button 
-                               onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsAddingToRanking(true); }}
+                               type="button"
+                               onClick={() => setIsAddingToRanking(true)}
                                className="w-full py-5 rounded-[24px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/30 text-xl tracking-tight italic uppercase"
                              >
                                 <ListPlus size={24} /> Add to Ranking
@@ -535,11 +532,13 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                </div>
                                <div className="flex gap-4 pt-4">
                                   <button 
-                                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setIsAddingToRanking(false); }} 
+                                    type="button"
+                                    onClick={() => setIsAddingToRanking(false)} 
                                     className="flex-1 py-3 text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest transition-colors"
                                   >キャンセル</button>
                                   <button 
-                                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAddToRanking(); }}
+                                    type="button"
+                                    onClick={handleAddToRanking}
                                     disabled={!selectedRankingId} 
                                     className="flex-[2] py-4 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs shadow-xl transition-all active:scale-95"
                                   >追加する <ArrowRight size={18} /></button>
@@ -554,8 +553,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       <div className="flex items-center justify-between px-2">
                           <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em] flex items-center gap-2"><AlignLeft size={14} /> メモ・あらすじ / NARRATIVE</p>
                           <button 
-                            onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleCopy(); }}
-                            className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95"
+                            type="button"
+                            onClick={handleCopy}
+                            className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95 px-3 py-2 -mr-3 -my-2"
                           >
                              <Copy size={12} /> コピー
                           </button>

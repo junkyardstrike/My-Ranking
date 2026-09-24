@@ -216,7 +216,7 @@ export default function AllRankingsView() {
               return (
                 <button
                   key={filter.id}
-                  onPointerDown={(e) => { e.preventDefault(); setSelectedGenre(filter.id); }}
+                  type="button"
                   onClick={() => setSelectedGenre(filter.id)}
                   className={`flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border transition-[transform,background-color,border-color,box-shadow] duration-200 text-[11px] font-black uppercase tracking-tighter ${
                     selectedGenre === filter.id 
@@ -246,7 +246,7 @@ export default function AllRankingsView() {
             <div 
               key={item.id} 
               className="premium-item-animate"
-              style={{ animationDelay: `${idx * 40}ms` }}
+              style={{ animationDelay: `${Math.min(idx, 12) * 40}ms` }}
             >
               <RankingItem 
                 item={item} 

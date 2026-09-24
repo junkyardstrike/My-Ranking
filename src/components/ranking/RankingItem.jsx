@@ -210,7 +210,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     }
 
     return (
-      <div className={`flex-shrink-0 flex flex-col items-center justify-center font-black font-mono rounded-lg border backdrop-blur-md transition-all duration-500 hover:scale-105 ${size} ${bgClass}`}>
+      <div className={`flex-shrink-0 flex flex-col items-center justify-center font-black font-mono rounded-lg border transition-transform duration-300 hover:scale-105 ${size} ${bgClass}`}>
         {icon}
         <span className={`drop-shadow-sm leading-none ${isActuallyCollapsed ? 'text-[11px]' : 'text-sm'}`}>{rank}</span>
       </div>
@@ -243,7 +243,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     <>
       <div 
         id={`ranking-item-${id}`}
-        className={`rounded-[22px] overflow-hidden border transition-all duration-500 flex flex-col cursor-pointer relative group/card backdrop-blur-xl ${
+        className={`rounded-[22px] overflow-hidden border transition-[transform,background-color,border-color] duration-150 flex flex-col cursor-pointer relative group/card ${isEditMode ? '' : 'select-none'} ${
           currentRank === 1 
             ? 'border-2 border-yellow-400 shadow-[0_0_15px_rgba(255,215,0,0.6),0_0_30px_rgba(255,215,0,0.3),inset_0_0_15px_rgba(255,215,0,0.3)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.03]' 
             : currentRank === 2
@@ -252,31 +252,13 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             ? 'border-2 border-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4),0_0_20px_rgba(234,88,12,0.2),inset_0_0_8px_rgba(234,88,12,0.1)] bg-gradient-to-br from-white/[0.08] to-white/[0.03] scale-[1.01]' 
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20 active:scale-[0.98] active:bg-white/[0.1]'
         }`} 
-        onPointerDown={(e) => {
+        onClick={(e) => {
           if (isReorderMode) return;
-          const startX = e.clientX;
-          const startY = e.clientY;
-          const startTime = Date.now();
-          
-          const handleUp = (upEvent) => {
-            const moveX = Math.abs(upEvent.clientX - startX);
-            const moveY = Math.abs(upEvent.clientY - startY);
-            const duration = Date.now() - startTime;
-            
-            // わずかな移動ならタップとみなして即座に開く
-            if (moveX < 10 && moveY < 10 && duration < 300) {
-              setIsModalOpen(true);
-            }
-            cleanup();
-          };
-          
-          const cleanup = () => {
-            window.removeEventListener('pointerup', handleUp);
-            window.removeEventListener('pointercancel', cleanup);
-          };
-          
-          window.addEventListener('pointerup', handleUp);
-          window.addEventListener('pointercancel', cleanup);
+          // ポータル内(詳細モーダル)からバブリングしてきたクリックは無視
+          if (!e.currentTarget.contains(e.target)) return;
+          // カード内のボタンや入力欄などの操作ではモーダルを開かない
+          if (e.target.closest('button, input, textarea, select, label, a, [role="button"]')) return;
+          setIsModalOpen(true);
         }}
       >
         {/* Gold glow effect removed to ensure true transparency */}
@@ -308,7 +290,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 </div>
               </div>
               {(dragHandleProps || isReorderMode) && (
-                <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all">
+                <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all" style={{ touchAction: 'none' }}>
                   <GripVertical className="w-5 h-5" />
                 </div>
               )}
@@ -328,7 +310,8 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 style={{ color, fontSize: `${localFontSize}px` }} 
               />
               <button 
-                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); handleAutoFetch(); }} 
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} 
                 disabled={!localTitle?.trim() || isFetching} 
                 className={`p-2.5 rounded-xl border transition-all shadow-lg active:scale-90 ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-accent/20 border-accent/40 text-accent'}`}
               >
@@ -344,7 +327,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   type="text" 
                   value={localAuthor} 
                   onClick={e => e.stopPropagation()} 
-                  onPointerDown={e => e.stopPropagation()}
                   onChange={e => setLocalAuthor(e.target.value)} 
                   onBlur={handleAuthorSync}
                   onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
@@ -421,9 +403,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
               <div className="flex items-center gap-3 bg-black/40 p-2.5 rounded-xl border border-white/5">
                  <Eye className="w-3.5 h-3.5 text-blue-500" />
                  <div className="flex items-center gap-2 flex-1">
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: Math.max(0, views - 1) }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">-</button>
+                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: Math.max(0, views - 1) }) }} className="w-8 h-8 bg-white/5 active:bg-white/15 rounded-lg text-sm text-slate-400">-</button>
                     <span className="text-[11px] font-mono font-bold text-white flex-1 text-center">{views}</span>
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: views + 1 }) }} className="w-5 h-5 bg-white/5 rounded text-xs text-slate-400">+</button>
+                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: views + 1 }) }} className="w-8 h-8 bg-white/5 active:bg-white/15 rounded-lg text-sm text-slate-400">+</button>
                  </div>
               </div>
             </div>
@@ -432,20 +414,20 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
                <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                  <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={duration || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="所要時間" />
+                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="所要時間" />
                  <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">{effectiveGenre === 'game' ? '時間' : '分'}</span>
                </div>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
                  <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                    <Tv className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="0" value={episodes || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
+                   <input type="number" min="0" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="話数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">話</span>
                  </div>
                )}
                {effectiveGenre === 'manga' && (
                  <div className="bg-black/40 p-2.5 rounded-xl border border-white/5 flex items-center gap-2 active:bg-white/5 transition-colors active:scale-[0.98]">
                    <BookOpen className="w-3.5 h-3.5 text-slate-500" />
-                   <input type="number" min="0" value={volumes || ''} onPointerDown={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
+                   <input type="number" min="0" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" placeholder="巻数" />
                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">巻</span>
                  </div>
                )}
@@ -507,8 +489,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       <div className="flex items-center gap-2 py-1" onClick={e => e.stopPropagation()}>
                         <div 
                           className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 shadow-2xl relative z-50"
-                          onPointerDown={e => e.stopPropagation()}
-                        >
+                                >
                           <button 
                             onClick={(e) => {
                               e.preventDefault();
@@ -580,7 +561,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                     <div className="flex items-center gap-1 bg-black/20 rounded-full border border-white/5 p-0.5 shrink-0">
                       <button 
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: Math.max(0, (views || 0) - 1) }); }}
-                        className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-red-400 transition-colors"
+                        className="relative w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 active:bg-white/20 text-slate-500 after:content-[''] after:absolute after:-inset-2 hover:text-red-400 transition-colors"
                       >
                         <Minus size={8} />
                       </button>
@@ -590,7 +571,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       </span>
                       <button 
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: (views || 0) + 1 }); }}
-                        className="w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 text-slate-500 hover:text-emerald-400 transition-colors"
+                        className="relative w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10 active:bg-white/20 text-slate-500 after:content-[''] after:absolute after:-inset-2 hover:text-emerald-400 transition-colors"
                       >
                         <Plus size={8} />
                       </button>

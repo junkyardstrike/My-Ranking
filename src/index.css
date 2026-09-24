@@ -40,6 +40,14 @@
     font-family: inherit;
     font-size: 16px !important;
   }
+
+  /* タップ操作の安定化: 長押しでの文字選択/コールアウトがタップを奪わないようにする */
+  button, a, label, [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
 }
 
 /* Custom Scrollbar */
@@ -62,6 +70,7 @@
   opacity: 0.18;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
   animation: float-orb 12s ease-in-out infinite;
 }
 .bg-orb-1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; animation-delay: 0s; }
@@ -92,20 +101,18 @@
 }
 
 .premium-item-animate {
-  animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  opacity: 0;
+  animation: premiumEntry 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+/* filter: blur を使うと要素ごとに重い再描画が走りタップ応答が遅れるため transform/opacity のみ */
 @keyframes premiumEntry {
   0% {
     opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    filter: blur(15px) brightness(0.5);
+    transform: translateY(24px) scale(0.97);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0) brightness(1);
+    transform: none;
   }
 }
 
@@ -116,4 +123,8 @@
 
 .animate-line-run {
   animation: lineRun 0.3s cubic-bezier(0.1, 1, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-orb, .premium-item-animate { animation: none; }
 }

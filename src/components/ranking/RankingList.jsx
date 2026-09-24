@@ -67,8 +67,8 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   }, [ranking.id]);
 
   const sensors = useSensors(
-    useSensor(MouseSensor, { activationConstraint: { distance: 20 } }),
-    useSensor(TouchSensor, { activationConstraint: { distance: 15 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
@@ -127,24 +127,6 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   return (
     <div className="relative" key={locationKey}>
-      <style>{`
-        @keyframes premiumEntry {
-          0% {
-            opacity: 0;
-            transform: translateY(40px) scale(0.9);
-            filter: blur(15px) brightness(0.5);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0) brightness(1);
-          }
-        }
-        .premium-item-animate {
-          animation: premiumEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-          opacity: 0;
-        }
-      `}</style>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
@@ -153,7 +135,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
               <div 
                 key={item.id}
                 className="premium-item-animate"
-                style={{ animationDelay: `${idx * 60}ms` }}
+                style={{ animationDelay: `${Math.min(idx, 12) * 60}ms` }}
               >
                 <SortableItem 
                   item={item} 

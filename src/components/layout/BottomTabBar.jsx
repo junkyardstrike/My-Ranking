@@ -36,16 +36,9 @@ export default function BottomTabBar() {
               return (
                 <button
                   key={tab.id}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    handleNavigate(tab.path);
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavigate(tab.path);
-                  }}
-                  className={`flex flex-col items-center justify-center gap-1.5 py-4 relative ${isActive ? 'text-accent' : 'text-slate-500'}`}
-                  style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
+                  type="button"
+                  onClick={() => handleNavigate(tab.path)}
+                  className={`flex flex-col items-center justify-center gap-1.5 py-4 relative active:bg-white/5 ${isActive ? 'text-accent' : 'text-slate-500'}`}
                 >
                   {isActive && (
                     <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent shadow-[0_0_10px_rgba(212,175,55,0.8)]" />

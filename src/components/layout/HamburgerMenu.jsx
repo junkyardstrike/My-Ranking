@@ -25,7 +25,7 @@ export default function HamburgerMenu() {
   const addRanking = useStore(state => state.addRanking);
   const recordItem = useStore(state => state.recordItem);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => setIsOpen(open => !open);
 
   const handleCreateFolder = () => {
     const name = prompt('フォルダ名を入力してください');
@@ -78,18 +78,9 @@ export default function HamburgerMenu() {
   return (
     <>
       <button 
-        onPointerDown={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleMenu();
-        }}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleMenu();
-        }}
+        type="button"
+        onClick={toggleMenu}
         className="p-3 hover:bg-white/10 rounded-full transition-all relative z-[99999] focus:outline-none bg-accent/20 border border-accent/30 active:scale-90"
-        style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
       >
         <Plus className="w-6 h-6 text-accent" />
       </button>
@@ -107,11 +98,10 @@ export default function HamburgerMenu() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-black text-2xl tracking-tighter text-white uppercase italic">コンテンツ追加</h2>
                   <button 
-                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleMenu(); }}
-                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
-                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
-                  >
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                              >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -141,11 +131,10 @@ export default function HamburgerMenu() {
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">ランキングを新規作成</h2>
                   <button 
-                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowGenreSelect(false); }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowGenreSelect(false); }}
-                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
-                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
-                  >
+                    type="button"
+                    onClick={() => setShowGenreSelect(false)}
+                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                              >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
@@ -169,11 +158,10 @@ export default function HamburgerMenu() {
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">レコードを作成</h2>
                   <button 
-                    onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setShowRecordItem(false); }}
-                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowRecordItem(false); }}
-                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-slate-600 bg-white/5"
-                    style={{ WebkitTapHighlightColor: 'transparent', touchAction: 'none' }}
-                  >
+                    type="button"
+                    onClick={() => setShowRecordItem(false)}
+                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                              >
                     <X className="w-5 h-5" />
                   </button>
                 </div>

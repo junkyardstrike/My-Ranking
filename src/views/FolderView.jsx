@@ -51,15 +51,15 @@ function ActionButtons({ id, name, type }) {
     <div className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-auto">
       <button 
         onClick={handleEdit}
-        className="bg-black/60 backdrop-blur-md p-1.5 rounded-full hover:bg-accent transition-all text-white border border-white/10 shadow-lg"
+        className="bg-black/60 p-2.5 rounded-full hover:bg-accent active:bg-accent transition-colors text-white border border-white/10 shadow-lg"
       >
-        <Edit2 className="w-3 h-3" />
+        <Edit2 className="w-3.5 h-3.5" />
       </button>
       <button 
         onClick={handleDelete}
-        className="bg-black/60 backdrop-blur-md p-1.5 rounded-full hover:bg-red-500 transition-all text-white border border-white/10 shadow-lg"
+        className="bg-black/60 p-2.5 rounded-full hover:bg-red-500 active:bg-red-500 transition-colors text-white border border-white/10 shadow-lg"
       >
-        <Trash2 className="w-3 h-3" />
+        <Trash2 className="w-3.5 h-3.5" />
       </button>
     </div>
   );
@@ -161,6 +161,7 @@ function SortableFolder({ folder, folders, rankings }) {
           {...listeners} 
           {...attributes} 
           className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-accent bg-black/40 rounded-lg hover:bg-black/60 z-30 pointer-events-auto transition-colors"
+          style={{ touchAction: 'none' }}
         >
           <GripVertical className="w-5 h-5" />
         </div>
@@ -196,7 +197,7 @@ function SortableFolder({ folder, folders, rankings }) {
       {isEditMode && (
         <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
           <label 
-            className="bg-black/60 p-2 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
+            className="bg-black/60 p-2.5 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
             onClick={e => e.stopPropagation()}
           >
             <ImageIcon className="w-3.5 h-3.5 text-white" />
@@ -271,6 +272,7 @@ function SortableRanking({ ranking }) {
             {...listeners} 
             {...attributes} 
             className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-accent bg-black/40 rounded-lg hover:bg-black/60 z-30 pointer-events-auto transition-colors"
+          style={{ touchAction: 'none' }}
           >
             <GripVertical className="w-5 h-5" />
           </div>
@@ -289,7 +291,7 @@ function SortableRanking({ ranking }) {
             <ActionButtons id={ranking.id} name={ranking.title} type="ranking" />
             <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
               <label 
-                className="bg-black/60 p-2 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
+                className="bg-black/60 p-2.5 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
                 onClick={e => e.stopPropagation()}
               >
                 <ImageIcon className="w-3.5 h-3.5 text-white" />
@@ -365,20 +367,6 @@ export default function FolderView() {
 
   return (
     <>
-      <style>{`
-        @keyframes premiumEntry {
-          0% {
-            opacity: 0;
-            transform: translateY(40px) scale(0.9);
-            filter: blur(15px) brightness(0.5);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-            filter: blur(0) brightness(1);
-          }
-        }
-      `}</style>
       <div className={`flex flex-col pb-20 ${isRoot ? 'pt-8' : 'pt-2 sm:pt-4'}`} key={locationKey}>
         <div className={`flex flex-col mb-10 relative mt-0 ${isRoot ? 'items-center text-center' : ''}`}>
         {isRoot ? (
@@ -437,7 +425,7 @@ export default function FolderView() {
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {childFolders.map((folder, idx) => (
-                    <div key={folder.id} className="premium-item-animate" style={{ animationDelay: `${idx * 60}ms` }}>
+                    <div key={folder.id} className="premium-item-animate" style={{ animationDelay: `${Math.min(idx, 12) * 60}ms` }}>
                       <SortableFolder folder={folder} folders={folders} rankings={rankings} />
                     </div>
                   ))}
@@ -456,7 +444,7 @@ export default function FolderView() {
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {childRankings.map((ranking, idx) => (
-                    <div key={ranking.id} className="premium-item-animate" style={{ animationDelay: `${(childFolders.length + idx) * 60}ms` }}>
+                    <div key={ranking.id} className="premium-item-animate" style={{ animationDelay: `${Math.min(childFolders.length + idx, 12) * 60}ms` }}>
                       <SortableRanking ranking={ranking} />
                     </div>
                   ))}
