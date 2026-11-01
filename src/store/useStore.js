@@ -69,6 +69,19 @@ const translateToEnglish = async (text) => {
   return '';
 };
 
+// id → 作品 の索引。各作品カードが毎回全ランキングを走査しないよう、データが変わった時だけ作り直す
+let itemIndexCache = { rankings: null, unrankedItems: null, map: new Map() };
+export const getItemIndex = (state) => {
+  if (state.rankings === itemIndexCache.rankings && state.unrankedItems === itemIndexCache.unrankedItems) {
+    return itemIndexCache.map;
+  }
+  const map = new Map();
+  (state.rankings || []).forEach(r => (r.items || []).forEach(item => { if (!map.has(item.id)) map.set(item.id, item); }));
+  (state.unrankedItems || []).forEach(item => { if (!map.has(item.id)) map.set(item.id, item); });
+  itemIndexCache = { rankings: state.rankings, unrankedItems: state.unrankedItems, map };
+  return map;
+};
+
 export const useStore = create((set, get) => ({
   isInitialized: false,
   folders: [], 

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useStore } from '../../store/useStore';
+import { useStore, getItemIndex } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
@@ -51,11 +51,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   }, [propIsCollapsed]);
 
   // Subscribe to live store updates for this specific item
-  const liveItemFromStore = useStore(state => {
-    const allRanked = (state.rankings || []).flatMap(r => r.items || []);
-    const allUnranked = state.unrankedItems || [];
-    return [...allRanked, ...allUnranked].find(i => i.id === propItem.id);
-  });
+  const liveItemFromStore = useStore(state => getItemIndex(state).get(propItem.id));
 
   const liveItem = {
     ...(liveItemFromStore || {}),
@@ -573,14 +569,15 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
           </div>
         )}
       </div>
-      <RankingItemDetailModal 
+      {/* 開いている時だけマウントする（一覧の全カードがモーダル分の処理を抱えないように） */}
+      {isModalOpen && <RankingItemDetailModal 
         item={liveItem} 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onUpdate={onUpdate}
         onMove={onMove}
         rankingId={rankingId || liveItem.rankingId}
-      />
+      />}
     </>
   );
 }

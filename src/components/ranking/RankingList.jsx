@@ -17,6 +17,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import RankingItem from './RankingItem';
+import useIncrementalRender from '../../hooks/useIncrementalRender';
 import { useStore } from '../../store/useStore';
 
 function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId, onUpdate, onMove }) {
@@ -91,6 +92,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   };
 
   const handleLocalMove = (id, targetRank) => {
+    ensureRendered(targetRank + 5);
     const itemToMove = items.find(i => i.id === id);
     if (!itemToMove) return;
     const otherItems = items.filter(i => i.id !== id);
@@ -108,6 +110,10 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   const isActuallyCollapsed = propIsCollapsed;
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
+  const [renderCount, sentinelRef, ensureRendered] = useIncrementalRender(visibleItems.length, {
+    resetKey: `${ranking.id}|${isEditMode}`,
+  });
+  const renderedItems = visibleItems.slice(0, renderCount);
 
   if (visibleItems.length === 0 && !isEditMode) {
     return (
@@ -122,9 +128,9 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     <div className="relative" key={locationKey}>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={visibleItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
+        <SortableContext items={renderedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
-            {visibleItems.map((item, idx) => (
+            {renderedItems.map((item, idx) => (
               <div 
                 key={item.id}
                 className="premium-item-animate"
@@ -142,6 +148,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
               </div>
             ))}
           </div>
+          {renderCount < visibleItems.length && <div ref={sentinelRef} className="h-24" aria-hidden="true" />}
         </SortableContext>
       </DndContext>
 

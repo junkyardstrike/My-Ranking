@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
+import useIncrementalRender from '../hooks/useIncrementalRender';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },
@@ -88,6 +89,9 @@ export default function AllRankingsView() {
   }, [allItems, searchQuery, selectedGenre]);
 
   const isActuallyCollapsed = isCollapsed;
+  const [renderCount, sentinelRef] = useIncrementalRender(filteredItems.length, {
+    resetKey: `${searchQuery}|${selectedGenre}`,
+  });
 
   const handleUpdate = (id, updates) => {
     updateItem(id, updates);
@@ -244,7 +248,7 @@ export default function AllRankingsView() {
         </div>
       ) : (
         <div className={`mt-8 space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
-          {filteredItems.map((item, idx) => (
+          {filteredItems.slice(0, renderCount).map((item, idx) => (
             <div 
               key={item.id} 
               className="premium-item-animate"
@@ -267,6 +271,7 @@ export default function AllRankingsView() {
               />
             </div>
           ))}
+          {renderCount < filteredItems.length && <div ref={sentinelRef} className="h-24" aria-hidden="true" />}
         </div>
       )}
 

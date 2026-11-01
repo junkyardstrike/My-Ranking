@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
-import { useStore } from '../../store/useStore';
+import { useStore, getItemIndex } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
 import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
 
@@ -44,13 +44,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const moveItemToRank = useStore(state => state.moveItemToRank);
   const settings = useStore(state => state.settings);
 
-  const itemFromStore = useStore(useCallback(state => {
-    const allItems = [
-      ...(state.rankings || []).flatMap(r => r.items || []),
-      ...(state.unrankedItems || [])
-    ];
-    return allItems.find(i => i.id === propItem?.id);
-  }, [propItem?.id]));
+  const itemFromStore = useStore(useCallback(state => getItemIndex(state).get(propItem?.id), [propItem?.id]));
 
   const liveItem = itemFromStore || propItem;
 
@@ -78,6 +72,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       document.body.style.overflow = 'auto';
       setIsAddingToRanking(false);
     }
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen, liveItem?.id]);
 
   if (!isOpen || !draftItem) return null;
