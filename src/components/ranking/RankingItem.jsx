@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { useStore, getItemIndex } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
@@ -44,7 +44,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
   });
 };
 
-export default function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false, isSelectable = false, isSelectedForBulk = false, onToggleSelect = null }) {
+function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false, isSelectable = false, isSelectedForBulk = false, onToggleSelect = null }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
@@ -538,3 +538,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
     </>
   );
 }
+
+// 並び替えのドラッグ中は一覧全体が毎フレーム再描画されるため、内容が変わらない作品カードは描画を省く
+export default memo(RankingItem);

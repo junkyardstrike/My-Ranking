@@ -18,6 +18,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import RankingItem from './RankingItem';
 import useIncrementalRender from '../../hooks/useIncrementalRender';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { useCallback, useMemo, useRef } from 'react';
 import { useStore } from '../../store/useStore';
 
 function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId, onUpdate, onMove }) {
@@ -30,23 +32,28 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
     isDragging
   } = useSortable({ id: item.id, disabled: !isEditMode && !isReorderMode });
 
+  // 移動量だけを反映する（Transform だと高さの違う作品同士で拡大縮小がかかり、カードが伸び縮みして揺れる）。
+  // ドラッグ中のカードにアニメーションを付けると指から遅れて追従し揺れるため、transition は付けない。
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: CSS.Translate.toString(transform),
+    transition: isDragging ? undefined : transition,
     zIndex: isDragging ? 50 : 1,
     position: 'relative',
-    opacity: isDragging ? 0.9 : 1,
   };
+  const dragHandleProps = useMemo(
+    () => ((isEditMode || isReorderMode) ? { ...attributes, ...listeners } : null),
+    [isEditMode, isReorderMode, attributes, listeners]
+  );
 
   return (
-    <div ref={setNodeRef} style={style} className={isDragging ? ' scale-[1.02] transition-transform duration-200' : ''}>
+    <div ref={setNodeRef} style={style} className={isDragging ? 'shadow-[0_6px_0_#0c2b2a] bg-white' : ''}>
       <RankingItem 
         item={item} 
         isEditMode={isEditMode} 
         isReorderMode={isReorderMode}
         isCollapsed={isCollapsed}
         rankingId={rankingId}
-        dragHandleProps={(isEditMode || isReorderMode) ? {...attributes, ...listeners} : null}
+        dragHandleProps={dragHandleProps}
         onUpdate={onUpdate}
         onMove={onMove}
         genre={item.genre || 'music'}
@@ -87,12 +94,14 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     }
   };
 
-  const handleLocalUpdate = (id, updates) => {
+  // 作品カードは memo 化しているので、ドラッグ中の再描画で毎回作り直されないよう関数を固定する
+  const ensureRenderedRef = useRef(null);
+  const handleLocalUpdate = useCallback((id, updates) => {
     updateItem(id, updates);
-  };
+  }, [updateItem]);
 
-  const handleLocalMove = (id, targetRank) => {
-    ensureRendered(targetRank + 5);
+  const handleLocalMove = useCallback((id, targetRank) => {
+    ensureRenderedRef.current?.(targetRank + 5);
     const itemToMove = items.find(i => i.id === id);
     if (!itemToMove) return;
     const otherItems = items.filter(i => i.id !== id);
@@ -105,7 +114,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
     }));
     if (onSave) onSave(updatedWithRanks);
     useStore.getState().captureRankHistory(ranking.id);
-  };
+  }, [items, onSave, ranking.id]);
 
 
   const isActuallyCollapsed = propIsCollapsed;
@@ -113,6 +122,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   const [renderCount, sentinelRef, ensureRendered] = useIncrementalRender(visibleItems.length, {
     resetKey: `${ranking.id}|${isEditMode}`,
   });
+  ensureRenderedRef.current = ensureRendered;
   const renderedItems = visibleItems.slice(0, renderCount);
 
   if (visibleItems.length === 0 && !isEditMode) {
@@ -127,7 +137,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   return (
     <div className="relative" key={locationKey}>
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
         <SortableContext items={renderedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
             {renderedItems.map((item, idx) => (
