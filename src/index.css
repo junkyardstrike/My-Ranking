@@ -17,7 +17,19 @@
   input, textarea, select {
     font-family: inherit;
     font-size: 16px !important;
+    /* iOS Safari では入力欄の最小幅が「文字数×平均文字幅」で決まり、日本語フォントだと枠より広くなって
+       カードの右端（検索ボタンなど）が画面外にはみ出す。枠に合わせて縮められるようにする */
+    min-width: 0;
+    max-width: 100%;
   }
+
+  /* iOS Safari の日付入力は独自の最小幅を持つため、標準の見た目を外して幅を枠に合わせる */
+  input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 1.6em;
+  }
+  input[type="date"]::-webkit-date-and-time-value { text-align: left; }
 
   /* タップ操作の安定化: 長押しでの文字選択/コールアウトがタップを奪わないようにする */
   button, a, label, [role="button"] {

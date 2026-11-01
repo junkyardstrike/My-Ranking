@@ -41,7 +41,7 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="relative min-h-screen text-ink flex flex-col bg-white">
+    <div className="relative min-h-screen text-ink flex flex-col bg-white [overflow-x:clip]">
       <header className="sticky top-0 z-[90] bg-white border-b-[3px] border-ink pt-[env(safe-area-inset-top)]">
         <div className="max-w-4xl mx-auto px-3 h-14 flex items-center justify-between gap-2">
           <div className="flex-1 min-w-0 max-w-[35%] sm:max-w-[50%]">

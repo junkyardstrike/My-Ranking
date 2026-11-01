@@ -263,14 +263,15 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                 onBlur={handleTitleSync}
                 onKeyDown={e => e.key === 'Enter' && handleTitleSync()}
                 placeholder="作品名を入力..." 
-                className={`flex-1 bg-transparent border-b border-line focus:border-accent outline-none text-ink pb-1  tracking-tight ${isBold ? 'font-black' : 'font-bold'}`} 
+                className={`flex-1 min-w-0 w-0 bg-transparent border-b-2 border-ink focus:border-teal outline-none text-ink pb-1 ${isBold ? 'font-black' : 'font-bold'}`} 
                 style={{ color: readableTitleColor(color), fontSize: `${localFontSize}px` }} 
               />
               <button 
                 type="button"
                 onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} 
                 disabled={!localTitle?.trim() || isFetching} 
-                className={`p-2.5 rounded border transition-all  active:scale-90 ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-mist border-accent text-accent'}`}
+                aria-label="作品情報を自動取得"
+                className={`flex-shrink-0 p-2.5 border-2 transition-colors ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-white border-ink text-ink active:bg-ink active:text-white'}`}
               >
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
