@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'MasterPiece - Cinematic Rank Manager',
         short_name: 'MasterPiece',
         description: 'Premium personal ranking management with cinematic UI and metadata auto-fetch.',
-        theme_color: '#080808',
-        background_color: '#080808',
+        theme_color: '#0c2b2a',
+        background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
         icons: [

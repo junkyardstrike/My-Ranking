@@ -70,13 +70,13 @@ function ActionButtons({ id, name, type }) {
     <div className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-auto">
       <button 
         onClick={handleEdit}
-        className="bg-black/60 p-2.5 rounded-full hover:bg-accent active:bg-accent transition-colors text-white border border-white/10 shadow-lg"
+        className="bg-mist p-2.5 rounded-full hover:bg-accent active:bg-accent transition-colors text-ink border border-line"
       >
         <Edit2 className="w-3.5 h-3.5" />
       </button>
       <button 
         onClick={handleDelete}
-        className="bg-black/60 p-2.5 rounded-full hover:bg-red-500 active:bg-red-500 transition-colors text-white border border-white/10 shadow-lg"
+        className="bg-mist p-2.5 rounded-full hover:bg-red-500 active:bg-red-500 transition-colors text-ink border border-line"
       >
         <Trash2 className="w-3.5 h-3.5" />
       </button>
@@ -86,11 +86,11 @@ function ActionButtons({ id, name, type }) {
           className="fixed inset-0 z-[300] flex items-center justify-center p-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="absolute inset-0 bg-black/80" onClick={() => setIsDeleteDialogOpen(false)} />
-          <div className="relative w-full max-w-sm bg-surface border border-white/10 rounded-[32px] p-6 space-y-5 shadow-2xl">
+          <div className="absolute inset-0 bg-ink/60" onClick={() => setIsDeleteDialogOpen(false)} />
+          <div className="relative w-full max-w-sm bg-white border border-line rounded-sm p-6 space-y-5">
             <div className="space-y-2">
-              <h2 className="text-lg font-black text-white tracking-tight">「{name}」を削除</h2>
-              <p className="text-sm text-slate-400 leading-relaxed">
+              <h2 className="text-lg font-black text-ink tracking-tight">「{name}」を削除</h2>
+              <p className="text-sm text-muted leading-relaxed">
                 {type === 'folder' ? 'このフォルダ内のランキング' : 'このランキング'}に含まれる
                 <span className="text-accent font-black mx-1">{itemCount}作品</span>
                 をどうしますか？
@@ -100,21 +100,21 @@ function ActionButtons({ id, name, type }) {
               <button
                 type="button"
                 onClick={() => runDelete(true)}
-                className="w-full py-4 rounded-2xl bg-accent text-black font-black text-sm active:scale-[0.98] transition-transform"
+                className="w-full py-4 rounded-sm bg-accent text-white font-black text-sm active:scale-[0.98] transition-transform"
               >
                 作品はレコードに残して削除
               </button>
               <button
                 type="button"
                 onClick={handleDeleteAll}
-                className="w-full py-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-400 font-black text-sm active:scale-[0.98] transition-transform"
+                className="w-full py-4 rounded-sm bg-red-500/15 border border-red-500/40 text-red-400 font-black text-sm active:scale-[0.98] transition-transform"
               >
                 作品ごと完全に削除
               </button>
               <button
                 type="button"
                 onClick={() => setIsDeleteDialogOpen(false)}
-                className="w-full py-3 rounded-2xl text-slate-400 font-black text-sm active:bg-white/5"
+                className="w-full py-3 rounded-sm text-muted font-black text-sm active:bg-mist"
               >
                 キャンセル
               </button>
@@ -209,9 +209,9 @@ function SortableFolder({ folder, folders, rankings }) {
     <div 
       ref={setNodeRef}
       style={style}
-      className={`group relative overflow-hidden bg-white/5 rounded-[24px] border transition-all duration-500 shadow-xl flex flex-col justify-end h-28 w-full ${
-        isDragging ? 'scale-[1.05] shadow-2xl z-50 ring-2 ring-accent' :
-        'border-white/10 hover:border-white/30'
+      className={`group relative overflow-hidden bg-ink text-white flex flex-col justify-end h-28 w-full ${
+        isDragging ? 'z-50 ring-4 ring-coral' :
+        ''
       }`}
     >
       <Link to={`/folder/${folder.id}`} className="absolute inset-0 z-10" />
@@ -222,7 +222,7 @@ function SortableFolder({ folder, folders, rankings }) {
         <div 
           {...listeners} 
           {...attributes} 
-          className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-accent bg-black/40 rounded-lg hover:bg-black/60 z-30 pointer-events-auto transition-colors"
+          className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
           style={{ touchAction: 'none' }}
         >
           <GripVertical className="w-5 h-5" />
@@ -231,18 +231,18 @@ function SortableFolder({ folder, folders, rankings }) {
 
       {coverImage && (
          <div className="absolute inset-0 z-0 transition-all duration-700">
-           <img src={coverImage} alt="" className="w-full h-full object-cover brightness-[0.55] group-hover:brightness-[0.65] group-hover:scale-110 transition-all duration-700" />
-           <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+           <img src={coverImage} alt="" className="w-full h-full object-cover opacity-45" />
+           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
          </div>
       )}
 
       <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
-        <h3 className="text-lg sm:text-xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110 pr-6">{folder.name}</h3>
-        <div className="flex items-center gap-2 mt-0.5 pr-4">
+        <h3 className="text-[17px] sm:text-xl font-black text-white line-clamp-1 pr-6">{folder.name}</h3>
+        <div className="flex items-center gap-2 mt-0.5 pr-2 min-w-0">
           {folder.englishName && (
-            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase leading-tight truncate opacity-90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pr-2">{folder.englishName}</span>
+            <span className="text-[9px] tracking-[0.1em] text-white/80 font-bold uppercase leading-tight truncate">{folder.englishName}</span>
           )}
-          <span className="text-[10px] font-black text-accent/80 italic uppercase tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+          <span className="text-[10px] font-black text-sun whitespace-nowrap">
             ({totalItems}作品)
           </span>
         </div>
@@ -250,8 +250,8 @@ function SortableFolder({ folder, folders, rankings }) {
 
       {!isReorderMode && (
         <div className="absolute top-3 right-3 z-20 pointer-events-none">
-          <div className="p-1.5 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm shadow-lg">
-            <Folder className="w-3 h-3 text-accent" />
+          <div className="p-1.5 bg-white/15">
+            <Folder className="w-3 h-3 text-white" />
           </div>
         </div>
       )}
@@ -259,10 +259,10 @@ function SortableFolder({ folder, folders, rankings }) {
       {isEditMode && (
         <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
           <label 
-            className="bg-black/60 p-2.5 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
+            className="bg-mist p-2.5 rounded-full transition-all cursor-pointer hover:bg-ink/60 flex items-center justify-center border border-line hover:scale-110"
             onClick={e => e.stopPropagation()}
           >
-            <ImageIcon className="w-3.5 h-3.5 text-white" />
+            <ImageIcon className="w-3.5 h-3.5 text-ink" />
             <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
           </label>
         </div>
@@ -308,24 +308,24 @@ function SortableRanking({ ranking }) {
 
   return (
     <div ref={setNodeRef} style={style} className={`block w-full h-full ${isDragging ? 'z-50 relative' : ''}`}>
-      <div className={`group relative bg-white/5 rounded-[24px] border border-white/10 hover:border-white/30 transition-all duration-500 shadow-xl h-28 overflow-hidden flex flex-col justify-end ${isDragging ? 'scale-[1.05] ring-2 ring-accent' : ''}`}>
+      <div className={`group relative bg-teal text-white h-28 overflow-hidden flex flex-col justify-end ${isDragging ? 'ring-4 ring-coral' : ''}`}>
         <Link to={`/ranking/${ranking.id}`} className="absolute inset-0 z-10" />
 
         {ranking.coverImageBase64 ? (
            <>
              <div className="absolute inset-0 z-0 transition-all duration-700">
-               <img src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover brightness-[0.55] group-hover:brightness-[0.65] group-hover:scale-110 transition-all duration-700" />
-               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+               <img src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover opacity-45" />
+               <div className="absolute inset-0 bg-gradient-to-t from-teal via-teal/40 to-transparent" />
              </div>
            </>
         ) : (
-           <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
+           <span className="absolute left-1/2 top-2.5 h-1.5 w-8 -translate-x-1/2 rounded-full bg-white z-0 pointer-events-none" />
         )}
 
         <div className="relative z-10 p-4 w-full flex flex-col pointer-events-none">
-          <h3 className="text-lg sm:text-xl font-black text-accent italic tracking-tighter line-clamp-1 drop-shadow-[0_4px_8px_rgba(0,0,0,1)] filter brightness-110 pr-6">{ranking.title}</h3>
+          <h3 className="text-[17px] sm:text-xl font-black text-white line-clamp-1 pr-6">{ranking.title}</h3>
           {ranking.englishName && (
-            <span className="text-[10px] tracking-widest text-slate-300 font-black uppercase block leading-tight truncate opacity-90 mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] pr-4">{ranking.englishName}</span>
+            <span className="text-[9px] tracking-[0.1em] text-white/85 font-bold uppercase block leading-tight truncate mt-0.5 pr-2">{ranking.englishName}</span>
           )}
         </div>
 
@@ -333,7 +333,7 @@ function SortableRanking({ ranking }) {
           <div 
             {...listeners} 
             {...attributes} 
-            className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-slate-500 hover:text-accent bg-black/40 rounded-lg hover:bg-black/60 z-30 pointer-events-auto transition-colors"
+            className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
           style={{ touchAction: 'none' }}
           >
             <GripVertical className="w-5 h-5" />
@@ -342,8 +342,8 @@ function SortableRanking({ ranking }) {
 
         {!isReorderMode && (
           <div className="absolute top-3 right-3 z-20 pointer-events-none">
-            <div className="p-1.5 rounded-full bg-black/50 border border-white/10 backdrop-blur-sm shadow-lg">
-              <ListOrdered className="w-3 h-3 text-accent" />
+            <div className="p-1.5 bg-white/15">
+              <ListOrdered className="w-3 h-3 text-white" />
             </div>
           </div>
         )}
@@ -353,10 +353,10 @@ function SortableRanking({ ranking }) {
             <ActionButtons id={ranking.id} name={ranking.title} type="ranking" />
             <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
               <label 
-                className="bg-black/60 p-2.5 rounded-full transition-all cursor-pointer hover:bg-black/80 flex items-center justify-center border border-white/10 hover:scale-110"
+                className="bg-mist p-2.5 rounded-full transition-all cursor-pointer hover:bg-ink/60 flex items-center justify-center border border-line hover:scale-110"
                 onClick={e => e.stopPropagation()}
               >
-                <ImageIcon className="w-3.5 h-3.5 text-white" />
+                <ImageIcon className="w-3.5 h-3.5 text-ink" />
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
               </label>
             </div>
@@ -429,49 +429,33 @@ export default function FolderView() {
 
   return (
     <>
-      <div className={`flex flex-col pb-20 ${isRoot ? 'pt-8' : 'pt-2 sm:pt-4'}`} key={locationKey}>
-        <div className={`flex flex-col mb-10 relative mt-0 ${isRoot ? 'items-center text-center' : ''}`}>
-        {isRoot ? (
-          <>
-            <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
-              Ranking
-            </h1>
-            <div className="flex flex-col items-center gap-2 mt-4">
-              <p className="text-[11px] text-accent font-black tracking-[0.1em] uppercase italic leading-none opacity-80">
-                Ranking Archive / ランキング
-              </p>
-              <div className="h-1 w-20 bg-accent rounded-full shadow-[0_0_15px_rgba(212,175,55,0.6)]" />
-            </div>
-          </>
-        ) : (
-          <div className="py-2 pt-12">
-            <h1 className="text-3xl sm:text-5xl font-black text-white italic tracking-tighter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
-              {currentFolder?.name}
-            </h1>
-            <p className="text-[11px] text-accent/60 font-black uppercase tracking-[0.4em] mt-2 italic">
-              {currentFolder?.englishName || 'COLLECTION ARCHIVE'}
-            </p>
-          </div>
-        )}
-
+      <div className="flex flex-col gap-4 pb-20 pt-1" key={locationKey}>
         {!isRoot && (
-          <div className="absolute left-0 top-0">
-             <button 
+          <div>
+            <button
+              type="button"
               onClick={() => navigate(currentFolder?.parentId ? `/folder/${currentFolder.parentId}` : '/')}
-              className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
+              className="fes-btn"
             >
-              <ArrowLeft className="w-4 h-4 text-accent" />
-              <span className="text-[10px] font-black uppercase tracking-widest hidden xs:inline">戻る</span>
+              <ArrowLeft className="w-3.5 h-3.5" />戻る
             </button>
           </div>
         )}
-      </div>
+        <div className={isRoot ? 'fes-pass' : 'fes-pass bg-ink'}>
+          <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">{isRoot ? 'MASTERPIECE FILM FES' : 'COLLECTION'}</p>
+          <h1 className={isRoot ? 'font-fes text-[28px] leading-tight mt-0.5' : 'text-[26px] font-black leading-tight mt-0.5 break-words'}>
+            {isRoot ? 'Ranking' : currentFolder?.name}
+          </h1>
+          <p className="text-[10px] font-bold tracking-[0.12em] opacity-85 mt-1">
+            {isRoot ? 'Ranking Archive ／ ランキング' : (currentFolder?.englishName || 'COLLECTION ARCHIVE')}
+          </p>
+        </div>
 
       {(childFolders.length === 0 && childRankings.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white/5 rounded-[40px] border border-white/5 border-dashed mx-1">
-          <Folder className="w-20 h-20 mb-6 opacity-20 text-accent" />
-          <p className="text-xl font-black italic tracking-tighter">No Items Yet</p>
-          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed px-4">右上の＋ボタンから新しいフォルダやランキングを作成してください</p>
+        <div className="flex flex-col items-center justify-center py-20 text-muted border-2 border-dashed border-ink">
+          <Folder className="w-12 h-12 mb-4 text-muted" />
+          <p className="font-fes text-lg text-ink">NO ITEMS YET</p>
+          <p className="text-xs mt-2 font-bold max-w-xs text-center leading-relaxed px-4">右上の＋ボタンから新しいフォルダやランキングを作成してください</p>
         </div>
       ) : (
         <DndContext 
@@ -496,7 +480,7 @@ export default function FolderView() {
             )}
             
             {childFolders.length > 0 && childRankings.length > 0 && (
-              <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent my-8" />
+              <div className="h-px bg-gradient-to-r from-transparent to-transparent my-8" />
             )}
 
             {childRankings.length > 0 && (

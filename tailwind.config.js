@@ -10,11 +10,30 @@ export default {
   ],
   theme: {
     extend: {
+      // テーマ「映画祭パス」
       colors: {
-        background: '#050505', // Pitch Black
-        surface: '#111111', // Very Dark Gray
-        'surface-light': '#222222', // Dark Charcoal
-        accent: '#D4AF37', // Metallic Gold
+        background: '#ffffff',
+        surface: '#ffffff',
+        'surface-light': '#eef5f4',
+        ink: '#0c2b2a',      // 文字・罫線・タブバー
+        teal: '#0a7a6f',     // メインカラー（パス）
+        coral: '#ff5a3c',    // 上位作品・強調
+        sun: '#ffcf3c',      // 殿堂入り・タブの現在地
+        mist: '#eef5f4',     // 面
+        line: '#d5e3e1',     // 薄い罫線
+        muted: '#4b6664',    // 補助テキスト
+        accent: '#0a7a6f',
+        genre: {
+          anime: '#0a7a6f',
+          movie: '#ff5a3c',
+          manga: '#c13b7a',
+          drama: '#e2a400',
+          game: '#3c5bd6',
+          music: '#7a8a89',
+        },
+      },
+      fontFamily: {
+        display: ['"Archivo Black"', '"Zen Kaku Gothic New"', 'sans-serif'],
       },
       screens: {
         'xs': '375px',

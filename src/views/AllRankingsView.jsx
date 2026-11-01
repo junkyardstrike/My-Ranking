@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
+import ModeBanner from '../components/common/ModeBanner';
 import useIncrementalRender from '../hooks/useIncrementalRender';
 
 const GENRE_FILTERS = [
@@ -131,123 +132,80 @@ export default function AllRankingsView() {
   };
 
   return (
-    <div className="pt-8 pb-32" key={locationKey}>
-      <div className="relative mb-4">
-        <div className="flex flex-col items-center text-center px-4">
-          <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
-            Records
-          </h1>
-          
-          <div className="flex flex-col items-center gap-2 mt-4">
-            <p className="text-[11px] text-rose-500 font-black tracking-[0.1em] uppercase italic opacity-80 leading-none">Master List / 全作品</p>
-            <div className="h-1 w-20 bg-rose-500 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.6)]" />
-          </div>
-            
-          <div className="flex items-center gap-3 mt-4 bg-rose-500/10 px-6 py-2 rounded-2xl border border-rose-500/20 shadow-lg backdrop-blur-sm">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">総作品数</span>
-            <span className="text-3xl font-black text-rose-400 font-mono leading-none">
-              <Counter value={filteredItems.length} />
-            </span>
-          </div>
-
-          {(isEditMode || isReorderMode) && (
-            <div className="mt-6 inline-block px-6 py-2.5 bg-accent/20 border border-accent/30 rounded-2xl shadow-[0_0_25px_rgba(234,179,8,0.3)]">
-              <p className="text-accent text-[16px] font-black text-center uppercase tracking-widest italic">
-                {isEditMode ? '編集モード実行中' : '並び替えモード実行中'}
-              </p>
-              {isEditMode && (
-                <p className="text-[13px] text-accent/80 font-black text-center mt-2 leading-tight">
-                  ※この画面での編集操作は即時保存されます。
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="absolute right-0 top-0 pt-2">
-          {!isEditMode && (
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/5 shadow-xl backdrop-blur-md hover:bg-white/10 transition-all text-slate-400 hover:text-white active:scale-95"
-            >
-              {isActuallyCollapsed ? (
-                <>
-                  <Maximize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
-                </>
-              ) : (
-                <>
-                  <Minimize2 className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">最小化</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
+    <div className="pt-1 pb-32 grid grid-cols-[minmax(0,1fr)] gap-4" key={locationKey}>
+      <div className="fes-pass">
+        <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">ARCHIVE PASS</p>
+        <h1 className="font-fes text-[28px] leading-tight mt-0.5">Records</h1>
+        <p className="text-[10px] font-bold tracking-[0.12em] opacity-85 mt-1">Master List ／ 全作品</p>
       </div>
 
+      <div className="flex items-end justify-between gap-2">
+        <p className="flex items-baseline gap-2 text-[11px] font-black">
+          総作品数
+          <span className="font-fes text-[28px] leading-none text-coral"><Counter value={filteredItems.length} /></span>
+        </p>
+        {!isEditMode && (
+          <button type="button" onClick={() => setIsCollapsed(!isCollapsed)} className="fes-btn">
+            {isActuallyCollapsed ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+            {isActuallyCollapsed ? '展開' : '最小化'}
+          </button>
+        )}
+      </div>
+
+      <ModeBanner isEditMode={isEditMode} isReorderMode={isReorderMode} editNote="※この画面での編集操作は即時保存されます。" />
+
       {isSelectMode && targetRankingId && (
-        <div className="bg-accent/10 border border-accent/20 rounded-2xl px-6 py-3 flex items-center justify-between shadow-lg shadow-accent/5 mb-6 animate-in slide-in-from-top-4 duration-500">
-           <div className="flex items-center gap-3">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <p className="text-[11px] sm:text-[13px] font-black text-white italic tracking-tight">
-                「<span className="text-accent underline underline-offset-4">{rankings.find(r => r.id === targetRankingId)?.title}</span>」への作品を選出中...
-              </p>
-           </div>
-           <button 
-             onClick={() => navigate(`/ranking/${targetRankingId}`)}
-             className="text-[9px] font-black text-slate-400 hover:text-white uppercase tracking-widest transition-colors"
-           >
-             キャンセル
-           </button>
+        <div className="bg-sun px-3 py-2.5 flex items-center justify-between gap-3">
+          <p className="text-[12px] font-black text-ink min-w-0">
+            「{rankings.find(r => r.id === targetRankingId)?.title}」への作品を選出中…
+          </p>
+          <button type="button" onClick={() => navigate(`/ranking/${targetRankingId}`)} className="fes-btn flex-shrink-0">
+            キャンセル
+          </button>
         </div>
       )}
 
-        {/* Search & Genre Filters */}
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600" />
-            <input 
-              type="text" 
-              placeholder="作品名・著者名で検索..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-black/40 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-accent transition-all placeholder:text-slate-800 font-bold"
-            />
-          </div>
-
-          <div className="flex gap-2 overflow-x-auto pb-6 custom-scrollbar px-1">
-            {GENRE_FILTERS.map(filter => {
-              const Icon = filter.icon;
-              return (
-                <button
-                  key={filter.id}
-                  type="button"
-                  onClick={() => setSelectedGenre(filter.id)}
-                  className={`flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full border transition-[transform,background-color,border-color,box-shadow] duration-200 text-[11px] font-black uppercase tracking-tighter ${
-                    selectedGenre === filter.id 
-                      ? 'bg-accent text-black border-accent shadow-lg shadow-accent/20 scale-105' 
-                      : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10 active:bg-white/20'
-                  } active:scale-95 touch-manipulation`}
-                >
-                  <Icon size={16} />
-                  {filter.label}
-                </button>
-              );
-            })}
-          </div>
+      <div className="grid gap-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
+          <input
+            type="text"
+            id="records-search"
+            placeholder="作品名・著者名で検索..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white border-2 border-ink py-3 pl-9 pr-3 text-ink font-bold placeholder:text-muted/70 focus:outline-none focus:border-teal"
+          />
         </div>
+
+        <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-4 px-4">
+          {GENRE_FILTERS.map(filter => {
+            const Icon = filter.icon;
+            const on = selectedGenre === filter.id;
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setSelectedGenre(filter.id)}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 border-[1.5px] border-ink text-[11px] font-black ${on ? 'bg-ink text-white' : 'bg-white text-ink active:bg-mist'}`}
+              >
+                <Icon size={14} />
+                {filter.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       {filteredItems.length === 0 ? (
-        <div className="py-24 text-center space-y-4 bg-white/5 rounded-[40px] border border-white/5 border-dashed">
-          <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-            <ListFilter className="w-10 h-10 text-slate-800" />
-          </div>
-          <p className="text-lg font-black text-slate-600 italic tracking-tighter">作品が見つかりません</p>
-          <p className="text-xs text-slate-700 uppercase font-bold tracking-widest">条件に一致するレコードがアーカイブにありません</p>
+        <div className="py-16 text-center grid gap-2 justify-items-center border-2 border-dashed border-ink">
+          <ListFilter className="w-8 h-8 text-muted" />
+          <p className="text-base font-black">作品が見つかりません</p>
+          <p className="text-xs text-muted font-bold">条件に一致するレコードがアーカイブにありません</p>
         </div>
       ) : (
-        <div className={`mt-8 space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
+        <div className={isActuallyCollapsed ? 'space-y-1.5' : 'space-y-3'}>
           {filteredItems.slice(0, renderCount).map((item, idx) => (
             <div 
               key={item.id} 
@@ -277,10 +235,11 @@ export default function AllRankingsView() {
 
         {/* Bulk Add Button (Sticky Bottom) */}
         {isSelectMode && selectedIds.length > 0 && (
-          <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-10 duration-500">
-            <button 
+          <div className="fixed bottom-[calc(76px+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[100]">
+            <button
+              type="button"
               onClick={handleBulkAdd}
-              className="px-8 py-4 bg-accent text-black font-black uppercase tracking-[0.2em] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
+              className="px-6 py-3.5 bg-coral text-white font-black border-2 border-ink active:bg-ink flex items-center gap-2 whitespace-nowrap"
             >
               <Save size={20} />
               追加する ({selectedIds.length}作品)

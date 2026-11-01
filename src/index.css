@@ -2,38 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* テーマ「映画祭パス」: 白地・濃い緑の文字、ティールのパス、コーラルの強調 */
 @layer base {
   body {
-    font-family: 'WDXL Lubrifont JP N', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-    @apply bg-background text-slate-100 antialiased min-h-screen overflow-x-hidden;
+    font-family: 'Zen Kaku Gothic New', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    @apply bg-white text-ink antialiased min-h-screen overflow-x-hidden;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* 上下のセーフエリアはヘッダー／タブバー側で確保する */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
-    background-image:
-      /* Colorful noise-like diagonal lines */
-      repeating-linear-gradient(
-        45deg,
-        rgba(212,175,55,0.03) 0px,
-        rgba(212,175,55,0.03) 1px,
-        transparent 1px,
-        transparent 20px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        rgba(139,92,246,0.03) 0px,
-        rgba(139,92,246,0.03) 1px,
-        transparent 1px,
-        transparent 20px
-      ),
-      /* Subtle radial color pops */
-      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,58,237,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212,175,55,0.10) 0%, transparent 50%),
-      radial-gradient(ellipse 50% 50% at 50% 50%, rgba(14,165,233,0.06) 0%, transparent 70%),
-      /* Base */
-      linear-gradient(160deg, #080808 0%, #0c0a10 40%, #0a0c08 100%);
   }
 
   input, textarea, select {
@@ -48,67 +26,45 @@
     -webkit-touch-callout: none;
     touch-action: manipulation;
   }
+
+  :focus-visible { outline: 2px solid #ff5a3c; outline-offset: 2px; }
+}
+
+@layer components {
+  /* 英字見出し用の書体（数字・ラベル） */
+  .font-fes { font-family: 'Archivo Black', 'Zen Kaku Gothic New', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
+
+  /* 入場パス（ページ見出し）。上部のストラップ穴つき */
+  .fes-pass { @apply relative rounded-[10px] bg-teal text-white px-4 pb-3.5 pt-6; }
+  .fes-pass::before { content: ""; @apply absolute left-1/2 top-2.5 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white; }
+
+  /* 太枠ボタン */
+  .fes-btn { @apply inline-flex items-center gap-1.5 border-2 border-ink bg-white px-3 py-1.5 text-[11px] font-black text-ink transition-colors active:bg-ink active:text-white; }
+
+  /* セクション（太い上罫線＋英字見出し） */
+  .fes-section { @apply border-t-[3px] border-ink pt-3; }
+  .fes-h { @apply flex items-baseline gap-2 font-fes text-[15px] text-ink; }
+  .fes-h small { @apply font-sans text-[10px] font-bold text-muted; }
+
+  /* タグ */
+  .fes-tag { @apply inline-flex items-center border border-ink px-1.5 text-[10px] font-bold leading-[18px] text-ink whitespace-nowrap; }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
-
-/* Animated gradient orbs in background */
-@keyframes float-orb {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(20px, -20px) scale(1.05); }
-  66% { transform: translate(-10px, 10px) scale(0.95); }
-}
-
-.bg-orb {
-  position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.18;
-  pointer-events: none;
-  z-index: 0;
-  will-change: transform;
-  animation: float-orb 12s ease-in-out infinite;
-}
-.bg-orb-1 { width: 400px; height: 400px; background: #7c3aed; top: -100px; left: -100px; animation-delay: 0s; }
-.bg-orb-2 { width: 300px; height: 300px; background: #D4AF37; bottom: 100px; right: -80px; animation-delay: -4s; }
-.bg-orb-3 { width: 250px; height: 250px; background: #0ea5e9; top: 40%; left: 50%; animation-delay: -8s; }
-
-@keyframes rainbow-slow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-rainbow-slow {
-  background-size: 200% 200%;
-  animation: rainbow-slow 6s linear infinite;
-}
-
-@keyframes textFlash {
-  0% { background-position: -200% 0, 0 0; }
-  100% { background-position: 200% 0, 0 0; }
-}
-
-.animate-text-flash {
-  background-size: 200% 100%, 100% 100%;
-  animation: textFlash 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-}
+::-webkit-scrollbar-thumb { background: #b9cfcc; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #0a7a6f; }
 
 .premium-item-animate {
-  animation: premiumEntry 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: premiumEntry 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* filter: blur を使うと要素ごとに重い再描画が走りタップ応答が遅れるため transform/opacity のみ */
 @keyframes premiumEntry {
   0% {
     opacity: 0;
-    transform: translateY(24px) scale(0.97);
+    transform: translateY(16px);
   }
   100% {
     opacity: 1;
@@ -116,15 +72,6 @@
   }
 }
 
-@keyframes lineRun {
-  0% { width: 0; opacity: 0; transform: translateX(-10px); }
-  100% { width: 96px; opacity: 1; transform: translateX(0); }
-}
-
-.animate-line-run {
-  animation: lineRun 0.3s cubic-bezier(0.1, 1, 0.2, 1) forwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .bg-orb, .premium-item-animate { animation: none; }
+  .premium-item-animate { animation: none; }
 }

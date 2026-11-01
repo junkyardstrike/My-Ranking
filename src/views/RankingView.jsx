@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import RankingList from '../components/ranking/RankingList';
+import ModeBanner from '../components/common/ModeBanner';
 import { ArrowLeft, Maximize2, Minimize2, PlusSquare } from 'lucide-react';
 
 export default function RankingView() {
@@ -26,7 +27,7 @@ export default function RankingView() {
   const ranking = rankings.find(r => r.id === rankingId);
 
   if (!ranking) {
-    return <div className="p-8 text-center text-slate-500">ランキングが見つかりません</div>;
+    return <div className="p-8 text-center text-muted font-bold">ランキングが見つかりません</div>;
   }
 
   const handleSave = (newItems) => {
@@ -34,71 +35,39 @@ export default function RankingView() {
   };
 
   return (
-    <div className="animate-in fade-in duration-500 pt-2 sm:pt-4">
-      <div className="relative mb-6">
-        <div className="flex flex-col items-center text-center px-1 mb-6 py-2">
-          <h1 
-            className="text-3xl sm:text-5xl font-black text-yellow-400 tracking-tighter uppercase italic drop-shadow-[0_0_35px_rgba(234,179,8,0.5)] px-4 pr-6"
-          >
-            {ranking.title}
-          </h1>
-          <p className="text-[10px] text-white/60 font-black uppercase tracking-widest mt-2 italic">{ranking.englishName || 'MASTERPIECE SELECTION ARCHIVE'}</p>
-        </div>
-
-        <div className="absolute left-0 top-0">
-          <button 
-            onClick={() => navigate(ranking.folderId ? `/folder/${ranking.folderId}` : '/')}
-            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95"
-          >
-            <ArrowLeft className="w-4 h-4 text-accent" />
-            <span className="text-[10px] font-black uppercase tracking-widest hidden xs:inline">戻る</span>
-          </button>
-        </div>
-
-        <div className="absolute right-0 top-0 flex flex-col items-end gap-2">
+    <div className="pt-1 grid grid-cols-[minmax(0,1fr)] gap-4">
+      <div className="flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => navigate(ranking.folderId ? `/folder/${ranking.folderId}` : '/')}
+          className="fes-btn"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />戻る
+        </button>
+        <div className="flex items-center gap-2">
           {!isEditMode && (
-            <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/5 border border-white/5 shadow-xl backdrop-blur-md hover:bg-white/10 transition-all text-slate-400 hover:text-white group"
-            >
-              {isCollapsed ? (
-                <>
-                  <Maximize2 className="w-4 h-4 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">展開</span>
-                </>
-              ) : (
-                <>
-                  <Minimize2 className="w-4 h-4 text-accent" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">最小化</span>
-                </>
-              )}
+            <button type="button" onClick={() => setIsCollapsed(!isCollapsed)} className="fes-btn">
+              {isCollapsed ? <Maximize2 className="w-3.5 h-3.5" /> : <Minimize2 className="w-3.5 h-3.5" />}
+              {isCollapsed ? '展開' : '最小化'}
             </button>
           )}
-
-          <button 
+          <button
+            type="button"
             onClick={() => navigate('/all', { state: { mode: 'select', targetRankingId: ranking.id } })}
-            className="flex-shrink-0 flex items-center gap-2 text-white/50 hover:text-white transition-all duration-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-2xl border border-white/5 shadow-xl backdrop-blur-md active:scale-95 group"
+            className="fes-btn"
           >
-            <PlusSquare className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-widest">レコードから追加</span>
+            <PlusSquare className="w-3.5 h-3.5" />レコードから追加
           </button>
         </div>
-
-        <div className="flex flex-col items-center gap-3">
-          {(isEditMode || isReorderMode) && (
-            <div className="inline-block px-6 py-2.5 bg-accent/20 border border-accent/30 rounded-2xl shadow-[0_0_25px_rgba(234,179,8,0.3)]">
-              <p className="text-accent text-[16px] font-black text-center uppercase tracking-widest italic">
-                {isEditMode ? '編集モード実行中' : '並び替えモード実行中'}
-              </p>
-              {isEditMode && (
-                <p className="text-[13px] text-accent/80 font-black text-center mt-2 leading-tight">
-                  ※この画面での編集操作は即時保存されます。
-                </p>
-              )}
-            </div>
-          )}
-        </div>
       </div>
+
+      <div className="fes-pass">
+        <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">MASTERPIECE FILM FES</p>
+        <h1 className="text-[26px] sm:text-4xl font-black leading-tight mt-0.5 break-words">{ranking.title}</h1>
+        <p className="text-[10px] font-bold tracking-[0.12em] opacity-85 mt-1">{ranking.englishName || 'MASTERPIECE SELECTION ARCHIVE'}</p>
+      </div>
+
+      <ModeBanner isEditMode={isEditMode} isReorderMode={isReorderMode} editNote="※この画面での編集操作は即時保存されます。" />
 
       <RankingList 
         ranking={ranking} 

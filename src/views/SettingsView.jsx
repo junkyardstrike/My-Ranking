@@ -130,19 +130,16 @@ export default function SettingsView() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-700 pt-8 pb-20">
-      <div className="flex flex-col items-center text-center px-4 mb-10 relative">
-        <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
-          Settings
-        </h1>
-        
-        <div className="flex flex-col items-center gap-2 mt-4">
-          <p className="text-[11px] text-purple-400 font-black tracking-[0.1em] uppercase italic leading-none">App Configuration / アプリ設定</p>
-          <div className="h-1 w-20 bg-purple-500 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.6)]" />
+    <div className="space-y-6 pt-1 pb-20">
+      <div className="relative">
+        <div className="fes-pass bg-ink">
+          <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">STAFF ONLY</p>
+          <h1 className="font-fes text-[28px] leading-tight mt-0.5">Settings</h1>
+          <p className="text-[10px] font-bold tracking-[0.12em] opacity-85 mt-1">App Configuration ／ アプリ設定</p>
         </div>
 
         {status && (
-          <div className={`absolute -bottom-10 flex items-center gap-2 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest animate-in zoom-in-95 fade-in backdrop-blur-xl shadow-2xl z-50 ${status.type === 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+          <div role="status" className={`fixed left-1/2 -translate-x-1/2 bottom-[calc(84px+env(safe-area-inset-bottom))] flex items-center gap-2 px-4 py-2.5 text-[12px] font-black text-white border-2 border-ink z-[95] whitespace-nowrap ${status.type === 'success' ? 'bg-teal' : 'bg-coral'}`}>
             {status.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
             {status.message}
           </div>
@@ -156,45 +153,45 @@ export default function SettingsView() {
           { label: 'ランキング', value: rankings.length },
           { label: '作品数', value: totalItems },
         ].map(s => (
-          <div key={s.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
+          <div key={s.label} className="bg-mist border border-line rounded p-3 text-center">
             <p className="text-2xl font-black text-accent font-mono">
               {s.value}
             </p>
-            <p className="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-widest">{s.label}</p>
+            <p className="text-[10px] text-muted mt-1 uppercase font-bold tracking-widest">{s.label}</p>
           </div>
         ))}
       </div>
 
       {/* Actions */}
       <div className="space-y-3">
-        <div className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden shadow-xl">
-          <div className="p-4 border-b border-white/5 bg-white/5">
-            <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-black">Data Management</p>
+        <div className="bg-mist border border-line rounded-sm overflow-hidden">
+          <div className="p-4 border-b border-line bg-mist">
+            <p className="text-[10px] text-muted uppercase tracking-[0.2em] font-black">Data Management</p>
           </div>
 
           <button
             onClick={handleExport}
-            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
+            className="w-full flex items-center gap-4 p-4 hover:bg-mist transition-colors border-b border-line group"
           >
-            <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded bg-mist flex items-center justify-center group-hover:scale-110 transition-transform">
               <Download className="w-5 h-5 text-accent" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-sm font-black text-white">JSONを書き出す (Export)</p>
-              <p className="text-[11px] text-slate-500 font-medium">画像を含む全データのバックアップ</p>
+              <p className="text-sm font-black text-ink">JSONを書き出す (Export)</p>
+              <p className="text-[11px] text-muted font-medium">画像を含む全データのバックアップ</p>
             </div>
           </button>
 
           <button
             onClick={handleImportClick}
-            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
+            className="w-full flex items-center gap-4 p-4 hover:bg-mist transition-colors border-b border-line group"
           >
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Upload className="w-5 h-5 text-blue-400" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-sm font-black text-white">JSONを取り込む (Import)</p>
-              <p className="text-[11px] text-slate-500 font-medium">バックアップファイルから復元</p>
+              <p className="text-sm font-black text-ink">JSONを取り込む (Import)</p>
+              <p className="text-[11px] text-muted font-medium">バックアップファイルから復元</p>
             </div>
             <input 
               type="file" 
@@ -207,80 +204,76 @@ export default function SettingsView() {
 
           <button
             onClick={handleExportCSV}
-            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors border-b border-white/5 group"
+            className="w-full flex items-center gap-4 p-4 hover:bg-mist transition-colors border-b border-line group"
           >
-            <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
               <FileText className="w-5 h-5 text-blue-400" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-sm font-black text-white">CSVを書き出す (Export CSV)</p>
-              <p className="text-[11px] text-slate-500 font-medium">Excel等で閲覧可能なデータ出力</p>
+              <p className="text-sm font-black text-ink">CSVを書き出す (Export CSV)</p>
+              <p className="text-[11px] text-muted font-medium">Excel等で閲覧可能なデータ出力</p>
             </div>
           </button>
 
           <button
             onClick={handleClearAll}
-            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors group"
+            className="w-full flex items-center gap-4 p-4 hover:bg-mist transition-colors group"
           >
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 ${confirmClear ? 'bg-red-500/40' : 'bg-red-500/20'}`}>
+            <div className={`w-10 h-10 rounded flex items-center justify-center transition-all group-hover:scale-110 ${confirmClear ? 'bg-red-500/40' : 'bg-red-500/20'}`}>
               <Trash2 className={`w-5 h-5 ${confirmClear ? 'text-red-300' : 'text-red-400'}`} />
             </div>
             <div className="text-left flex-1">
-              <p className={`text-sm font-black transition-colors ${confirmClear ? 'text-red-300' : 'text-white'}`}>
+              <p className={`text-sm font-black transition-colors ${confirmClear ? 'text-red-300' : 'text-ink'}`}>
                 {confirmClear ? 'タップで削除確定' : '全データを削除 (Clear All)'}
               </p>
-              <p className="text-[11px] text-slate-500 font-medium">ストレージのデータを完全にリセット</p>
+              <p className="text-[11px] text-muted font-medium">ストレージのデータを完全にリセット</p>
             </div>
           </button>
         </div>
 
         {/* Precision Calculation Settings */}
         {/* Precision Calculation Settings */}
-        <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-[32px] overflow-hidden shadow-2xl mt-6 relative">
-          {/* Purple Glow Background */}
-          <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
-            backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(124,58,237,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(212,175,55,0.2) 0%, transparent 50%)'
-          }} />
+        <div className="bg-mist border border-line rounded-sm overflow-hidden mt-6 relative">
 
           <div className="relative z-10">
-            <div className="p-5 border-b border-white/5 bg-white/5 flex items-center justify-between">
+            <div className="p-5 border-b border-line bg-mist flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Settings2 className="w-4 h-4 text-accent" />
-                <p className="text-[10px] text-slate-300 uppercase tracking-[0.2em] font-black">Precision Calculation / 視聴時間の精密設定</p>
+                <p className="text-[10px] text-ink uppercase tracking-[0.2em] font-black">Precision Calculation / 視聴時間の精密設定</p>
               </div>
             </div>
 
             <div className="p-6 space-y-8">
               {/* Description Box */}
-              <div className="relative p-5 bg-white/5 rounded-2xl border border-white/10 shadow-inner overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-transparent opacity-50" />
+              <div className="relative p-5 bg-mist rounded-sm border border-line overflow-hidden">
+                
                 <div className="relative z-10">
                   <p className="text-sm text-accent font-black mb-2 flex items-center gap-2 not-italic">
                     <Sparkles size={16} /> 視聴時間の精密計算について
                   </p>
-                  <p className="text-xs text-slate-300 leading-relaxed font-medium not-italic font-sans">
+                  <p className="text-xs text-ink leading-relaxed font-medium not-italic font-sans">
                     STATSタブでの累計視聴時間の算出に使用される設定です。個々の作品詳細で「所要時間」が未入力の場合、ここで設定した時間がデフォルト値として適用されます。アニメや漫画等の連載形式は「設定時間 × 話数/巻数」で算出されます。
                   </p>
                 </div>
               </div>
 
               {/* View Count Toggle */}
-              <div className="relative flex items-center justify-between p-5 bg-white/5 rounded-2xl border border-white/10 shadow-lg overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/5 to-transparent opacity-30" />
+              <div className="relative flex items-center justify-between p-5 bg-mist rounded-sm border border-line overflow-hidden">
+                
                 <div className="relative z-10 flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 ${settings.useViewCount ? 'bg-emerald-500/20 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-slate-500/20 text-slate-400'}`}>
+                  <div className={`w-12 h-12 rounded-sm flex items-center justify-center transition-all duration-500 ${settings.useViewCount ? 'bg-teal text-white' : 'bg-mist text-muted'}`}>
                     <Activity className="w-6 h-6" />
                   </div>
                   <div>
-                    <p className="text-base font-black text-white italic tracking-tight">閲覧回数を計算に含める</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Include View Count in Duration</p>
+                    <p className="text-base font-black text-ink tracking-tight">閲覧回数を計算に含める</p>
+                    <p className="text-[10px] text-muted font-bold uppercase tracking-widest mt-0.5">Include View Count in Duration</p>
                   </div>
                 </div>
                 <button 
                   onClick={handleToggleViewCount}
-                  className={`relative z-10 w-14 h-7 rounded-full p-1 transition-all duration-500 ${settings.useViewCount ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-slate-700'}`}
+                  className={`relative z-10 w-14 h-7 rounded-full p-1 transition-all duration-500 ${settings.useViewCount ? 'bg-teal' : 'bg-line'}`}
                 >
-                  <div className={`w-5 h-5 bg-white rounded-full shadow-lg transition-transform duration-300 ${settings.useViewCount ? 'translate-x-7' : 'translate-x-0'}`} />
+                  <div className={`w-5 h-5 bg-white rounded-full  transition-transform duration-300 ${settings.useViewCount ? 'translate-x-7' : 'translate-x-0'}`} />
                 </button>
               </div>
 
@@ -288,10 +281,10 @@ export default function SettingsView() {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 px-1">
                   <Clock className="w-4 h-4 text-accent" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-widest italic">Default Unit Durations</h3>
+                  <h3 className="text-xs font-black text-ink uppercase tracking-widest">Default Unit Durations</h3>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-white/5 rounded-[28px] border border-white/10 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-30" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-mist rounded-sm border border-line relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-b to-transparent opacity-30" />
                   {[
                     { id: 'movie', label: '映画', icon: Film, unit: '作品' },
                     { id: 'music', label: '音楽', icon: Music, unit: '曲' },
@@ -300,13 +293,13 @@ export default function SettingsView() {
                     { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },
                     { id: 'game', label: 'ゲーム', icon: Gamepad2, unit: '回', timeUnit: 'hour' },
                   ].map(genre => (
-                    <div key={genre.id} className="relative z-10 flex flex-col gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 hover:border-white/20 transition-all group">
+                    <div key={genre.id} className="relative z-10 flex flex-col gap-3 p-4 bg-mist rounded-sm border border-line hover:border-line transition-all group">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <genre.icon className="w-4 h-4 text-accent group-hover:scale-110 transition-transform" />
-                          <span className="text-xs font-black text-white uppercase tracking-widest">{genre.label}</span>
+                          <span className="text-xs font-black text-ink uppercase tracking-widest">{genre.label}</span>
                         </div>
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">1{genre.unit}あたり</span>
+                        <span className="text-[10px] font-bold text-muted uppercase tracking-widest">1{genre.unit}あたり</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <input 
@@ -327,9 +320,9 @@ export default function SettingsView() {
                               e.target.value = current;
                             }
                           }}
-                          className="bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono font-black text-lg outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 w-full transition-all"
+                          className="bg-mist border border-line rounded px-4 py-2.5 text-ink font-mono font-black text-lg outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 w-full transition-all"
                         />
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">{genre.timeUnit === 'hour' ? 'hour' : 'min'}</span>
+                        <span className="text-xs font-black text-muted uppercase tracking-[0.2em]">{genre.timeUnit === 'hour' ? 'hour' : 'min'}</span>
                       </div>
                     </div>
                   ))}
@@ -340,13 +333,13 @@ export default function SettingsView() {
         </div>
 
         {/* App info */}
-        <div className="bg-white/5 border border-white/5 rounded-2xl p-4 flex items-center gap-4 shadow-xl">
-          <div className="w-10 h-10 rounded-xl bg-accent/20 flex items-center justify-center">
+        <div className="bg-mist border border-line rounded-sm p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded bg-mist flex items-center justify-center">
             <Info className="w-5 h-5 text-accent" />
           </div>
           <div>
-            <p className="text-sm font-black text-white tracking-widest uppercase">MASTERPIECE PWA</p>
-            <p className="text-[11px] text-slate-500 font-medium">Premium Cinematic Experience</p>
+            <p className="text-sm font-black text-ink tracking-widest uppercase">MASTERPIECE PWA</p>
+            <p className="text-[11px] text-muted font-medium">Premium Cinematic Experience</p>
           </div>
         </div>
       </div>

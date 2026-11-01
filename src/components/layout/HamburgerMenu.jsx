@@ -5,12 +5,12 @@ import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboa
 import { useStore } from '../../store/useStore';
 
 const GENRES = [
-  { id: 'anime', label: 'アニメ', icon: Tv, color: 'from-blue-500 to-cyan-500', emoji: '📺' },
-  { id: 'manga', label: '漫画', icon: BookOpen, color: 'from-pink-500 to-rose-500', emoji: '📖' },
-  { id: 'movie', label: '映画', icon: Film, color: 'from-amber-500 to-orange-500', emoji: '🎬' },
-  { id: 'drama', label: 'ドラマ', icon: Clapperboard, color: 'from-purple-500 to-violet-500', emoji: '🎭' },
-  { id: 'game', label: 'ゲーム', icon: Gamepad2, color: 'from-orange-500 to-red-500', emoji: '🎮' },
-  { id: 'music', label: '音楽', icon: Music, color: 'from-slate-500 to-slate-600', emoji: '🎵' },
+  { id: 'anime', label: 'アニメ', icon: Tv, color: 'bg-genre-anime', emoji: '📺' },
+  { id: 'manga', label: '漫画', icon: BookOpen, color: 'bg-genre-manga', emoji: '📖' },
+  { id: 'movie', label: '映画', icon: Film, color: 'bg-genre-movie', emoji: '🎬' },
+  { id: 'drama', label: 'ドラマ', icon: Clapperboard, color: 'bg-genre-drama', emoji: '🎭' },
+  { id: 'game', label: 'ゲーム', icon: Gamepad2, color: 'bg-genre-game', emoji: '🎮' },
+  { id: 'music', label: '音楽', icon: Music, color: 'bg-genre-music', emoji: '🎵' },
 ];
 
 export default function HamburgerMenu() {
@@ -91,43 +91,44 @@ export default function HamburgerMenu() {
       <button 
         type="button"
         onClick={toggleMenu}
-        className="p-3 hover:bg-white/10 rounded-full transition-all relative z-[99999] focus:outline-none bg-accent/20 border border-accent/30 active:scale-90"
+        aria-label="コンテンツを追加"
+        className="w-10 h-10 flex items-center justify-center bg-coral text-white active:bg-ink ml-1"
       >
-        <Plus className="w-6 h-6 text-accent" />
+        <Plus className="w-6 h-6" strokeWidth={3} />
       </button>
 
       {typeof document !== 'undefined' && createPortal(
         <>
           <div 
-            className={`fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            className={`fixed inset-0 bg-ink/60  z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
             onClick={() => { setIsOpen(false); setShowGenreSelect(false); setShowRecordItem(false); }}
           />
 
           <div className={`fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-surface/90 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${isOpen && !showGenreSelect && !showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${isOpen && !showGenreSelect && !showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="font-black text-2xl tracking-tighter text-white uppercase italic">コンテンツ追加</h2>
+                  <h2 className="font-black text-2xl text-ink uppercase">コンテンツ追加</h2>
                   <button 
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                    className="p-3 -m-1 hover:bg-mist active:bg-mist transition-colors text-ink border-2 border-ink bg-white"
                               >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
                 
-                <button onClick={() => setShowRecordItem(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-accent text-black shadow-xl shadow-accent/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                <button onClick={() => setShowRecordItem(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-sm bg-accent text-white hover:scale-[1.02] active:scale-[0.98] transition-all">
                   <FileText className="w-6 h-6" />
                   <span className="font-black text-lg tracking-tight uppercase">レコード作成</span>
                 </button>
                 
-                <button onClick={() => setShowGenreSelect(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
+                <button onClick={() => setShowGenreSelect(true)} className="w-full flex items-center justify-center gap-4 p-5 rounded-sm bg-mist hover:bg-mist border border-line transition-all text-ink hover:scale-[1.02] active:scale-[0.98]">
                   <Plus className="w-6 h-6 text-accent" strokeWidth={3} />
                   <span className="font-black text-lg tracking-tight uppercase">ランキング作成</span>
                 </button>
 
-                <button onClick={handleCreateFolder} className="w-full flex items-center justify-center gap-4 p-5 rounded-3xl bg-white/10 hover:bg-white/15 border border-white/10 transition-all text-white hover:scale-[1.02] active:scale-[0.98]">
+                <button onClick={handleCreateFolder} className="w-full flex items-center justify-center gap-4 p-5 rounded-sm bg-mist hover:bg-mist border border-line transition-all text-ink hover:scale-[1.02] active:scale-[0.98]">
                   <FolderPlus className="w-6 h-6 text-emerald-500" strokeWidth={3} />
                   <span className="font-black text-lg tracking-tight uppercase">フォルダ作成</span>
                 </button>
@@ -137,22 +138,22 @@ export default function HamburgerMenu() {
 
           {/* New Ranking Modal */}
           <div className={`fixed inset-0 z-[102] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-surface/95 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${showGenreSelect ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${showGenreSelect ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">ランキングを新規作成</h2>
+                  <h2 className="font-black text-xl text-ink uppercase">ランキングを新規作成</h2>
                   <button 
                     type="button"
                     onClick={() => setShowGenreSelect(false)}
-                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                    className="p-3 -m-1 hover:bg-mist active:bg-mist transition-colors text-ink border-2 border-ink bg-white"
                               >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-                <input type="text" value={rankingTitle} onChange={e => setRankingTitle(e.target.value)} placeholder="ランキングのタイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
+                <input type="text" value={rankingTitle} onChange={e => setRankingTitle(e.target.value)} placeholder="ランキングのタイトルを入力..." className="w-full bg-mist border border-line rounded-sm px-5 py-4 text-ink focus:outline-none focus:border-accent transition-all text-lg font-bold" />
                 <div className="grid grid-cols-2 gap-2.5">
                   {GENRES.map(genre => (
-                    <button key={genre.id} onClick={() => handleSelectRankingGenre(genre.id)} disabled={!rankingTitle.trim()} className={`flex flex-col items-center gap-2 p-4 rounded-2xl border transition-all ${rankingTitle.trim() ? `bg-gradient-to-br ${genre.color} border-transparent text-white shadow-lg hover:scale-105 active:scale-95` : 'bg-white/5 border-white/5 text-slate-800 cursor-not-allowed'}`}>
+                    <button key={genre.id} onClick={() => handleSelectRankingGenre(genre.id)} disabled={!rankingTitle.trim()} className={`flex flex-col items-center gap-2 p-4 border-2 transition-colors ${rankingTitle.trim() ? `${genre.color} border-ink text-white active:opacity-80` : 'bg-mist border-line text-ink/40 cursor-not-allowed'}`}>
                       <genre.icon className="w-6 h-6" />
                       <span className="text-[10px] font-black tracking-widest uppercase">{genre.label}</span>
                     </button>
@@ -164,36 +165,36 @@ export default function HamburgerMenu() {
 
           {/* Record Item Modal - Integrated Genre Selection */}
           <div className={`fixed inset-0 z-[102] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-surface/95 backdrop-blur-3xl border border-white/10 w-full max-w-sm rounded-[40px] shadow-2xl transform transition-all duration-300 ${showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-black text-xl text-white tracking-tighter uppercase italic">レコードを作成</h2>
+                  <h2 className="font-black text-xl text-ink uppercase">レコードを作成</h2>
                   <button 
                     type="button"
                     onClick={() => setShowRecordItem(false)}
-                    className="p-3 -m-1 hover:bg-white/10 active:bg-white/15 rounded-full transition-colors text-slate-400 bg-white/5"
+                    className="p-3 -m-1 hover:bg-mist active:bg-mist transition-colors text-ink border-2 border-ink bg-white"
                               >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
                 <div className="space-y-4">
-                  <input type="text" value={recordTitle} onChange={e => setRecordTitle(e.target.value)} placeholder="タイトルを入力..." className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-accent transition-all text-lg font-bold" />
+                  <input type="text" value={recordTitle} onChange={e => setRecordTitle(e.target.value)} placeholder="タイトルを入力..." className="w-full bg-mist border border-line rounded-sm px-5 py-4 text-ink focus:outline-none focus:border-accent transition-all text-lg font-bold" />
                   
                   <div className="grid grid-cols-5 gap-2">
                     {GENRES.map(genre => (
                       <button 
                         key={genre.id} 
                         onClick={() => setSelectedRecordGenre(genre.id)}
-                        className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${selectedRecordGenre === genre.id ? 'bg-accent/20 border-accent/40 text-accent scale-105' : 'bg-white/5 border-white/5 text-slate-700 hover:text-slate-500'}`}
+                        className={`flex flex-col items-center gap-1.5 p-3 rounded border transition-all ${selectedRecordGenre === genre.id ? 'bg-mist border-accent text-accent scale-105' : 'bg-mist border-line text-ink/40 hover:text-muted'}`}
                         title={genre.label}
                       >
                         <genre.icon className="w-5 h-5" />
-                        <span className="text-[8px] font-black uppercase tracking-tighter">{genre.label}</span>
+                        <span className="text-[8px] font-black uppercase">{genre.label}</span>
                       </button>
                     ))}
                   </div>
 
-                  <button onClick={handleRecordItem} disabled={!recordTitle.trim()} className="w-full py-5 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-3 disabled:opacity-30 shadow-xl shadow-accent/10 hover:scale-[1.02] active:scale-95 transition-all text-lg tracking-tighter">
+                  <button onClick={handleRecordItem} disabled={!recordTitle.trim()} className="w-full py-5 rounded-sm bg-accent text-white font-black flex items-center justify-center gap-3 disabled:opacity-30 hover:scale-[1.02] active:scale-95 transition-all text-lg">
                     作成を完了 <Sparkles className="w-5 h-5" />
                   </button>
                 </div>

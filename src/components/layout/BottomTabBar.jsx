@@ -25,32 +25,26 @@ export default function BottomTabBar() {
   }, [navigate, location.pathname]);
 
   return (
-    <>
-      {/* Bottom tab bar - Raised slightly for iOS Home bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-[80] flex items-end justify-center pointer-events-none pb-[env(safe-area-inset-bottom)]">
-        <div className="w-full max-w-4xl mx-auto pb-4 sm:pb-8">
-          <div className="mx-4 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.6)] grid grid-cols-4 pointer-events-auto overflow-hidden">
-            {TABS.map(tab => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => handleNavigate(tab.path)}
-                  className={`flex flex-col items-center justify-center gap-1.5 py-4 relative active:bg-white/5 ${isActive ? 'text-accent' : 'text-slate-500'}`}
-                >
-                  {isActive && (
-                    <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-accent shadow-[0_0_10px_rgba(212,175,55,0.8)]" />
-                  )}
-                  <Icon className={isActive ? 'scale-110' : 'scale-100'} size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  <span className={`text-[8px] font-black tracking-[0.2em] ${isActive ? 'text-accent' : 'text-slate-600'}`}>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-    </>
+    <nav className="fixed bottom-0 left-0 right-0 z-[80] bg-ink pb-[max(8px,env(safe-area-inset-bottom))]">
+      <div className="max-w-4xl mx-auto grid grid-cols-4">
+        {TABS.map(tab => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => handleNavigate(tab.path)}
+              aria-current={isActive ? 'page' : undefined}
+              className={`relative flex flex-col items-center justify-center gap-1 pt-3 pb-2 active:bg-white/10 ${isActive ? 'text-sun' : 'text-[#9cbdb9]'}`}
+            >
+              {isActive && <span className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-[3px] bg-sun" />}
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 1.75} />
+              <span className="font-fes text-[9px] tracking-[0.06em]">{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }

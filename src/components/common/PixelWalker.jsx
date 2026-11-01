@@ -202,16 +202,12 @@ const PixelWalker = ({ className = "", stats = { totalCount: 0, hallOfFameCount:
 
   return (
     <div className={`relative ${className} w-24 h-24 cursor-pointer`} onClick={handleJump}>
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-50 animate-in fade-in zoom-in duration-300">
-        <div className="relative bg-white text-black text-[10px] font-black px-3 py-2 border-2 border-black whitespace-nowrap shadow-[4px_4px_0_rgba(0,0,0,0.2)]">
+      <div className="absolute bottom-full right-0 mb-1 z-50 w-max max-w-[min(220px,60vw)]">
+        <div className="relative bg-white text-ink text-[11px] font-black leading-snug px-2.5 py-1.5 border-2 border-ink">
            {quote.text}
-           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-white border-r-2 border-b-2 border-black rotate-45" />
+           <span className="block text-[9px] font-bold text-muted mt-0.5">〜{quote.source}より〜</span>
+           <div className="absolute -bottom-[6px] right-9 w-2.5 h-2.5 bg-white border-r-2 border-b-2 border-ink rotate-45" />
         </div>
-      </div>
-      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
-        <span className="text-[9px] font-black text-white/40 uppercase tracking-widest italic bg-black/20 px-2 py-0.5 rounded-full backdrop-blur-[2px]">
-          〜{quote.source}より〜
-        </span>
       </div>
       <svg viewBox="0 0 16 16" className={`w-full h-full transition-all duration-300 ${isJumping ? '-translate-y-4 scale-110' : (frame === 1 ? '-translate-y-1' : '')}`} style={{ shapeRendering: 'crispEdges' }}>
         {renderCharacter()}

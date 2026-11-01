@@ -4,6 +4,7 @@ import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, Li
 import ScoreRating from './ScoreRating';
 import { useStore, getItemIndex } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
+import { readableTitleColor } from '../../utils/colors';
 import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
 
 const GENRE_MAP = {
@@ -198,23 +199,21 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const GenreIcon = genreInfo.icon;
 
   return createPortal(
-    <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-0 sm:p-6 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" onClick={handleClose} />
+    <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-0 sm:p-6 duration-300">
+      <div className="absolute inset-0 bg-white" onClick={handleClose} />
       
-      <div className="relative w-full max-w-5xl bg-[#0c0a10]/95 border-x border-white/10 sm:rounded-[48px] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] flex flex-col h-full sm:h-auto sm:max-h-[94vh] animate-in zoom-in-95 duration-300">
-        <div className="absolute inset-0 z-[-1] opacity-30" style={{ 
-          backgroundImage: 'radial-gradient(circle at 20% 10%, rgba(124,58,237,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(212,175,55,0.2) 0%, transparent 50%)'
-        }} />
+      <div className="relative w-full max-w-5xl bg-white border-x border-line sm:rounded-sm overflow-hidden flex flex-col h-full sm:h-auto sm:max-h-[94vh] duration-300">
         
-        <div className="flex items-center justify-between p-6 border-b border-white/5 bg-black/60 backdrop-blur-md z-[100]">
+        
+        <div className="flex items-center justify-between p-6 border-b border-line bg-mist z-[100]">
           <div className="flex items-center gap-4">
              <button 
                type="button"
                onClick={() => setEditMode(!useStore.getState().isEditMode)} 
-               className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 cursor-pointer hover:bg-white/10 transition-colors duration-100 active:scale-95"
+               className="flex items-center gap-3 bg-mist px-4 py-2 rounded-full border border-line cursor-pointer hover:bg-mist transition-colors duration-100 active:scale-95"
              >
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-100 ${isGlobalEditMode ? 'text-accent' : 'text-white'}`}>編集モード</span>
-                <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-100 ${isGlobalEditMode ? 'bg-accent/30 border border-accent/50' : 'bg-white/10 border border-white/10'}`}>
+                <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-100 ${isGlobalEditMode ? 'text-accent' : 'text-ink'}`}>編集モード</span>
+                <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-100 ${isGlobalEditMode ? 'bg-mist border border-accent' : 'bg-mist border border-line'}`}>
                    <div className={`w-3 h-3 rounded-full transition-transform duration-150 ease-out ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600 translate-x-0'}`} />
                </div>
             </button>
@@ -222,7 +221,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
               <button 
                 type="button"
                 onClick={handleSave}
-                className="flex items-center gap-2 bg-accent text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(234,179,8,0.4)] active:bg-yellow-400 active:scale-95 transition-all animate-in zoom-in-95"
+                className="flex items-center gap-2 bg-accent text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] active:bg-coral active:scale-95 transition-all"
               >
                 <CheckCircle2 size={14} /> 変更を保存
               </button>
@@ -231,7 +230,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
           <button 
             type="button"
             onClick={handleClose} 
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all shadow-xl active:scale-90"
+            className="w-12 h-12 flex items-center justify-center rounded-full bg-mist border border-line text-ink hover:bg-mist transition-all active:scale-90"
           >
             <X size={24} />
           </button>
@@ -244,7 +243,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
                    <label 
                      htmlFor={`modal-upload-${id}`}
-                     className="bg-white text-black px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.3em] shadow-2xl cursor-pointer pointer-events-auto hover:scale-105 active:scale-95 transition-all backdrop-blur-sm"
+                     className="bg-white text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.3em] cursor-pointer pointer-events-auto hover:scale-105 active:scale-95 transition-all"
                    >
                      画像を更新
                    </label>
@@ -269,20 +268,20 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       value={title || ''} 
                       onChange={e => handleUpdate({ title: e.target.value })} 
                       onBlur={handleTitleSync}
-                      className="flex-1 bg-transparent border-b border-white/20 focus:border-accent outline-none text-white text-3xl sm:text-5xl font-black italic tracking-tighter pb-1" 
+                      className="flex-1 bg-transparent border-b border-line focus:border-accent outline-none text-ink text-3xl sm:text-5xl font-black pb-1" 
                       placeholder="作品名..." 
                     />
                     <button 
                       type="button"
                       onClick={handleAutoFetch} 
                       disabled={isFetching} 
-                      className="p-3 rounded-xl bg-accent text-black hover:scale-105 transition-all shadow-xl shadow-accent/20 active:scale-90"
+                      className="p-3 rounded bg-accent text-white hover:scale-105 transition-all active:scale-90"
                     >
                        {isFetching ? <Loader size={20} className="animate-spin" /> : <Sparkles size={20} />}
                     </button>
                  </div>
                ) : (
-                 <h2 className="text-4xl sm:text-6xl font-black text-white leading-none tracking-tighter italic flex items-center flex-wrap gap-y-4 pr-6" style={{ color, textShadow: '0 10px 30px rgba(0,0,0,0.9)' }}>
+                 <h2 className="text-4xl sm:text-6xl font-black text-ink leading-none flex items-center flex-wrap gap-y-4 pr-6" style={{ color: readableTitleColor(color) }}>
                    {title || 'Untitled'}
                  </h2>
                )}
@@ -292,17 +291,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-wrap items-center gap-4">
                     {(rankingId || propRankingId) ? (
-                      <div className="px-5 py-2.5 bg-accent text-black font-black text-xs uppercase tracking-[0.2em] rounded-xl shadow-[0_10px_30px_rgba(234,179,8,0.3)] italic flex items-center gap-2 border border-white/20">
+                      <div className="px-5 py-2.5 bg-accent text-white font-black text-xs uppercase tracking-[0.2em] rounded flex items-center gap-2 border border-line">
                         <Crown size={16} /> Rank {currentRank}
                       </div>
                     ) : isSelected && (
-                      <div className="px-5 py-2.5 bg-accent/20 border border-accent/30 text-accent font-black text-xs uppercase tracking-[0.2em] rounded-xl shadow-sm italic flex items-center gap-2">
+                      <div className="px-5 py-2.5 bg-mist border border-accent text-accent font-black text-xs uppercase tracking-[0.2em] rounded shadow-sm flex items-center gap-2">
                         <Crown size={16} /> 選出済み
                       </div>
                     )}
 
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="bg-white/5 border border-white/10 rounded-2xl p-1.5 flex items-center gap-1 shadow-2xl">
+                      <div className="bg-mist border border-line rounded-sm p-1.5 flex items-center gap-1">
                          {isGlobalEditMode ? (
                             Object.entries(GENRE_MAP).map(([key, info]) => {
                                const Icon = info.icon;
@@ -312,7 +311,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                    key={key} 
                                    type="button"
                                    onClick={() => handleUpdate({ genre: key })}
-                                   className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-accent/20 text-accent border border-accent/40 shadow-[0_0_20px_rgba(234,179,8,0.2)]' : 'text-slate-400 hover:text-white hover:bg-white/5 active:bg-white/10'}`}
+                                   className={`flex items-center gap-1.5 px-3 py-2 rounded transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-mist text-accent border border-accent ' : 'text-muted hover:text-ink hover:bg-mist active:bg-mist'}`}
                                  >
                                     <Icon size={16} />
                                     {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
@@ -328,11 +327,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       </div>
 
                       {!isGlobalEditMode && (genre === 'manga' || genre === 'anime' || genre === 'drama') && (
-                        <div className="bg-white/5 border border-white/10 rounded-2xl px-5 py-2.5 flex items-center gap-3 shadow-2xl">
-                           <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                        <div className="bg-mist border border-line rounded-sm px-5 py-2.5 flex items-center gap-3">
+                           <span className="text-[10px] font-black text-muted uppercase tracking-widest">
                              {genre === 'manga' ? 'VOLS' : 'EPS'}
                            </span>
-                           <span className="text-sm font-black text-white font-mono italic tracking-tighter">
+                           <span className="text-sm font-black text-ink font-mono">
                              {genre === 'manga' ? `全${volumes || 1}巻` : `全${episodes || 1}話`}
                            </span>
                         </div>
@@ -340,38 +339,38 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 pl-1 pt-6 border-t border-white/5 mt-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6 pl-1 pt-6 border-t border-line mt-2">
                     <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20 shadow-lg shadow-accent/5">
+                       <div className="w-12 h-12 rounded-sm bg-mist flex items-center justify-center border border-accent">
                          <User size={24} className="text-accent" />
                        </div>
                        <div className="flex flex-col">
-                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">作者 / AUTHOR</span>
+                         <span className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-1">作者 / AUTHOR</span>
                          {isGlobalEditMode ? (
                             <input 
                               type="text" 
                               value={author || ''} 
                               onChange={e => handleUpdate({ author: e.target.value })} 
-                              className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm font-black text-white outline-none focus:border-accent w-full sm:w-[240px]" 
+                              className="bg-mist border border-line rounded px-4 py-2 text-sm font-black text-ink outline-none focus:border-accent w-full sm:w-[240px]" 
                               placeholder="作者名" 
                             />
                          ) : (
-                            <span className="text-xl font-black text-white tracking-wider leading-none">
+                            <span className="text-xl font-black text-ink tracking-wider leading-none">
                               {author || '---'}
                             </span>
                          )}
                        </div>
                     </div>
                     <div className="flex items-center gap-4">
-                       <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
+                       <div className="w-12 h-12 rounded-sm bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                          <Calendar size={24} className="text-emerald-400" />
                        </div>
                        <div className="flex flex-col">
-                         <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">作成日 / DATE</span>
+                         <span className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-1">作成日 / DATE</span>
                          {isGlobalEditMode ? (
-                            <input type="date" value={toDateInputValue(createdAt)} onChange={e => handleUpdate({ createdAt: fromDateInputValue(e.target.value) })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-black text-white outline-none focus:border-accent" />
+                            <input type="date" value={toDateInputValue(createdAt)} onChange={e => handleUpdate({ createdAt: fromDateInputValue(e.target.value) })} className="bg-mist border border-line rounded px-4 py-2 text-xs font-black text-ink outline-none focus:border-accent" />
                          ) : (
-                            <span className="text-xl font-black text-white tracking-widest leading-none">
+                            <span className="text-xl font-black text-ink tracking-widest leading-none">
                               {createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}
                             </span>
                          )}
@@ -382,19 +381,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-4">
                    <div className="lg:col-span-5 space-y-6">
-                      <div className="bg-white/5 p-6 rounded-[40px] border border-white/5 grid grid-cols-1 gap-6 shadow-2xl relative overflow-hidden">
+                      <div className="bg-mist p-6 rounded-sm border border-line grid grid-cols-1 gap-6 relative overflow-hidden">
                          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-50" />
                          
                          <div className="flex flex-col sm:flex-row items-center justify-between relative z-10 gap-6 sm:gap-4">
                             <div className="space-y-3">
-                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center justify-center sm:justify-start gap-2"><Star size={12} className="text-accent" /> スコア / SCORE</p>
+                               <p className="text-[10px] text-ink font-black uppercase tracking-[0.2em] flex items-center justify-center sm:justify-start gap-2"><Star size={12} className="text-accent" /> スコア / SCORE</p>
                                <div className="flex justify-center sm:justify-start w-full scale-110 sm:scale-125 origin-center sm:origin-left">
                                   <ScoreRating rating={rating} onRatingChange={isGlobalEditMode ? (v => handleUpdate({ rating: v })) : undefined} readOnly={!isGlobalEditMode} />
                                </div>
                             </div>
                             
                             <div className="flex flex-col items-center space-y-2 flex-1 w-full sm:w-auto">
-                               <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                               <p className="text-[10px] text-ink font-black uppercase tracking-[0.2em] flex items-center gap-2">
                                  <Eye size={12} className="text-blue-500" /> 
                                  {genre === 'game' ? 'プレイ回数 / PLAYS' : '閲覧回数 / VIEWS'}
                                </p>
@@ -403,31 +402,31 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                      <button 
                                        type="button"
                                        onClick={() => handleUpdate({ views: Math.max(0, views - 1) })}
-                                       className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
+                                       className="w-10 h-10 bg-mist rounded border border-line text-ink active:bg-mist active:scale-90 transition-all font-bold"
                                      >-</button>
-                                     <span className="font-mono font-black text-2xl tracking-tighter w-12 text-center">{views}</span>
+                                     <span className="font-mono font-black text-2xl w-12 text-center">{views}</span>
                                      <button 
                                        type="button"
                                        onClick={() => handleUpdate({ views: views + 1 })}
-                                       className="w-10 h-10 bg-white/5 rounded-xl border border-white/10 text-white active:bg-white/20 active:scale-90 transition-all font-bold"
+                                       className="w-10 h-10 bg-mist rounded border border-line text-ink active:bg-mist active:scale-90 transition-all font-bold"
                                      >+</button>
                                   </div>
                                ) : (
-                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
+                                  <p className="text-3xl font-black text-ink font-mono text-center">{views.toLocaleString()}回</p>
                                )}
                             </div>
                          </div>
 
-                         <div className="relative z-10 pt-6 border-t border-white/5 flex flex-col items-center gap-3">
-                            <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} className="text-purple-500" /> 累計所要時間 / TOTAL TIME</p>
+                         <div className="relative z-10 pt-6 border-t border-line flex flex-col items-center gap-3">
+                            <p className="text-[10px] text-ink font-black uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} className="text-purple-500" /> 累計所要時間 / TOTAL TIME</p>
                             <div className="flex items-baseline gap-2">
-                               <p className="text-5xl font-black text-white font-mono tracking-tighter">
+                               <p className="text-5xl font-black text-ink font-mono">
                                  {totalLifetimeHours.toFixed(1)}
                                </p>
-                               <p className="text-sm font-black text-slate-500 uppercase tracking-widest">時間 / HOURS</p>
+                               <p className="text-sm font-black text-muted uppercase tracking-widest">時間 / HOURS</p>
                             </div>
-                            <div className="w-full bg-black/40 px-4 py-3 rounded-2xl border border-white/5 flex items-center justify-center gap-3 shadow-inner">
-                               <span className="text-[11px] sm:text-[13px] font-black text-accent tracking-widest uppercase italic">
+                            <div className="w-full bg-mist px-4 py-3 rounded-sm border border-line flex items-center justify-center gap-3">
+                               <span className="text-[11px] sm:text-[13px] font-black text-accent tracking-widest uppercase">
                                   {genre === 'game' ? (
                                     `${unitDuration}時間 × ${finalViewCount}回`
                                   ) : (genre === 'manga' || genre === 'anime' || genre === 'drama') ? (
@@ -441,11 +440,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       </div>
 
                       {isGlobalEditMode && (
-                         <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 space-y-6 shadow-xl">
-                            <p className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Clock size={14} /> 詳細設定 / DETAILS</p>
+                         <div className="bg-mist p-6 rounded-sm border border-line space-y-6">
+                            <p className="text-[10px] text-ink font-black uppercase tracking-widest flex items-center gap-2"><Clock size={14} /> 詳細設定 / DETAILS</p>
                             <div className="grid grid-cols-2 gap-4">
                                <div className="space-y-2">
-                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                  <label className="text-[10px] font-black text-muted uppercase tracking-widest">
                                     {genre === 'game' ? '所要時間 (時間)' : '時間 (分)'}
                                   </label>
                                   <input 
@@ -454,19 +453,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                     step={genre === 'game' ? '0.1' : '1'}
                                     value={baseDuration === null ? '' : baseDuration} 
                                     onChange={e => handleUpdate({ duration: e.target.value === '' ? '' : (genre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} 
-                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
+                                    className="w-full bg-mist border border-line rounded px-4 py-2.5 text-ink font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                     placeholder={unitDuration.toString()} 
                                   />
                                </div>
                                {(genre === 'anime' || genre === 'drama' || genre === 'manga') && (
                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{genre === 'manga' ? '巻数' : '話数'}</label>
+                                    <label className="text-[10px] font-black text-muted uppercase tracking-widest">{genre === 'manga' ? '巻数' : '話数'}</label>
                                     <input 
                                       type="number" 
                                       min="0" 
                                       value={genre === 'manga' ? (volumes === 0 || volumes === undefined ? '' : volumes) : (episodes === 0 || episodes === undefined ? '' : episodes)} 
                                       onChange={e => handleUpdate({ [genre === 'manga' ? 'volumes' : 'episodes']: e.target.value === '' ? '' : parseInt(e.target.value) })} 
-                                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-sm outline-none focus:border-accent touch-manipulation" 
+                                      className="w-full bg-mist border border-line rounded px-4 py-2.5 text-ink font-mono text-sm outline-none focus:border-accent touch-manipulation" 
                                       placeholder="1" 
                                     />
                                  </div>
@@ -476,60 +475,60 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                       )}
 
                       {isGlobalEditMode && (
-                         <div className="bg-white/5 p-6 rounded-[32px] border border-white/5 space-y-6 shadow-xl">
-                            <p className="text-[10px] text-white font-black uppercase tracking-widest flex items-center gap-2"><Type size={14} /> スタイルカスタマイズ / STYLE</p>
+                         <div className="bg-mist p-6 rounded-sm border border-line space-y-6">
+                            <p className="text-[10px] text-ink font-black uppercase tracking-widest flex items-center gap-2"><Type size={14} /> スタイルカスタマイズ / STYLE</p>
                             <div className="flex items-center gap-6">
                                <div className="flex-1 space-y-2">
                                   <div className="flex justify-between">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest">サイズ</label>
+                                    <label className="text-[10px] font-black text-muted uppercase tracking-widest">サイズ</label>
                                     <span className="text-[10px] font-mono font-black text-accent">{fontSize}px</span>
                                   </div>
                                   <input type="range" min="14" max="100" value={fontSize} onChange={e => handleUpdate({ fontSize: parseInt(e.target.value) })} className="w-full h-1.5 bg-slate-800 accent-accent rounded-full appearance-none cursor-pointer" />
                                </div>
                                <div className="space-y-2">
-                                  <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block text-center">カラー</label>
-                                  <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-12 h-12 rounded-xl bg-transparent border-none cursor-pointer p-0" />
+                                  <label className="text-[10px] font-black text-muted uppercase tracking-widest block text-center">カラー</label>
+                                  <input type="color" value={color} onChange={e => handleUpdate({ color: e.target.value })} className="w-12 h-12 rounded bg-transparent border-none cursor-pointer p-0" />
                                </div>
                             </div>
-                            <button type="button" onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-2xl border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-black border-accent' : 'bg-white/5 text-white border-white/10'}`}>
+                            <button type="button" onClick={() => handleUpdate({ isBold: !isBold })} className={`w-full py-4 rounded-sm border font-black text-[11px] tracking-[0.3em] transition-all uppercase ${isBold ? 'bg-accent text-white border-accent' : 'bg-mist text-ink border-line'}`}>
                                太字設定: {isBold ? 'ON' : 'OFF'}
                             </button>
                          </div>
                       )}
 
                       {!isSelected && !(rankingId || propRankingId) && (
-                        <div className="bg-accent/5 border border-accent/20 p-6 rounded-[40px] space-y-4 shadow-2xl">
+                        <div className="bg-mist border border-accent p-6 rounded-sm space-y-4">
                            {!isAddingToRanking ? (
                              <button 
                                type="button"
                                onClick={() => setIsAddingToRanking(true)}
-                               className="w-full py-5 rounded-[24px] bg-accent text-black font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-2xl shadow-accent/30 text-xl tracking-tight italic uppercase"
+                               className="w-full py-5 rounded-sm bg-accent text-white font-black flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all text-xl tracking-tight uppercase"
                              >
                                 <ListPlus size={24} /> Add to Ranking
                              </button>
                            ) : (
-                             <div className="space-y-4 animate-in slide-in-from-bottom-4">
+                             <div className="space-y-4">
                                <div className="grid grid-cols-1 gap-3">
-                                  <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white font-black outline-none focus:border-accent appearance-none text-sm shadow-inner">
+                                  <select value={selectedRankingId} onChange={e => setSelectedRankingId(e.target.value)} className="bg-mist border border-line rounded-sm px-5 py-4 text-ink font-black outline-none focus:border-accent appearance-none text-sm">
                                      <option value="">ランキングを選択... / Select...</option>
                                      {rankings.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
                                   </select>
                                   <div className="relative">
-                                     <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-black/60 border border-white/10 rounded-2xl px-5 py-4 text-white font-black outline-none focus:border-accent text-xl shadow-inner" placeholder="順位 / Pos" />
-                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-white/30 uppercase tracking-widest pointer-events-none">順位 / Rank</span>
+                                     <input type="number" min="1" max="100" value={selectedRank} onChange={e => setSelectedRank(e.target.value)} className="w-full bg-mist border border-line rounded-sm px-5 py-4 text-ink font-black outline-none focus:border-accent text-xl" placeholder="順位 / Pos" />
+                                     <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-ink uppercase tracking-widest pointer-events-none">順位 / Rank</span>
                                   </div>
                                </div>
                                <div className="flex gap-4 pt-4">
                                   <button 
                                     type="button"
                                     onClick={() => setIsAddingToRanking(false)} 
-                                    className="flex-1 py-3 text-white/40 hover:text-white font-black uppercase text-[10px] tracking-widest transition-colors"
+                                    className="flex-1 py-3 text-ink hover:text-ink font-black uppercase text-[10px] tracking-widest transition-colors"
                                   >キャンセル</button>
                                   <button 
                                     type="button"
                                     onClick={handleAddToRanking}
                                     disabled={!selectedRankingId} 
-                                    className="flex-[2] py-4 rounded-2xl bg-accent text-black font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs shadow-xl transition-all active:scale-95"
+                                    className="flex-[2] py-4 rounded-sm bg-accent text-white font-black flex items-center justify-center gap-2 disabled:opacity-20 tracking-widest uppercase text-xs transition-all active:scale-95"
                                   >追加する <ArrowRight size={18} /></button>
                                </div>
                              </div>
@@ -540,19 +539,19 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
                    <div className="lg:col-span-7 space-y-4 flex flex-col h-full">
                       <div className="flex items-center justify-between px-2">
-                          <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.3em] flex items-center gap-2"><AlignLeft size={14} /> メモ・あらすじ / NARRATIVE</p>
+                          <p className="text-[10px] text-ink font-black uppercase tracking-[0.3em] flex items-center gap-2"><AlignLeft size={14} /> メモ・あらすじ / NARRATIVE</p>
                           <button 
                             type="button"
                             onClick={handleCopy}
-                            className="text-[10px] text-accent/40 hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95 px-3 py-2 -mr-3 -my-2"
+                            className="text-[10px] text-accent hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95 px-3 py-2 -mr-3 -my-2"
                           >
                              <Copy size={12} /> コピー
                           </button>
                        </div>
                       {isGlobalEditMode ? (
-                         <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-white/5 p-8 rounded-[48px] border border-white/5 text-white text-xl min-h-[300px] resize-none focus:outline-none focus:border-accent transition-all italic leading-relaxed shadow-inner custom-scrollbar" placeholder="..." />
+                         <textarea value={memo || ''} onChange={e => handleUpdate({ memo: e.target.value })} className="flex-1 w-full bg-mist p-8 rounded-sm border border-line text-ink text-xl min-h-[300px] resize-none focus:outline-none focus:border-accent transition-all leading-relaxed custom-scrollbar" placeholder="..." />
                       ) : (
-                         <div className="flex-1 bg-white/5 p-8 rounded-[48px] border border-white/5 text-white text-lg leading-relaxed italic shadow-inner min-h-[250px] whitespace-pre-wrap custom-scrollbar">
+                         <div className="flex-1 bg-mist p-8 rounded-sm border border-line text-ink text-lg leading-relaxed min-h-[250px] whitespace-pre-wrap custom-scrollbar">
                             {memo || <span className="opacity-10 text-4xl not-italic font-black flex items-center justify-center h-full">記述なし</span>}
                          </div>
                       )}

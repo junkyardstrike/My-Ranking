@@ -27,7 +27,7 @@ import {
   PlusSquare
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import { getItemMetrics } from '../utils/itemMetrics';
+import { getItemMetrics, getDefaultDuration } from '../utils/itemMetrics';
 
 const GENRE_LABELS = {
   anime: 'アニメ',
@@ -50,14 +50,23 @@ const GENRE_UNITS = {
 };
 
 const GENRE_COLORS = {
-  anime: '#7c3aed', 
-  manga: '#ec4899', 
-  movie: '#ef4444', 
-  drama: '#f59e0b', 
-  game: '#0ea5e9',  
-  music: '#10b981', 
-  other: '#64748b'  
+  anime: '#0a7a6f',
+  manga: '#c13b7a',
+  movie: '#ff5a3c',
+  drama: '#e2a400',
+  game: '#3c5bd6',
+  music: '#7a8a89',
+  other: '#7a8a89'
 };
+
+function Section({ en, ja, children, className = '' }) {
+  return (
+    <section className={`fes-section grid gap-3 ${className}`}>
+      <h2 className="fes-h">{en}<small>{ja}</small></h2>
+      {children}
+    </section>
+  );
+}
 
 export default function StatsView() {
   const getAllItems = useStore(state => state.getAllItems);
@@ -188,452 +197,219 @@ export default function StatsView() {
 
   if (!stats) return null;
 
+  const maxBin = Math.max(...stats.scoreBins.map(b => b.count), 1);
+  const dd = (g) => getDefaultDuration(g, settings);
+
   return (
-    <div className="space-y-8 pb-32 animate-in fade-in duration-700 pt-8">
-      {/* Header */}
-      <div className="flex flex-col items-center text-center px-4 mb-10 relative">
-        <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40 tracking-tighter uppercase italic leading-none drop-shadow-[0_10px_40px_rgba(0,0,0,0.5)] px-8">
-          MASTERPIECE STATS
-        </h1>
-        <div className="flex flex-col items-center gap-2 mt-4">
-          <p className="text-[11px] text-cyan-400 font-black uppercase tracking-[0.1em] italic leading-none">Analytics / 統計データ</p>
-          <div className="h-1 w-20 bg-cyan-500 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.6)]" />
-        </div>
+    <div className="pt-1 pb-32 grid grid-cols-[minmax(0,1fr)] gap-6">
+      <div className="fes-pass">
+        <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">FESTIVAL REPORT</p>
+        <h1 className="font-fes text-[24px] sm:text-3xl leading-tight mt-0.5">MASTERPIECE STATS</h1>
+        <p className="text-[10px] font-bold tracking-[0.12em] opacity-85 mt-1">Analytics ／ 統計データ</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2 sm:px-4">
-        {/* Lifetime Stats */}
-        <section className="md:col-span-2 relative py-4 premium-section-animate" style={{ animationDelay: '100ms' }}>
-          <div className="relative z-10 flex flex-col gap-8">
-            <div className="flex flex-row items-center justify-between w-full">
-              <div className="flex-shrink-0 ml-4">
-                 <PixelWalker 
-                    className="transform scale-[1.2] sm:scale-[1.3] origin-left translate-y-3" 
-                    stats={{
-                      totalCount: stats.totalCount,
-                      hallOfFameCount: stats.hallOfFame.length,
-                      totalHours: stats.lifetimeStats.totalHours
-                    }}
-                  />
-              </div>
-
-              <div className="flex flex-col items-end text-right min-w-0 flex-1 pr-6 sm:pr-10">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-widest mb-1 drop-shadow-md">累計視聴時間</h2>
-                <div className="flex items-baseline gap-1 justify-end w-full min-w-0">
-                  <span className="text-4xl sm:text-5xl md:text-6xl font-black text-cyan-400 font-mono italic tracking-tighter drop-shadow-[0_0_20px_rgba(34,211,238,0.5)] animate-pulse pr-1">
-                    <Counter value={stats.lifetimeStats.totalHours} />
-                  </span>
-                  <span className="text-lg sm:text-xl font-black text-accent italic tracking-tighter drop-shadow-md flex-shrink-0">時間</span>
-                </div>
-                
-                <div className="flex flex-col items-end gap-1.5 mt-3 max-w-[220px] w-full">
-                  <p className="text-[10px] text-slate-400 font-black leading-tight text-right whitespace-pre-line tracking-tighter">
-                    ※(所要時間×話数/巻)×閲覧回数を<br />合算した概算値です。
-                  </p>
-                  <p className="text-[9px] text-slate-500 font-bold leading-tight text-right opacity-80">
-                    アニメ20分 / ドラマ40分 / 映画120分<br />
-                    漫画30分 / 音楽3分 (ゲームは時間入力)
-                  </p>
-                </div>
-                
-                {stats.lifetimeStats.days > 0 && (
-                  <div className="mt-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/10 border-2 border-cyan-400/40 px-4 py-2.5 rounded-xl inline-flex flex-col items-center gap-1.5 shadow-[0_0_20px_rgba(34,211,238,0.2)] w-fit">
-                    <span className="text-[8px] font-black text-cyan-400 uppercase tracking-widest leading-none">Conversion / 日付換算</span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-[8px] font-black text-cyan-500">約</span>
-                      <span className="text-xl font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.days}</span>
-                      <span className="text-[8px] font-black text-cyan-500 uppercase">日</span>
-                      <span className="text-xl font-black text-accent font-mono italic leading-none">{stats.lifetimeStats.remainingHours}</span>
-                      <span className="text-[8px] font-black text-cyan-500 uppercase">時間</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="w-full mt-2 px-2">
-               <h3 className="text-sm font-black text-white tracking-widest mb-3 border-l-4 border-accent pl-2 leading-none uppercase italic">Genre Time Stats / ジャンル別視聴時間</h3>
-               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                 {stats.lifetimeStats.genreLifetime.map(g => (
-                    <div 
-                      key={g.id} 
-                      className="relative h-28 rounded-xl overflow-hidden group shadow-lg border border-white/10 flex flex-col justify-between p-3.5 bg-black/40 text-left w-full"
-                    >
-                      {g.bgImage && (
-                        <div className="absolute inset-0 z-0 opacity-30 transition-opacity duration-500">
-                           <img src={g.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
-                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                        </div>
-                      )}
-                      
-                      <div className="absolute top-2.5 right-3 z-20 text-right">
-                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] leading-none mb-1 drop-shadow-md">Count</p>
-                        <p className="text-sm font-black text-white font-mono leading-none drop-shadow-md">
-                          {stats.genreData.find(gd => gd.id === g.id)?.value || 0}
-                          <span className="text-[9px] ml-0.5 text-slate-400 font-bold">{GENRE_UNITS[g.id] || '作品'}</span>
-                        </p>
-                      </div>
-
-                      <div className="relative z-10 flex flex-col justify-start -mt-1">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full flex-shrink-0 shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: g.color }} />
-                          <span className="text-xl font-black text-white truncate drop-shadow-md tracking-wider">{g.name}</span>
-                        </div>
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-widest pl-5 leading-none">{g.id}</span>
-                      </div>
-                      <div className="relative z-10 text-right flex-shrink-0 flex items-baseline justify-end gap-1">
-                        <span className="text-4xl font-black text-accent font-mono drop-shadow-md">{g.hours}</span>
-                        <span className="text-sm font-black text-accent/80 drop-shadow-md">時間</span>
-                      </div>
-                    </div>
-                  ))}
-               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Hall of Fame - Cinematic Redesign */}
-        <section className="md:col-span-2 relative py-12 px-2 overflow-hidden group premium-section-animate" style={{ animationDelay: '200ms' }}>
-          {/* Section Header */}
-          <div className="flex flex-col items-center mb-10 font-serif">
-            <div className="flex flex-col items-center gap-1 mb-4">
-              <p className="text-[10px] font-black text-yellow-500/60 uppercase tracking-[0.8em] leading-none mb-2">RATING STATS</p>
-              <h2 className="text-4xl sm:text-6xl font-black text-white italic tracking-tighter leading-none drop-shadow-2xl pr-4">殿堂入り</h2>
-            </div>
-            <div className="w-full max-w-2xl h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent relative">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-yellow-500 rounded-full shadow-[0_0_15px_rgba(234,179,8,0.8)]" />
-            </div>
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto">
-            {/* Archived Count - Clean Typography */}
-            <div className="flex items-center justify-center mb-6 animate-in slide-in-from-top duration-700 font-serif">
-              <p className="text-xl sm:text-3xl font-black text-white italic tracking-tighter pr-4">
-                選出数：<span className="text-3xl sm:text-5xl text-yellow-500 mx-1 drop-shadow-lg pr-2">{stats.hallOfFame.length}</span>作品
+      {/* 累計視聴時間 */}
+      <Section en="LIFETIME" ja="累計視聴時間">
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <p className="flex items-baseline gap-1">
+              <span className="font-fes text-[44px] sm:text-6xl leading-none text-teal"><Counter value={stats.lifetimeStats.totalHours} /></span>
+              <span className="text-sm font-black">時間</span>
+            </p>
+            {stats.lifetimeStats.days > 0 && (
+              <p className="mt-2 inline-flex items-baseline gap-1 bg-mist border-l-4 border-teal px-2.5 py-1.5 text-[11px] font-black">
+                日付換算　約<span className="font-fes text-lg text-ink">{stats.lifetimeStats.days}</span>日
+                <span className="font-fes text-lg text-ink">{stats.lifetimeStats.remainingHours}</span>時間
               </p>
-            </div>
-
-            {/* Selection Criteria - Yellow Framed Box */}
-            <div className="mb-10 flex flex-wrap items-center justify-center gap-x-12 gap-y-4 px-8 py-5 bg-black/60 border-2 border-yellow-500 backdrop-blur-2xl rounded-xl relative font-serif">
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-start leading-none">
-                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-1">MIN RATING</span>
-                  <span className="text-xs font-black text-white/60 uppercase">最小評価点</span>
-                </div>
-                <span className="text-3xl font-black text-white italic pr-2">95<span className="text-[11px] ml-1 text-yellow-500/60 uppercase">pts</span></span>
-              </div>
-              
-              <div className="w-px h-10 bg-yellow-500/20 hidden sm:block" />
-              
-              <div className="flex items-center gap-4">
-                <div className="flex flex-col items-start leading-none">
-                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mb-1">REQ VIEWS</span>
-                  <span className="text-xs font-black text-white/60 uppercase">最低視聴回数</span>
-                </div>
-                <span className="text-3xl font-black text-white italic pr-2">5<span className="text-[11px] ml-1 text-yellow-500/60 uppercase">views</span></span>
-              </div>
-            </div>
-
-            {stats.hallOfFame.length === 0 ? (
-              <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-[48px] bg-white/[0.02] font-serif">
-                <Trophy className="w-16 h-16 text-slate-800 opacity-20 mx-auto mb-4" />
-                <p className="text-sm font-black text-slate-700 uppercase tracking-[0.5em] italic">No Legends Yet</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 sm:gap-6">
-                {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item, idx) => (
-                  <div 
-                    key={item.id} 
-                    onClick={() => setSelectedHallItem(item)}
-                    className="group/card relative aspect-square rounded-2xl sm:rounded-[40px] overflow-hidden shadow-2xl border border-white/5 transition-all duration-500 hover:scale-[1.02] active:scale-95 cursor-pointer bg-[#0c0a10] flex flex-col justify-between"
-                    style={{ animationDelay: `${250 + (idx * 50)}ms` }}
-                  >
-                    {/* Background Image with Cinematic Overlay */}
-                    <div className="absolute inset-0 z-0">
-                      {item.imageBase64 ? (
-                        <img src={item.imageBase64} alt="" className="w-full h-full object-cover opacity-40 transition-all duration-1000" />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-white/5 to-black" />
-                      )}
-                      {/* Lighter Dark Overlay for Title Area */}
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-10" />
-                    </div>
-
-                    {/* Top Row: Score Only (Plus Button Removed) */}
-                    <div className="relative z-20 p-4 sm:p-8 flex items-start justify-between w-full">
-                      <div className="flex flex-col pointer-events-none">
-                        <span className="text-[8px] sm:text-[10px] font-black text-yellow-500 uppercase tracking-[0.3em] mb-1 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">RATING</span>
-                        <div className="flex items-baseline gap-1 sm:gap-2">
-                          <span className="text-4xl sm:text-8xl font-black text-yellow-500 italic leading-none tracking-tighter drop-shadow-[0_0_25px_rgba(234,179,8,0.8)] font-serif pr-4">
-                            {item.rating}
-                          </span>
-                          <span className="text-sm sm:text-4xl font-black text-yellow-500 italic drop-shadow-[0_0_15px_rgba(234,179,8,0.6)] pr-2">PT</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Middle Section: Analytics (Simplified) */}
-                    <div className="relative z-20 px-4 sm:px-8 flex items-center gap-2 sm:gap-4 -mt-4 sm:-mt-8">
-                       <Eye className="w-4 h-4 sm:w-8 h-8 text-accent drop-shadow-[0_0_10px_rgba(165,180,252,0.5)]" />
-                       <div className="flex flex-col">
-                         <span className="text-[7px] sm:text-[10px] font-black text-white/80 uppercase tracking-widest leading-none mb-0.5 sm:mb-1 drop-shadow-[0_0_5px_rgba(255,255,255,0.4)]">Views</span>
-                         <span className="text-xs sm:text-2xl font-black text-white leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.6)] font-serif pr-2">{item.views}</span>
-                       </div>
-                    </div>
-
-                    {/* Bottom Section: Title ONLY (Mega Size) */}
-                    <div className="relative z-20 p-4 sm:p-8 w-full mt-auto">
-                      <h3 className="font-black text-yellow-500 text-base sm:text-5xl leading-tight whitespace-nowrap truncate uppercase italic tracking-tighter drop-shadow-[0_0_30px_rgba(234,179,8,0.8)] pr-6">
-                        {item.title}
-                      </h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {stats.hallOfFame.length > 6 && (
-              <div className="flex justify-center mt-12">
-                <button 
-                  onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
-                  className="px-10 py-4 bg-white text-black rounded-full transition-all duration-300 text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-3 hover:scale-105 active:scale-95 shadow-xl"
-                >
-                  {isHallOfFameExpanded ? 'CLOSE ARCHIVE' : `VIEW FULL ARCHIVE (${stats.hallOfFame.length})`}
-                  <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
-                </button>
-              </div>
             )}
           </div>
-        </section>
-
-        {/* DashBoard Header */}
-        <div className="md:col-span-2 mt-4 mb-2 px-4">
-          <div className="flex items-center gap-4">
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
-            <div className="flex flex-col items-center">
-              <p className="text-[10px] font-black text-accent uppercase tracking-[0.4em] italic mb-1">Dashboard</p>
-              <h2 className="text-xl font-black text-white/40 uppercase tracking-tighter italic">ダッシュボード</h2>
-            </div>
-            <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/10" />
+          <div className="flex-shrink-0 mt-14">
+            <PixelWalker
+              className="transform scale-[1.05] origin-bottom-right"
+              stats={{
+                totalCount: stats.totalCount,
+                hallOfFameCount: stats.hallOfFame.length,
+                totalHours: stats.lifetimeStats.totalHours
+              }}
+            />
           </div>
         </div>
+        <div className="text-[10px] text-muted font-bold leading-relaxed">
+          <p>※（所要時間×話数／巻）×閲覧回数を合算した概算値です。</p>
+          <p>アニメ{dd('anime')}分／ドラマ{dd('drama')}分／映画{dd('movie')}分／漫画{dd('manga')}分／音楽{dd('music')}分（ゲームは{dd('game') > 0 ? `${dd('game')}時間` : '時間入力'}）</p>
+        </div>
+      </Section>
 
-        {/* Genre Ratio Chart */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] px-6 py-8 shadow-2xl relative overflow-hidden group premium-section-animate" style={{ animationDelay: '400ms' }}>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="p-2 bg-violet-500/10 rounded-xl border border-violet-500/20">
-              <PieIcon className="w-4 h-4 text-violet-400" />
+      {/* ジャンル別視聴時間 */}
+      <Section en="GENRE TIME" ja="ジャンル別視聴時間">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {stats.lifetimeStats.genreLifetime.map(g => (
+            <div key={g.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[86px] flex flex-col justify-between" style={{ borderColor: g.color }}>
+              {g.bgImage && <img src={g.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              <div className="relative flex items-start justify-between gap-1">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-black truncate">{g.name}</p>
+                  <p className="font-fes text-[9px] text-muted uppercase">{g.id}</p>
+                </div>
+                <p className="text-right text-[10px] font-bold text-muted leading-tight">
+                  COUNT<br />
+                  <span className="font-fes text-[13px] text-ink">{stats.genreData.find(gd => gd.id === g.id)?.value || 0}</span>
+                  <span className="ml-0.5">{GENRE_UNITS[g.id] || '作品'}</span>
+                </p>
+              </div>
+              <p className="relative text-right"><span className="font-fes text-[26px] leading-none">{g.hours}</span><span className="text-[11px] font-black ml-0.5">時間</span></p>
             </div>
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Ratio</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別比率</p>
-            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* 殿堂入り */}
+      <Section en="HALL OF FAME" ja="殿堂入り">
+        <p className="text-[13px] font-black">選出数 <span className="font-fes text-[26px] text-coral mx-1">{stats.hallOfFame.length}</span>作品</p>
+        <div className="flex flex-wrap justify-around gap-2 bg-coral text-white px-3 py-2 text-[11px] font-black">
+          <span>最小評価点 <span className="font-fes text-lg">95</span>pt</span>
+          <span>最低視聴回数 <span className="font-fes text-lg">5</span>回</span>
+        </div>
+        {stats.hallOfFame.length === 0 ? (
+          <div className="py-12 grid justify-items-center gap-2 border-2 border-dashed border-ink">
+            <Trophy className="w-10 h-10 text-muted" />
+            <p className="font-fes text-sm text-muted">NO LEGENDS YET</p>
           </div>
-          
+        ) : (
+          <div className="grid grid-cols-2 gap-2">
+            {stats.hallOfFame.slice(0, isHallOfFameExpanded ? undefined : 6).map((item) => (
+              <button
+                type="button"
+                key={item.id}
+                onClick={() => setSelectedHallItem(item)}
+                className="relative overflow-hidden bg-ink text-white text-left p-3 min-h-[120px] flex flex-col justify-between active:opacity-80"
+              >
+                {item.imageBase64 && <img src={item.imageBase64} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />}
+                <span className="relative">
+                  <span className="block text-[9px] font-black tracking-[0.15em] text-sun">RATING</span>
+                  <span className="font-fes text-[34px] leading-none text-sun">{item.rating}</span><span className="font-fes text-xs text-sun ml-0.5">PT</span>
+                </span>
+                <span className="relative flex items-center gap-1 text-[10px] font-bold"><Eye className="w-3 h-3" />VIEWS <span className="font-fes text-[13px]">{item.views}</span></span>
+                <span className="relative text-[14px] font-black leading-tight truncate">{item.title}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        {stats.hallOfFame.length > 6 && (
+          <button
+            type="button"
+            onClick={() => setIsHallOfFameExpanded(!isHallOfFameExpanded)}
+            className="w-full py-3 bg-ink text-white font-black text-[12px] flex items-center justify-center gap-2 active:bg-teal"
+          >
+            {isHallOfFameExpanded ? '閉じる' : `すべて見る（${stats.hallOfFame.length}）`}
+            <ChevronDown className={`w-4 h-4 transition-transform ${isHallOfFameExpanded ? 'rotate-180' : ''}`} />
+          </button>
+        )}
+      </Section>
+
+      <p className="font-fes text-[13px] text-muted -mb-2">DASHBOARD <span className="font-sans text-[10px] font-bold">ダッシュボード</span></p>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* ジャンル別比率 */}
+        <Section en="GENRE RATIO" ja="ジャンル別比率">
           <div className="h-40 relative pointer-events-none">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={stats.genreData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={65}
-                  paddingAngle={4}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {stats.genreData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} className="drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]" />
-                  ))}
+                <Pie data={stats.genreData} cx="50%" cy="50%" innerRadius={50} outerRadius={68} paddingAngle={2} dataKey="value" stroke="none" isAnimationActive={false}>
+                  {stats.genreData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20">
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-1 leading-none">Total</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-white italic font-mono leading-none">
-                  <Counter value={stats.totalCount} />
-                </span>
-                <span className="text-[11px] font-black text-accent/80 italic">作品</span>
-              </div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-[10px] font-black text-muted">合計</span>
+              <span className="font-fes text-[28px] leading-none"><Counter value={stats.totalCount} /></span>
+              <span className="text-[10px] font-black text-muted">作品</span>
             </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-2 mt-6">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1">
             {stats.genreData.map((genre) => (
-              <div key={genre.name} className="flex items-center justify-between p-2 bg-white/10 rounded-xl border border-white/10">
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: genre.color }} />
-                  <span className="text-[11px] font-bold text-slate-300 uppercase tracking-wider truncate">{genre.name}</span>
-                </div>
-                <div className="text-right flex-shrink-0">
-                   <span className="text-xs font-black text-white font-mono">{genre.value}<span className="text-[10px] text-slate-500 ml-1">作品</span></span>
-                </div>
+              <div key={genre.name} className="flex items-center justify-between text-[11px] font-bold border-b border-line py-1">
+                <span className="flex items-center gap-1.5 min-w-0"><span className="w-2.5 h-2.5 flex-shrink-0" style={{ backgroundColor: genre.color }} /><span className="truncate">{genre.name}</span></span>
+                <span><span className="font-fes">{genre.value}</span>作品</span>
               </div>
             ))}
           </div>
-        </section>
+        </Section>
 
-        {/* Score Distribution */}
-        <section className="bg-white/5 rounded-[40px] p-6 border border-white/5 shadow-2xl premium-section-animate" style={{ animationDelay: '300ms' }}>
-          <div className="flex items-start gap-3 mb-8">
-            <div className="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-              <BarChart3 className="w-4 h-4 text-emerald-400" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Score Distribution</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">スコア分布</p>
-            </div>
+        {/* スコア分布 */}
+        <Section en="SCORE" ja="スコア分布">
+          <div className="grid grid-cols-6 gap-2 items-end h-32 border-b-2 border-ink">
+            {stats.scoreBins.map(bin => (
+              <div key={bin.range} className="bg-teal" style={{ height: `${(bin.count / maxBin) * 100}%` }} title={`${bin.range} ${bin.count}作品`} />
+            ))}
           </div>
-
-          <div className="h-40 mb-4 pointer-events-none">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.scoreBins}>
-                <XAxis 
-                  dataKey="range" 
-                  stroke="#475569" 
-                  fontSize={8} 
-                  fontWeight="bold" 
-                  axisLine={false} 
-                  tickLine={false}
-                />
-                <YAxis hide />
-                <Bar dataKey="count" fill="#D4AF37" radius={[4, 4, 0, 0]} barSize={20} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="grid grid-cols-6 gap-2 -mt-2 text-[9px] font-bold text-muted text-center">
+            {stats.scoreBins.map(bin => <span key={bin.range}>{bin.range}</span>)}
           </div>
-
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-             {stats.scoreBins.map(bin => (
-               <div key={bin.range} className="flex items-center gap-2">
-                  <span className="w-14 text-[10px] font-black text-slate-500 font-bold whitespace-nowrap">{bin.range}</span>
-                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-accent transition-all duration-1000" 
-                      style={{ width: `${(bin.count / Math.max(...stats.scoreBins.map(b => b.count), 1)) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-[10px] font-black text-white text-right font-mono">{bin.count}<span className="text-[9px] text-slate-600 ml-0.5">作品</span></span>
-               </div>
-             ))}
-          </div>
-        </section>
-
-        {/* Genre Average Score - Restored Layout */}
-        <section className="bg-black/40 border border-white/5 rounded-[32px] px-2 py-6 sm:p-6 shadow-2xl md:col-span-2 premium-section-animate" style={{ animationDelay: '600ms' }}>
-          <div className="flex items-center gap-2 mb-6">
-            <div className="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20">
-              <Star className="w-4 h-4 text-blue-400" />
-            </div>
-            <div>
-              <h2 className="text-sm font-black text-white uppercase tracking-widest italic">Genre Performance</h2>
-              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">ジャンル別平均スコア</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {stats.genreAverages.map((genre) => (
-              <div key={genre.id} className="relative bg-black/40 border border-white/10 p-4 pb-8 rounded-[24px] group h-28 flex flex-col justify-between shadow-lg overflow-hidden">
-                {/* Random Genre Overlay Image */}
-                {genre.bgImage && (
-                  <div className="absolute inset-0 z-0 opacity-30 group-hover:opacity-40 transition-opacity duration-700">
-                    <img src={genre.bgImage} alt="" className="w-full h-full object-cover grayscale brightness-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                  </div>
-                )}
-                
-                <div className="relative z-10 -mt-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none drop-shadow-md">{genre.id.toUpperCase()}</span>
-                    <div className="flex flex-col items-end">
-                       <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none mb-0.5 drop-shadow-md">Count</p>
-                       <p className="text-xs font-black text-white font-mono leading-none drop-shadow-md">{genre.count}<span className="text-[9px] ml-0.5 text-slate-400">{GENRE_UNITS[genre.id] || '作品'}</span></p>
-                    </div>
-                  </div>
-                  <h3 className="text-base font-black text-white uppercase italic tracking-tighter truncate drop-shadow-md">{genre.name}</h3>
-                </div>
-
-                <div className="relative z-10 flex items-end justify-between mb-5">
-                  <div>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1 drop-shadow-md">平均点</p>
-                    <p className="text-3xl font-black text-accent font-mono leading-none tracking-tighter drop-shadow-md">{genre.avg}<span className="text-xs ml-0.5 italic">点</span></p>
-                  </div>
-                  <div className="w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.8)]" style={{ backgroundColor: genre.color }} />
-                </div>
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+            {stats.scoreBins.map(bin => (
+              <div key={bin.range} className="flex items-center justify-between text-[11px] font-bold border-b border-line py-1">
+                <span>{bin.range}</span><span><span className="font-fes">{bin.count}</span>作品</span>
               </div>
             ))}
           </div>
-
-          <div className="mt-6 flex items-center gap-2 px-4 py-3 bg-white/5 rounded-2xl border border-white/5">
-            <Info className="w-3.5 h-3.5 text-accent opacity-60" />
-            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
-              ※平均スコアは統計上の理由により小数点表示しています。
-            </p>
-          </div>
-        </section>
+        </Section>
       </div>
 
-      {/* Hall of Fame Modal */}
+      {/* ジャンル別平均スコア */}
+      <Section en="PERFORMANCE" ja="ジャンル別平均スコア">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {stats.genreAverages.map((genre) => (
+            <div key={genre.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[96px] flex flex-col justify-between" style={{ borderColor: genre.color }}>
+              {genre.bgImage && <img src={genre.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              <div className="relative flex items-start justify-between gap-1">
+                <span className="font-fes text-[9px] text-muted">{genre.id.toUpperCase()}</span>
+                <span className="text-right text-[10px] font-bold text-muted leading-tight">COUNT<br /><span className="font-fes text-[12px] text-ink">{genre.count}</span>{GENRE_UNITS[genre.id] || '作品'}</span>
+              </div>
+              <p className="relative text-[13px] font-black truncate">{genre.name}</p>
+              <p className="relative text-[10px] font-bold text-muted">平均点 <span className="font-fes text-[24px] text-ink">{genre.avg}</span>点</p>
+            </div>
+          ))}
+        </div>
+        <p className="flex items-start gap-1.5 text-[10px] text-muted font-bold"><Info className="w-3.5 h-3.5 flex-shrink-0" />※平均スコアは統計上の理由により小数点表示しています。</p>
+      </Section>
+
+      {/* 殿堂入りの詳細 */}
       {selectedHallItem && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setSelectedHallItem(null)} />
-          <div className="relative bg-slate-900 w-full max-w-lg rounded-[32px] overflow-hidden border border-yellow-500/30 shadow-[0_0_50px_rgba(234,179,8,0.2)] animate-in zoom-in-95 duration-300">
-            <div className="relative aspect-video w-full">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-ink/60" onClick={() => setSelectedHallItem(null)} />
+          <div className="relative bg-white w-full max-w-lg overflow-hidden border-2 border-ink">
+            <div className="relative aspect-video w-full bg-ink">
               {selectedHallItem.imageBase64 ? (
                 <img src={selectedHallItem.imageBase64} alt="" className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full bg-slate-800 flex items-center justify-center">
-                  <Trophy className="w-20 h-20 text-yellow-500/20" />
-                </div>
+                <div className="w-full h-full flex items-center justify-center"><Trophy className="w-16 h-16 text-sun" /></div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-              <button 
+              <button
+                type="button"
+                aria-label="閉じる"
                 onClick={() => setSelectedHallItem(null)}
-                className="absolute top-4 right-4 p-2 bg-black/40 backdrop-blur-md rounded-full text-white/60 hover:text-white transition-colors"
+                className="absolute top-3 right-3 w-11 h-11 flex items-center justify-center bg-white border-2 border-ink active:bg-mist"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
-
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
-                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[selectedHallItem.genre]}</span>
-                </div>
+            <div className="p-5 grid gap-4">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="fes-tag text-white" style={{ backgroundColor: GENRE_COLORS[selectedHallItem.genre], borderColor: GENRE_COLORS[selectedHallItem.genre] }}>{GENRE_LABELS[selectedHallItem.genre]}</span>
                 {['anime', 'drama', 'manga'].includes(selectedHallItem.genre) && (
-                  <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full flex items-center gap-1.5">
-                    <span className="text-[10px] font-black text-slate-300 font-mono italic">
-                      {selectedHallItem.genre === 'manga' ? (selectedHallItem.volumes || 1) : (selectedHallItem.episodes || 1)}
-                    </span>
-                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                      {selectedHallItem.genre === 'manga' ? '巻' : '話'}
-                    </span>
-                  </div>
+                  <span className="fes-tag">{selectedHallItem.genre === 'manga' ? `${selectedHallItem.volumes || 1}巻` : `${selectedHallItem.episodes || 1}話`}</span>
                 )}
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full ml-auto">
-                  <Eye className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{selectedHallItem.views} VIEWS</span>
-                </div>
+                <span className="fes-tag ml-auto"><Eye className="w-3 h-3 mr-1" />{selectedHallItem.views} VIEWS</span>
               </div>
-
-              <h2 className="text-3xl font-black text-white uppercase italic tracking-tighter mb-6 leading-tight">{selectedHallItem.title}</h2>
-              
-              <div className="grid grid-cols-1 mb-8">
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex flex-col items-center">
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Rating</span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-yellow-400 font-mono italic">{selectedHallItem.rating}</span>
-                    <span className="text-xs font-black text-yellow-500/60">pts</span>
-                  </div>
-                </div>
+              <h2 className="text-2xl font-black leading-tight">{selectedHallItem.title}</h2>
+              <div className="bg-ink text-white p-3 flex items-baseline justify-center gap-1">
+                <span className="text-[10px] font-black tracking-[0.15em] text-sun mr-2">RATING</span>
+                <span className="font-fes text-4xl text-sun">{selectedHallItem.rating}</span>
+                <span className="font-fes text-xs text-sun">PTS</span>
               </div>
-
-              <button 
-                onClick={() => setSelectedHallItem(null)}
-                className="w-full py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-sm uppercase tracking-[0.3em] rounded-2xl transition-all shadow-[0_10px_20px_rgba(234,179,8,0.3)] active:scale-95"
-              >
-                CLOSE DETAIL
+              <button type="button" onClick={() => setSelectedHallItem(null)} className="w-full py-3.5 bg-white border-2 border-ink font-black text-sm active:bg-ink active:text-white">
+                閉じる
               </button>
             </div>
           </div>

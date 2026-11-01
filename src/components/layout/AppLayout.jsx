@@ -4,8 +4,26 @@ import HamburgerMenu from './HamburgerMenu';
 import BottomTabBar from './BottomTabBar';
 import { useStore } from '../../store/useStore';
 import { useEffect } from 'react';
-import { Edit3, ArrowUpDown } from 'lucide-react';
 
+
+// ヘッダーの切り替えスイッチ（並び替え・編集）
+function Toggle({ label, shortLabel, on, onClick, color }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={on}
+      className="flex items-center gap-1.5 py-1.5 px-1.5 sm:px-2 active:bg-mist"
+    >
+      <span className={`text-[10px] font-black ${on ? 'text-ink' : 'text-muted'}`}>
+        {shortLabel ? (<><span className="hidden xs:inline">{label}</span><span className="xs:hidden">{shortLabel}</span></>) : label}
+      </span>
+      <span className={`relative w-8 h-[18px] rounded-full transition-colors duration-150 ${on ? color : 'bg-line'}`}>
+        <span className={`absolute top-[3px] left-[3px] w-3 h-3 rounded-full bg-white transition-transform duration-150 ${on ? 'translate-x-[14px]' : ''}`} />
+      </span>
+    </button>
+  );
+}
 
 export default function AppLayout() {
   const init = useStore(state => state.init);
@@ -14,79 +32,33 @@ export default function AppLayout() {
   const isReorderMode = useStore(state => state.isReorderMode);
   const setEditMode = useStore(state => state.setEditMode);
   const setReorderMode = useStore(state => state.setReorderMode);
-  const folders = useStore(state => state.folders);
-  const rankings = useStore(state => state.rankings);
 
   useEffect(() => { init(); }, [init]);
 
   
   if (!isInitialized) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-muted font-fes">LOADING…</div>;
   }
 
   return (
-    <>
-      {/* Animated background orbs */}
-      <div aria-hidden="true">
-        <div className="bg-orb bg-orb-1" />
-        <div className="bg-orb bg-orb-2" />
-        <div className="bg-orb bg-orb-3" />
-      </div>
-
-      <div className="relative min-h-screen text-slate-100 flex flex-col">
-        {/* Header — colorful gradient */}
-        <header className="sticky top-0 z-[90] backdrop-blur-xl border-b border-white/10 shadow-lg pt-[env(safe-area-inset-top)]"
-          style={{
-            background: 'linear-gradient(135deg, rgba(124,58,237,0.35) 0%, rgba(10,10,20,0.85) 40%, rgba(212,175,55,0.20) 100%)',
-          }}
-        >
-          <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
-            <div className="flex-1 min-w-0 max-w-[35%] sm:max-w-[50%] relative z-0">
-              <Breadcrumb />
-            </div>
-            <div className="flex items-center gap-1 sm:gap-3">
-              <div className="flex items-center gap-1 sm:gap-2 relative z-[10000]">
-                <button 
-                  type="button"
-                  onClick={() => setReorderMode(!useStore.getState().isReorderMode)}
-                  className="relative flex items-center gap-1 sm:gap-2 group focus:outline-none py-1.5 px-2 sm:px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-[transform,background-color] duration-100 cursor-pointer active:scale-95"
-                >
-                  <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-tight sm:tracking-widest transition-colors ${isReorderMode ? 'text-blue-400' : 'text-slate-500'}`}>
-                    <span className="hidden xs:inline">並び替え</span>
-                    <span className="xs:hidden">順序</span>
-                  </span>
-                  <div className={`w-8 h-4 sm:w-10 sm:h-5 rounded-full p-0.5 sm:p-1 transition-all duration-300 flex items-center ${isReorderMode ? 'bg-blue-400/30 border border-blue-400/50 shadow-[0_0_8px_rgba(59,130,246,0.3)]' : 'bg-white/20 border border-white/10'}`}>
-                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-150 ${isReorderMode ? 'bg-blue-400 translate-x-4 sm:translate-x-5' : 'bg-slate-400'}`} />
-                  </div>
-                </button>
-
-                <button 
-                  type="button"
-                  onClick={() => setEditMode(!useStore.getState().isEditMode)}
-                  className="relative flex items-center gap-1 sm:gap-2 group focus:outline-none py-1.5 px-2 sm:px-3 pointer-events-auto bg-white/5 active:bg-accent/20 rounded-xl transition-[transform,background-color] duration-100 cursor-pointer active:scale-95"
-                >
-                  <span className={`text-[9px] sm:text-[10px] font-black uppercase tracking-tight sm:tracking-widest transition-colors ${isEditMode ? 'text-accent' : 'text-slate-500'}`}>
-                    編集
-                  </span>
-                  <div className={`w-8 h-4 sm:w-10 sm:h-5 rounded-full p-0.5 sm:p-1 transition-all duration-300 flex items-center ${isEditMode ? 'bg-accent/30 border border-accent/50 shadow-[0_0_8px_rgba(212,175,55,0.3)]' : 'bg-white/20 border border-white/10'}`}>
-                    <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-150 ${isEditMode ? 'bg-accent translate-x-4 sm:translate-x-5' : 'bg-slate-400'}`} />
-                  </div>
-                </button>
-              </div>
-              <HamburgerMenu />
-            </div>
+    <div className="relative min-h-screen text-ink flex flex-col bg-white">
+      <header className="sticky top-0 z-[90] bg-white border-b-[3px] border-ink pt-[env(safe-area-inset-top)]">
+        <div className="max-w-4xl mx-auto px-3 h-14 flex items-center justify-between gap-2">
+          <div className="flex-1 min-w-0 max-w-[35%] sm:max-w-[50%]">
+            <Breadcrumb />
           </div>
-          {/* Colorful header accent line */}
-          <div className="h-px w-full" style={{
-            background: 'linear-gradient(90deg, #7c3aed, #D4AF37, #0ea5e9, #7c3aed)'
-          }} />
-        </header>
-        <main className="flex-1 max-w-4xl mx-auto w-full p-4 md:p-6 pb-28">
-          <Outlet />
-        </main>
+          <div className="flex items-center gap-0.5 sm:gap-2">
+            <Toggle label="並び替え" shortLabel="順序" on={isReorderMode} color="bg-coral" onClick={() => setReorderMode(!useStore.getState().isReorderMode)} />
+            <Toggle label="編集" on={isEditMode} color="bg-teal" onClick={() => setEditMode(!useStore.getState().isEditMode)} />
+            <HamburgerMenu />
+          </div>
+        </div>
+      </header>
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 pt-4 md:px-6 pb-28">
+        <Outlet />
+      </main>
 
-        <BottomTabBar />
-      </div>
-    </>
+      <BottomTabBar />
+    </div>
   );
 }

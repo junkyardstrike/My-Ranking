@@ -39,7 +39,7 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={isDragging ? 'shadow-2xl scale-[1.02] transition-transform duration-200' : ''}>
+    <div ref={setNodeRef} style={style} className={isDragging ? ' scale-[1.02] transition-transform duration-200' : ''}>
       <RankingItem 
         item={item} 
         isEditMode={isEditMode} 
@@ -117,9 +117,9 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   if (visibleItems.length === 0 && !isEditMode) {
     return (
-      <div className="py-20 text-center text-slate-600 bg-white/5 rounded-[32px] border border-white/5 border-dashed">
-        <p className="text-lg font-bold italic tracking-tighter">No Items Yet</p>
-        <p className="text-xs mt-2 text-slate-500 uppercase tracking-widest font-black opacity-60">右上のメニューから編集モードをONにして<br/>作品を追加してください</p>
+      <div className="py-20 text-center text-muted bg-mist rounded-sm border border-line border-dashed">
+        <p className="text-lg font-bold">No Items Yet</p>
+        <p className="text-xs mt-2 text-muted uppercase tracking-widest font-black opacity-60">右上のメニューから編集モードをONにして<br/>作品を追加してください</p>
       </div>
     );
   }
