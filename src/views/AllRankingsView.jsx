@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import PixelItem from '../components/common/PixelItem';
 
 const GENRE_FILTERS = [
   { id: 'all', label: 'すべて', icon: Hash },

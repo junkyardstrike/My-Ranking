@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import RankingEditor from '../components/ranking/RankingEditor';
 import RankingList from '../components/ranking/RankingList';
 import { ArrowLeft, Maximize2, Minimize2, PlusSquare } from 'lucide-react';
 

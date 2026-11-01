@@ -1,7 +1,8 @@
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Folder, ListOrdered, GripVertical, Image as ImageIcon, Trash2, Edit2, ArrowLeft } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   DndContext, 
   closestCenter, 
@@ -18,13 +19,26 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import PixelItem from '../components/common/PixelItem';
 
 function ActionButtons({ id, name, type }) {
   const updateFolder = useStore(state => state.updateFolder);
   const deleteFolder = useStore(state => state.deleteFolder);
   const updateRanking = useStore(state => state.updateRanking);
   const deleteRanking = useStore(state => state.deleteRanking);
+  const folders = useStore(state => state.folders);
+  const rankings = useStore(state => state.rankings);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  // 削除対象に含まれる作品数（フォルダの場合は配下すべて）
+  const itemCount = type === 'folder'
+    ? getRecursiveItemCount(id, folders, rankings)
+    : (rankings.find(r => r.id === id)?.items || []).filter(i => i.title).length;
+
+  const runDelete = (keepItems) => {
+    if (type === 'folder') deleteFolder(id, { keepItems });
+    else deleteRanking(id, { keepItems });
+    setIsDeleteDialogOpen(false);
+  };
 
   const handleEdit = (e) => {
     e.preventDefault();
@@ -39,11 +53,16 @@ function ActionButtons({ id, name, type }) {
   const handleDelete = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (confirm(`本当に「${name}」を削除しますか？`)) {
-      if (confirm(`【最終確認】\n「${name}」を完全に削除します。この操作は取り消せません。本当によろしいですか？`)) {
-        if (type === 'folder') deleteFolder(id);
-        else deleteRanking(id);
-      }
+    if (itemCount === 0) {
+      if (confirm(`「${name}」を削除しますか？（作品は含まれていません）`)) runDelete(false);
+      return;
+    }
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteAll = () => {
+    if (confirm(`【最終確認】\n「${name}」と中の${itemCount}作品を完全に削除します。この操作は取り消せません。本当によろしいですか？`)) {
+      runDelete(false);
     }
   };
 
@@ -61,6 +80,49 @@ function ActionButtons({ id, name, type }) {
       >
         <Trash2 className="w-3.5 h-3.5" />
       </button>
+
+      {isDeleteDialogOpen && createPortal(
+        <div
+          className="fixed inset-0 z-[300] flex items-center justify-center p-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="absolute inset-0 bg-black/80" onClick={() => setIsDeleteDialogOpen(false)} />
+          <div className="relative w-full max-w-sm bg-surface border border-white/10 rounded-[32px] p-6 space-y-5 shadow-2xl">
+            <div className="space-y-2">
+              <h2 className="text-lg font-black text-white tracking-tight">「{name}」を削除</h2>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                {type === 'folder' ? 'このフォルダ内のランキング' : 'このランキング'}に含まれる
+                <span className="text-accent font-black mx-1">{itemCount}作品</span>
+                をどうしますか？
+              </p>
+            </div>
+            <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={() => runDelete(true)}
+                className="w-full py-4 rounded-2xl bg-accent text-black font-black text-sm active:scale-[0.98] transition-transform"
+              >
+                作品はレコードに残して削除
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteAll}
+                className="w-full py-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-400 font-black text-sm active:scale-[0.98] transition-transform"
+              >
+                作品ごと完全に削除
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsDeleteDialogOpen(false)}
+                className="w-full py-3 rounded-2xl text-slate-400 font-black text-sm active:bg-white/5"
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }

@@ -41,6 +41,20 @@ const stripDerivedFields = (item) => {
   return rest;
 };
 
+// 削除するランキングの作品をレコード（未ランクイン）に戻す形に変換する
+const toUnrankedItems = (rankingsToRemove, existingUnranked) => {
+  const existingIds = new Set(existingUnranked.map(i => i.id));
+  return rankingsToRemove.flatMap(r =>
+    (r.items || [])
+      .filter(item => item.title && !existingIds.has(item.id))
+      .map(item => {
+        const rest = stripDerivedFields(item);
+        delete rest.currentRank;
+        return { ...rest, genre: item.genre || r.genre, previousRanks: [] };
+      })
+  );
+};
+
 const translateToEnglish = async (text) => {
   if (!text) return '';
   try {
@@ -160,7 +174,8 @@ export const useStore = create((set, get) => ({
     });
   },
 
-  deleteFolder: (id) => {
+  // keepItems: true なら中のランキングの作品をレコードに戻す。false なら作品ごと削除
+  deleteFolder: (id, { keepItems = false } = {}) => {
     set((state) => {
       // Helper for recursive deletion
       const getAllChildFolderIds = (parentId, allFolders) => {
@@ -176,11 +191,16 @@ export const useStore = create((set, get) => ({
       
       const folders = state.folders.filter(f => !folderIdsToDelete.includes(f.id));
       const rankings = state.rankings.filter(r => !folderIdsToDelete.includes(r.folderId));
+      const removedRankings = state.rankings.filter(r => folderIdsToDelete.includes(r.folderId));
+      const unrankedItems = keepItems
+        ? [...toUnrankedItems(removedRankings, state.unrankedItems), ...state.unrankedItems]
+        : state.unrankedItems;
       
       saveData('folders', folders);
       saveData('rankings', rankings);
+      saveData('unrankedItems', unrankedItems);
       
-      return { folders, rankings };
+      return { folders, rankings, unrankedItems };
     });
   },
 
@@ -205,11 +225,17 @@ export const useStore = create((set, get) => ({
     }
   },
 
-  deleteRanking: (id) => {
+  // keepItems: true なら作品をレコードに戻す。false なら作品ごと削除
+  deleteRanking: (id, { keepItems = false } = {}) => {
     set((state) => {
       const rankings = state.rankings.filter(r => r.id !== id);
+      const removed = state.rankings.filter(r => r.id === id);
+      const unrankedItems = keepItems
+        ? [...toUnrankedItems(removed, state.unrankedItems), ...state.unrankedItems]
+        : state.unrankedItems;
       saveData('rankings', rankings);
-      return { rankings };
+      saveData('unrankedItems', unrankedItems);
+      return { rankings, unrankedItems };
     });
   },
 

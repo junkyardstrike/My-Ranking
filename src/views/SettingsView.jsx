@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import { useStore } from '../store/useStore';
 import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles, FileText } from 'lucide-react';
 import Counter from '../components/common/Counter';
-import PixelItem from '../components/common/PixelItem';
 import { getDefaultDuration } from '../utils/itemMetrics';
 
 export default function SettingsView() {
