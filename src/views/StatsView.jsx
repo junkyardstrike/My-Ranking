@@ -28,6 +28,7 @@ import {
   PlusSquare
 } from 'lucide-react';
 import Counter from '../components/common/Counter';
+import { getItemMetrics } from '../utils/itemMetrics';
 
 const GENRE_LABELS = {
   anime: 'アニメ',
@@ -63,10 +64,7 @@ export default function StatsView() {
   const getAllItems = useStore(state => state.getAllItems);
   const rankings = useStore(state => state.rankings);
   const unrankedItems = useStore(state => state.unrankedItems);
-  const settings = useStore(state => state.settings) || {
-    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
-    useViewCount: true
-  };
+  const settings = useStore(state => state.settings);
   
   const location = useLocation();
   const [isHallOfFameExpanded, setIsHallOfFameExpanded] = useState(false);
@@ -119,7 +117,7 @@ export default function StatsView() {
       { range: '80点台', min: 80, max: 89, count: 0 },
       { range: '70点台', min: 70, max: 79, count: 0 },
       { range: '60点台', min: 60, max: 69, count: 0 },
-      { range: '60点以下', min: 0, max: 59, count: 0 },
+      { range: '60点未満', min: 0, max: 59, count: 0 },
     ];
     
     allItems.forEach(item => {
@@ -144,15 +142,9 @@ export default function StatsView() {
     const genreLifetime = {};
 
     allItems.forEach(item => {
-      const g = item.genre || 'other';
-      const isGame = g === 'game';
-      const duration = Number(item.duration) || settings.defaultDurations[g] || (isGame ? 0 : 20);
-      const episodes = isGame ? 1 : Number(item.episodes || item.volumes || 1);
-      const views = settings.useViewCount ? Number(item.views || 1) : 1;
-      
-      // Game is already in hours, others are in minutes
-      const hrs = isGame ? (duration * views) : (duration * episodes * views / 60);
-      
+      // 作品カード・詳細画面と同じ計算式を使う
+      const { genre: g, totalHours: hrs } = getItemMetrics(item, settings);
+
       totalHours += hrs;
       genreLifetime[g] = (genreLifetime[g] || 0) + hrs;
     });
@@ -610,14 +602,16 @@ export default function StatsView() {
                 <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/40 rounded-full">
                   <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest">{GENRE_LABELS[selectedHallItem.genre]}</span>
                 </div>
-                <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full flex items-center gap-1.5">
-                  <span className="text-[10px] font-black text-slate-300 font-mono italic">
-                    {selectedHallItem.episodes || selectedHallItem.volumes || 1}
-                  </span>
-                  <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
-                    {selectedHallItem.genre === 'manga' ? '巻' : '話'}
-                  </span>
-                </div>
+                {['anime', 'drama', 'manga'].includes(selectedHallItem.genre) && (
+                  <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full flex items-center gap-1.5">
+                    <span className="text-[10px] font-black text-slate-300 font-mono italic">
+                      {selectedHallItem.genre === 'manga' ? (selectedHallItem.volumes || 1) : (selectedHallItem.episodes || 1)}
+                    </span>
+                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                      {selectedHallItem.genre === 'manga' ? '巻' : '話'}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center gap-1.5 px-3 py-1 bg-white/5 border border-white/10 rounded-full ml-auto">
                   <Eye className="w-3.5 h-3.5 text-slate-400" />
                   <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{selectedHallItem.views} VIEWS</span>

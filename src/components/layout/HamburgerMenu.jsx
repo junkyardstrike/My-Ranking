@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useLocation, matchPath } from 'react-router-dom';
 import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2 } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
@@ -20,7 +21,17 @@ export default function HamburgerMenu() {
   const [recordTitle, setRecordTitle] = useState('');
   const [selectedRecordGenre, setSelectedRecordGenre] = useState('music');
   
-  const currentFolderId = useStore(state => state.currentFolderId);
+  const location = useLocation();
+  const rankings = useStore(state => state.rankings);
+  // 作成先フォルダは「今表示している画面」から決める。
+  // （以前は最後に開いたフォルダが残り、STATS画面などで作ると見えないフォルダに作られていた）
+  const folderMatch = matchPath('/folder/:folderId', location.pathname);
+  const rankingMatch = matchPath('/ranking/:rankingId', location.pathname);
+  const currentFolderId = folderMatch
+    ? folderMatch.params.folderId
+    : rankingMatch
+      ? (rankings.find(r => r.id === rankingMatch.params.rankingId)?.folderId ?? null)
+      : null;
   const addFolder = useStore(state => state.addFolder);
   const addRanking = useStore(state => state.addRanking);
   const recordItem = useStore(state => state.recordItem);

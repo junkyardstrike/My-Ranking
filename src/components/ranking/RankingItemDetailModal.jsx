@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore } from '../../store/useStore';
 import { fetchMetadata } from '../../services/metadataFetcher';
+import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
 
 const GENRE_MAP = {
   anime: { label: 'アニメ', icon: Tv },
@@ -41,10 +42,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItemStore = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
-  const settings = useStore(state => state.settings) || {
-    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
-    useViewCount: true
-  };
+  const settings = useStore(state => state.settings);
 
   const itemFromStore = useStore(useCallback(state => {
     const allItems = [
@@ -62,11 +60,14 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const [selectedRankingId, setSelectedRankingId] = useState('');
   const [selectedRank, setSelectedRank] = useState(1);
   const [isFetching, setIsFetching] = useState(false);
+  // モーダルを開いた時点の編集モード。閉じたらこの状態に戻す（一覧側の編集モードを勝手にOFFにしない）
+  const editModeOnOpenRef = useRef(false);
 
   useEffect(() => {
     if (isOpen && liveItem) {
       setDraftItem({ ...liveItem });
       setHasChanges(false);
+      editModeOnOpenRef.current = useStore.getState().isEditMode;
     }
   }, [isOpen, liveItem?.id]);
 
@@ -81,20 +82,11 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   if (!isOpen || !draftItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre = 'music', isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = draftItem;
+  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre: rawGenre, isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = draftItem;
 
-  const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
-  let unitDuration = baseDuration;
-  if (unitDuration === null) {
-    unitDuration = settings.defaultDurations[genre] || settings.defaultDurations.movie || 60;
-  }
-
-  let totalDurationPerView = unitDuration;
-  if (genre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
-  else if (genre === 'anime' || genre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
-
-  const finalViewCount = settings.useViewCount ? (views || 1) : 1;
-  const totalLifetimeDuration = totalDurationPerView * finalViewCount;
+  const genre = normalizeGenre(rawGenre);
+  const { unitDuration, hasOwnDuration, viewCount: finalViewCount, totalHours: totalLifetimeHours } = getItemMetrics({ ...draftItem, genre }, settings);
+  const baseDuration = hasOwnDuration ? Number(duration) : null;
 
   const handleUpdate = (updates) => {
     setDraftItem(prev => ({ ...prev, ...updates }));
@@ -109,15 +101,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
       updateItemStore(id, draftItem);
     }
     setHasChanges(false);
-    setEditMode(false);
+    setEditMode(editModeOnOpenRef.current);
     onClose();
   };
 
   const handleAddToRanking = () => {
     if (!selectedRankingId) return;
-    if (window.confirm(`${selectedRank}位に挿入します。よろしいですか？`)) {
-      insertItemIntoRanking(selectedRankingId, liveItem, parseInt(selectedRank));
+    if (window.confirm(`${Math.max(1, Math.min(100, parseInt(selectedRank) || 1))}位に挿入します。よろしいですか？`)) {
+      const rank = Math.max(1, Math.min(100, parseInt(selectedRank) || 1));
+      insertItemIntoRanking(selectedRankingId, liveItem, rank);
       setIsAddingToRanking(false);
+      setEditMode(editModeOnOpenRef.current);
       onClose();
     }
   };
@@ -201,7 +195,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
         return;
       }
     }
-    setEditMode(false);
+    setEditMode(editModeOnOpenRef.current);
     onClose();
   };
 
@@ -380,7 +374,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                        <div className="flex flex-col">
                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">作成日 / DATE</span>
                          {isGlobalEditMode ? (
-                            <input type="date" value={createdAt ? createdAt.split('T')[0] : ''} onChange={e => handleUpdate({ createdAt: new Date(e.target.value).toISOString() })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-black text-white outline-none focus:border-accent" />
+                            <input type="date" value={toDateInputValue(createdAt)} onChange={e => handleUpdate({ createdAt: fromDateInputValue(e.target.value) })} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs font-black text-white outline-none focus:border-accent" />
                          ) : (
                             <span className="text-xl font-black text-white tracking-widest leading-none">
                               {createdAt ? new Date(createdAt).toLocaleDateString('ja-JP') : '---'}
@@ -407,7 +401,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                             <div className="flex flex-col items-center space-y-2 flex-1 w-full sm:w-auto">
                                <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2">
                                  <Eye size={12} className="text-blue-500" /> 
-                                 {genre === 'game' ? 'プレイ時間 / PLAYTIME' : '閲覧回数 / VIEWS'}
+                                 {genre === 'game' ? 'プレイ回数 / PLAYS' : '閲覧回数 / VIEWS'}
                                </p>
                                {isGlobalEditMode ? (
                                   <div className="flex items-center gap-2">
@@ -424,7 +418,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                      >+</button>
                                   </div>
                                ) : (
-                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}{genre === 'game' ? '時間' : '回'}</p>
+                                  <p className="text-3xl font-black text-white font-mono tracking-tighter text-center">{views.toLocaleString()}回</p>
                                )}
                             </div>
                          </div>
@@ -433,7 +427,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                             <p className="text-[10px] text-white/40 font-black uppercase tracking-[0.2em] flex items-center gap-2"><Clock size={12} className="text-purple-500" /> 累計所要時間 / TOTAL TIME</p>
                             <div className="flex items-baseline gap-2">
                                <p className="text-5xl font-black text-white font-mono tracking-tighter">
-                                 {genre === 'game' ? totalLifetimeDuration.toFixed(1) : (totalLifetimeDuration / 60).toFixed(1)}
+                                 {totalLifetimeHours.toFixed(1)}
                                </p>
                                <p className="text-sm font-black text-slate-500 uppercase tracking-widest">時間 / HOURS</p>
                             </div>

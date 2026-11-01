@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import localforage from 'localforage';
+import { DEFAULT_DURATIONS, normalizeGenre } from '../utils/itemMetrics';
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -31,6 +32,15 @@ const saveData = async (key, value) => {
   }
 };
 
+// getAllItems() が表示用に付与する項目は保存データに混ぜない
+const stripDerivedFields = (item) => {
+  const rest = { ...item };
+  delete rest.isSelected;
+  delete rest.rankingTitle;
+  delete rest.rankingId;
+  return rest;
+};
+
 const translateToEnglish = async (text) => {
   if (!text) return '';
   try {
@@ -55,13 +65,7 @@ export const useStore = create((set, get) => ({
   viewMode: 'list', 
   currentFolderId: null,
   settings: {
-    defaultDurations: {
-      movie: 120,
-      music: 3,
-      anime: 20,
-      drama: 40,
-      manga: 30
-    },
+    defaultDurations: { ...DEFAULT_DURATIONS },
     useViewCount: true
   },
 
@@ -71,13 +75,7 @@ export const useStore = create((set, get) => ({
     const unrankedItems = await loadData('unrankedItems', []);
     
     const defaultSettings = {
-      defaultDurations: {
-        movie: 120,
-        music: 3,
-        anime: 20,
-        drama: 40,
-        manga: 30
-      },
+      defaultDurations: { ...DEFAULT_DURATIONS },
       useViewCount: true
     };
     
@@ -96,8 +94,9 @@ export const useStore = create((set, get) => ({
   },
 
   setCurrentFolderId: (id) => set({ currentFolderId: id }),
-  setEditMode: (mode) => set({ isEditMode: mode }),
-  setReorderMode: (mode) => set({ isReorderMode: mode }),
+  // 編集モードと並び替えモードは同時にONにしない
+  setEditMode: (mode) => set(mode ? { isEditMode: true, isReorderMode: false } : { isEditMode: false }),
+  setReorderMode: (mode) => set(mode ? { isReorderMode: true, isEditMode: false } : { isReorderMode: false }),
   
   setFolders: (folders) => {
     set({ folders });
@@ -125,13 +124,13 @@ export const useStore = create((set, get) => ({
         rankingId: r.id, 
         isSelected: true,
         rankingTitle: r.title,
-        genre: item.genre || r.genre || 'other'
+        genre: normalizeGenre(item.genre || r.genre)
       }))
     );
     return [...rankedItems, ...state.unrankedItems.map(item => ({ 
       ...item, 
       isSelected: false,
-      genre: item.genre || 'other'
+      genre: normalizeGenre(item.genre)
     }))];
   },
 
@@ -313,12 +312,29 @@ export const useStore = create((set, get) => ({
     set(state => {
       const ranking = state.rankings.find(r => r.id === targetRankingId);
       if (!ranking) return state;
-      const itemToRank = { ...itemToInsert, currentRank: targetRank, genre: itemToInsert.genre || ranking.genre };
+      const itemToRank = { ...stripDerivedFields(itemToInsert), currentRank: targetRank, genre: itemToInsert.genre || ranking.genre };
       let newItems = [...ranking.items].filter(i => i.id !== itemToInsert.id);
       newItems.splice(targetRank - 1, 0, itemToRank);
-      const finalItems = newItems.map((item, i) => ({ ...item, currentRank: i + 1 })).slice(0, 100);
+      // 100枠を超えた分は、後ろの空き枠から削る。空き枠が無ければ最下位の作品をレコードに戻す（作品を消さない）
+      const overflowed = [];
+      while (newItems.length > 100) {
+        let emptyIdx = -1;
+        for (let k = newItems.length - 1; k >= 0; k--) {
+          if (!newItems[k].title && newItems[k].id !== itemToInsert.id) { emptyIdx = k; break; }
+        }
+        if (emptyIdx !== -1) newItems.splice(emptyIdx, 1);
+        else overflowed.push(newItems.pop());
+      }
+      const finalItems = newItems.map((item, i) => ({ ...item, currentRank: i + 1 }));
       const rankings = state.rankings.map(r => r.id === targetRankingId ? { ...r, items: finalItems } : r);
-      const unrankedItems = state.unrankedItems.filter(i => i.id !== itemToInsert.id);
+      const unrankedItems = [
+        ...overflowed.map(item => {
+          const rest = stripDerivedFields(item);
+          delete rest.currentRank;
+          return rest;
+        }),
+        ...state.unrankedItems.filter(i => i.id !== itemToInsert.id)
+      ];
       saveData('rankings', rankings);
       saveData('unrankedItems', unrankedItems);
       return { rankings, unrankedItems };
@@ -326,24 +342,27 @@ export const useStore = create((set, get) => ({
   },
 
   bulkInsertItemsIntoRanking: (targetRankingId, itemsToInsert) => {
+    let insertedCount = 0;
     set(state => {
       const ranking = state.rankings.find(r => r.id === targetRankingId);
       if (!ranking) return state;
 
       // Filter out items that are already in the ranking
       const existingIds = new Set(ranking.items.filter(i => i.title).map(i => i.id));
-      const validNewItems = itemsToInsert.filter(i => !existingIds.has(i.id));
-
-      // Get empty slots
-      let currentItems = [...ranking.items];
-      let filledItems = currentItems.filter(i => i.title);
-      let emptyItems = currentItems.filter(i => !i.title);
+      const currentItems = [...ranking.items];
+      const filledItems = currentItems.filter(i => i.title);
+      const emptyItems = currentItems.filter(i => !i.title);
+      // 100枠に収まる分だけ追加し、入りきらない作品はレコードに残す
+      const capacity = Math.max(0, 100 - filledItems.length);
+      const validNewItems = itemsToInsert.filter(i => !existingIds.has(i.id)).slice(0, capacity);
+      const insertedIds = new Set(validNewItems.map(i => i.id));
+      insertedCount = validNewItems.length;
 
       // Add new items
       const newFilledItems = [
         ...filledItems,
         ...validNewItems.map((item, idx) => ({
-          ...item,
+          ...stripDerivedFields(item),
           genre: item.genre || ranking.genre,
           currentRank: filledItems.length + idx + 1
         }))
@@ -352,16 +371,17 @@ export const useStore = create((set, get) => ({
       // Re-fill to 100
       const finalItems = [
         ...newFilledItems,
-        ...emptyItems
-      ].map((item, i) => ({ ...item, currentRank: i + 1 })).slice(0, 100);
+        ...emptyItems.slice(0, Math.max(0, 100 - newFilledItems.length))
+      ].map((item, i) => ({ ...item, currentRank: i + 1 }));
 
       const rankings = state.rankings.map(r => r.id === targetRankingId ? { ...r, items: finalItems } : r);
-      const unrankedItems = state.unrankedItems.filter(i => !itemsToInsert.some(ni => ni.id === i.id));
+      const unrankedItems = state.unrankedItems.filter(i => !insertedIds.has(i.id));
 
       saveData('rankings', rankings);
       saveData('unrankedItems', unrankedItems);
       return { rankings, unrankedItems };
     });
+    return insertedCount;
   },
 
   captureRankHistory: (rankingId) => {
@@ -420,7 +440,20 @@ export const useStore = create((set, get) => ({
   },
 
   importData: async (data) => {
-    const { rankings = [], folders = [], unrankedItems = [], settings = null } = data;
+    if (!data || typeof data !== 'object' || !Array.isArray(data.rankings ?? []) || !Array.isArray(data.folders ?? []) || !Array.isArray(data.unrankedItems ?? [])) {
+      throw new Error('Invalid backup format');
+    }
+    const folders = data.folders ?? [];
+    const unrankedItems = data.unrankedItems ?? [];
+    // items が欠けたランキングがあると各画面が落ちるため補完する
+    const rankings = (data.rankings ?? []).map(r => ({ ...r, items: Array.isArray(r.items) ? r.items : [] }));
+    const settings = data.settings
+      ? {
+          ...data.settings,
+          useViewCount: data.settings.useViewCount ?? true,
+          defaultDurations: { ...DEFAULT_DURATIONS, ...(data.settings.defaultDurations || {}) }
+        }
+      : null;
     const updateObj = { rankings, folders, unrankedItems, isInitialized: true };
     if (settings) updateObj.settings = settings;
     
@@ -440,13 +473,7 @@ export const useStore = create((set, get) => ({
       unrankedItems: [], 
       currentFolderId: null,
       settings: {
-        defaultDurations: {
-          movie: 120,
-          music: 3,
-          anime: 20,
-          drama: 40,
-          manga: 30
-        },
+        defaultDurations: { ...DEFAULT_DURATIONS },
         useViewCount: true
       }
     });

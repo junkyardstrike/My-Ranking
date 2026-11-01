@@ -3,6 +3,7 @@ import { useStore } from '../store/useStore';
 import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles, FileText } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import PixelItem from '../components/common/PixelItem';
+import { getDefaultDuration } from '../utils/itemMetrics';
 
 export default function SettingsView() {
   const rankings = useStore(state => state.rankings) || [];
@@ -21,7 +22,8 @@ export default function SettingsView() {
   const totalItems = totalItemsInRankings + unrankedItems.length;
 
   const handleExport = () => {
-    const data = { rankings, folders, unrankedItems, exportedAt: new Date().toISOString() };
+    // 設定（デフォルト所要時間など）もバックアップに含める（復元時に設定が消えないように）
+    const data = { rankings, folders, unrankedItems, settings, exportedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -105,9 +107,9 @@ export default function SettingsView() {
     setTimeout(() => setStatus(null), 3000);
   };
 
-  const handleDurationChange = (genre, value) => {
-    const val = parseInt(value) || 0;
-    if (confirm(`このジャンルのデフォルト時間を ${val} 分に変更しますか？統計データに即座に反映されます。`)) {
+  const handleDurationChange = (genre, value, unitLabel) => {
+    const val = genre === 'game' ? (parseFloat(value) || 0) : (parseInt(value) || 0);
+    if (confirm(`このジャンルのデフォルト時間を ${val} ${unitLabel}に変更しますか？統計データに即座に反映されます。`)) {
       updateSettings({
         defaultDurations: {
           ...settings.defaultDurations,
@@ -115,7 +117,9 @@ export default function SettingsView() {
         }
       });
       showStatus('success', '設定を更新しました');
+      return true;
     }
+    return false;
   };
 
   const handleToggleViewCount = () => {
@@ -294,7 +298,8 @@ export default function SettingsView() {
                     { id: 'music', label: '音楽', icon: Music, unit: '曲' },
                     { id: 'anime', label: 'アニメ', icon: Tv, unit: '話' },
                     { id: 'drama', label: 'ドラマ', icon: Clapperboard, unit: '話' },
-                    { id: 'manga', label: '漫画', icon: BookOpen, unit: '作品' },
+                    { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },
+                    { id: 'game', label: 'ゲーム', icon: Gamepad2, unit: '回', timeUnit: 'hour' },
                   ].map(genre => (
                     <div key={genre.id} className="relative z-10 flex flex-col gap-3 p-4 bg-black/40 rounded-2xl border border-white/5 hover:border-white/20 transition-all group">
                       <div className="flex items-center justify-between">
@@ -307,16 +312,25 @@ export default function SettingsView() {
                       <div className="flex items-center gap-3">
                         <input 
                           type="number" 
-                          defaultValue={settings.defaultDurations?.[genre.id] || 0}
+                          min="0"
+                          step={genre.timeUnit === 'hour' ? '0.1' : '1'}
+                          // 値が外部で変わった（復元・リセット）ときに表示を更新するため key に値を含める
+                          key={`${genre.id}-${getDefaultDuration(genre.id, settings)}`}
+                          defaultValue={getDefaultDuration(genre.id, settings)}
                           onBlur={(e) => {
-                            const val = parseInt(e.target.value);
-                            if (val !== settings.defaultDurations?.[genre.id]) {
-                              handleDurationChange(genre.id, e.target.value);
+                            const current = getDefaultDuration(genre.id, settings);
+                            const val = genre.timeUnit === 'hour' ? (parseFloat(e.target.value) || 0) : (parseInt(e.target.value) || 0);
+                            if (val !== current) {
+                              const ok = handleDurationChange(genre.id, e.target.value, genre.timeUnit === 'hour' ? '時間' : '分');
+                              // キャンセルしたら入力欄を元の値に戻す（表示と実際の設定がズレないように）
+                              if (!ok) e.target.value = current;
+                            } else {
+                              e.target.value = current;
                             }
                           }}
                           className="bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono font-black text-lg outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 w-full transition-all"
                         />
-                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">min</span>
+                        <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">{genre.timeUnit === 'hour' ? 'hour' : 'min'}</span>
                       </div>
                     </div>
                   ))}

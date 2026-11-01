@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
   DndContext, 
@@ -58,13 +57,10 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
 export default function RankingList({ ranking, isCollapsed: propIsCollapsed = false, isEditMode = false, onSave }) {
   const isReorderMode = useStore(state => state.isReorderMode);
   const updateItem = useStore(state => state.updateItem);
-  const [items, setItems] = useState(ranking.items);
+  // 常にストアの最新データを使う（ローカルコピーを持つと、順位履歴などが古い内容で上書きされるため）
+  const items = ranking.items;
   // Use location key to FORCE full re-mount on every navigation
   const { key: locationKey } = useLocation();
-
-  useEffect(() => {
-    setItems(ranking.items);
-  }, [ranking.id]);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -85,14 +81,12 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
         currentRank: index + 1
       }));
       
-      setItems(updatedWithRanks);
       if (onSave) onSave(updatedWithRanks);
       useStore.getState().captureRankHistory(ranking.id);
     }
   };
 
   const handleLocalUpdate = (id, updates) => {
-    setItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
     updateItem(id, updates);
   };
 
@@ -107,7 +101,6 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
       ...item,
       currentRank: index + 1
     }));
-    setItems(updatedWithRanks);
     if (onSave) onSave(updatedWithRanks);
     useStore.getState().captureRankHistory(ranking.id);
   };

@@ -111,8 +111,11 @@ export default function AllRankingsView() {
 
   const handleBulkAdd = () => {
     if (selectedIds.length === 0 || !targetRankingId) return;
-    const itemsToAdd = allItems.filter(i => selectedIds.includes(i.id));
-    bulkInsertItemsIntoRanking(targetRankingId, itemsToAdd);
+    const itemsToAdd = allItems.filter(i => selectedIds.includes(i.id) && !i.isSelected);
+    const inserted = bulkInsertItemsIntoRanking(targetRankingId, itemsToAdd);
+    if (inserted < itemsToAdd.length) {
+      alert(`ランキングの空き枠（100枠）が足りないため、${itemsToAdd.length - inserted}作品は追加されずにレコードに残りました。`);
+    }
     setSelectedIds([]);
     window.history.replaceState({}, document.title); // Clear state
     navigate(`/ranking/${targetRankingId}`);
@@ -257,7 +260,9 @@ export default function AllRankingsView() {
                 onMove={handleMove}
                 genre={item.genre || 'music'}
                 rankingId={item.rankingId}
-                isSelectable={isSelectMode}
+                // 「レコードから追加」はレコード（未ランクイン）の作品のみ選択可能。
+                // 他ランキングの作品を選ぶと同じ作品が2つのランキングに重複してしまうため
+                isSelectable={isSelectMode && !item.isSelected}
                 isSelectedForBulk={selectedIds.includes(item.id)}
                 onToggleSelect={handleToggleSelect}
               />

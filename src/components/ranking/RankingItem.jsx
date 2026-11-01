@@ -4,6 +4,7 @@ import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Typ
 import RankingItemDetailModal from './RankingItemDetailModal';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
+import { getItemMetrics, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
 
 const GENRES = [
   { id: 'anime', label: 'アニメ', icon: Tv },
@@ -43,10 +44,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
   const [localIsCollapsed, setLocalIsCollapsed] = useState(propIsCollapsed);
-  const settings = useStore(state => state.settings) || {
-    defaultDurations: { movie: 120, music: 3, anime: 20, drama: 40, manga: 30, game: 60 },
-    useViewCount: true
-  };
+  const settings = useStore(state => state.settings);
 
   useEffect(() => {
     setLocalIsCollapsed(propIsCollapsed);
@@ -74,18 +72,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
   const rawGenre = itemGenre || propItem.genre || propGenre || 'music';
   const effectiveGenre = rawGenre === 'other' ? 'music' : rawGenre;
 
-  const baseDuration = (duration !== undefined && duration !== null && duration !== '' && Number(duration) > 0) ? Number(duration) : null;
-  let unitDuration = baseDuration;
-  if (unitDuration === null) {
-    unitDuration = settings.defaultDurations[effectiveGenre] || settings.defaultDurations.movie || 60;
-  }
-
-  let totalDurationPerView = unitDuration;
-  if (effectiveGenre === 'manga') totalDurationPerView = unitDuration * (volumes || 1);
-  else if (effectiveGenre === 'anime' || effectiveGenre === 'drama') totalDurationPerView = unitDuration * (episodes || 1);
-
-  const finalViewCount = settings.useViewCount ? (views || 1) : 1;
-  const totalLifetimeDuration = totalDurationPerView * finalViewCount;
+  const { totalHours: lifetimeHours } = getItemMetrics({ ...liveItem, genre: effectiveGenre }, settings);
 
   // Local states to fix IME bug for lists
   const [localTitle, setLocalTitle] = useState(title || '');
@@ -235,7 +222,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
         }
       }, 100);
     } else {
-      moveItemToRank(rankingId || liveItem.rankingId, id, newRank);
+      useStore.getState().moveItemToRank(rankingId || liveItem.rankingId, id, newRank);
     }
   };
 
@@ -253,7 +240,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             : 'border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.02] hover:bg-white/[0.07] hover:border-white/20 active:scale-[0.98] active:bg-white/[0.1]'
         }`} 
         onClick={(e) => {
-          if (isReorderMode) return;
+          if (isReorderMode && dragHandleProps) return;
           // ポータル内(詳細モーダル)からバブリングしてきたクリックは無視
           if (!e.currentTarget.contains(e.target)) return;
           // カード内のボタンや入力欄などの操作ではモーダルを開かない
@@ -289,7 +276,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                   ))}
                 </div>
               </div>
-              {(dragHandleProps || isReorderMode) && (
+              {dragHandleProps && (
                 <div {...dragHandleProps} className="p-2.5 cursor-grab text-slate-500 hover:text-accent bg-white/5 rounded-xl border border-white/5 active:scale-95 transition-all" style={{ touchAction: 'none' }}>
                   <GripVertical className="w-5 h-5" />
                 </div>
@@ -338,9 +325,9 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                 <Calendar className="w-3.5 h-3.5 text-emerald-500" />
                 <input 
                   type="date" 
-                  value={createdAt ? createdAt.split('T')[0] : ''} 
+                  value={toDateInputValue(createdAt)} 
                   onClick={e => e.stopPropagation()} 
-                  onChange={e => onUpdate(propItem.id, { createdAt: new Date(e.target.value).toISOString() })} 
+                  onChange={e => onUpdate(propItem.id, { createdAt: fromDateInputValue(e.target.value) })} 
                   className="bg-transparent border-none outline-none text-white text-[10px] font-bold w-full" 
                 />
               </div>
@@ -484,52 +471,6 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       {title || 'Untitled'}
                     </h3>
 
-                    {/* NEW RANK EDITOR ROW - Always in Edit Mode */}
-                    {isEditMode && effectiveRankingId && (
-                      <div className="flex items-center gap-2 py-1" onClick={e => e.stopPropagation()}>
-                        <div 
-                          className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/10 shadow-2xl relative z-50"
-                                >
-                          <button 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const r = Number(item.currentRank || currentRank) || 0;
-                              if (r > 1) handleMove(r - 1);
-                            }}
-                            className="w-8 h-8 flex items-center justify-center bg-accent/20 rounded-lg hover:bg-accent/40 active:scale-75 transition-all text-accent"
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <div className="relative w-14 h-8">
-                            <input 
-                              type="number"
-                              min="1"
-                              key={`${id}-${item.currentRank || currentRank}`}
-                              defaultValue={item.currentRank || currentRank}
-                              onBlur={(e) => {
-                                const newRank = parseInt(e.target.value);
-                                const r = Number(item.currentRank || currentRank);
-                                if (newRank > 0 && newRank !== r) handleMove(newRank);
-                              }}
-                              className="w-full h-full bg-accent text-black font-black text-center rounded-md text-sm focus:ring-2 focus:ring-white outline-none"
-                            />
-                          </div>
-                          <button 
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const r = Number(item.currentRank || currentRank) || 0;
-                              handleMove(r + 1);
-                            }}
-                            className="w-8 h-8 flex items-center justify-center bg-accent/20 rounded-lg hover:bg-accent/40 active:scale-75 transition-all text-accent"
-                          >
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic opacity-50">Rank Change</span>
-                      </div>
-                    )}
                     {localIsCollapsed && previousRanks.length > 0 && previousRanks[previousRanks.length - 1].rank !== currentRank && (
                       <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded border border-white/5 shrink-0">
                         <History size={8} className="text-slate-500" />
@@ -577,10 +518,10 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
                       </button>
                     </div>
 
-                    {totalLifetimeDuration > 0 && (
+                    {lifetimeHours > 0 && (
                       <span className={`flex items-center gap-1 text-[8px] font-mono px-1.5 py-0.5 rounded-full border shrink-0 ${currentRank === 1 ? 'bg-black/40 text-yellow-100 border-yellow-300/30' : 'bg-black/20 text-slate-400 border-white/5'}`}>
                         <Clock className={`w-2 h-2 ${currentRank === 1 ? 'text-yellow-200' : 'text-purple-500'}`} />
-                        {effectiveGenre === 'game' ? totalLifetimeDuration.toFixed(1) : (totalLifetimeDuration / 60).toFixed(1)}h
+                        {lifetimeHours.toFixed(1)}h
                       </span>
                     )}
                     {formattedDate && (
@@ -619,7 +560,7 @@ export default function RankingItem({ item: propItem, isEditMode, dragHandleProp
             )}
             
             <div className="flex items-center pr-1 gap-1">
-              {(isReorderMode || dragHandleProps) && !isEditMode && (
+              {dragHandleProps && !isEditMode && (
                 <div 
                   {...dragHandleProps} 
                   className="p-2 cursor-grab text-slate-700 hover:text-accent transition-colors active:scale-90"

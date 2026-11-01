@@ -405,11 +405,11 @@ export default function FolderView() {
         )}
       </div>
 
-      {(folders.length === 0 && rankings.length === 0) ? (
+      {(childFolders.length === 0 && childRankings.length === 0) ? (
         <div className="flex flex-col items-center justify-center py-32 text-slate-400 bg-white/5 rounded-[40px] border border-white/5 border-dashed mx-1">
           <Folder className="w-20 h-20 mb-6 opacity-20 text-accent" />
           <p className="text-xl font-black italic tracking-tighter">No Items Yet</p>
-          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed px-4">右上のメニューから新しいフォルダやランキングを作成してください</p>
+          <p className="text-xs mt-3 text-slate-600 uppercase font-bold tracking-widest max-w-xs text-center leading-relaxed px-4">右上の＋ボタンから新しいフォルダやランキングを作成してください</p>
         </div>
       ) : (
         <DndContext 
