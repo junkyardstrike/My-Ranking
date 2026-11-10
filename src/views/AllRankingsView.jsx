@@ -188,7 +188,7 @@ export default function AllRankingsView() {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setSelectedGenre(filter.id)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 border-[1.5px] border-ink text-[11px] font-black ${on ? 'bg-ink text-white' : 'bg-white text-ink active:bg-mist'}`}
+                className={`flex-shrink-0 flex items-center gap-1.5 px-3 min-h-[44px] border-[1.5px] border-ink text-[11px] font-black ${on ? 'bg-ink text-white' : 'bg-white text-ink active:bg-mist'}`}
               >
                 <Icon size={14} />
                 {filter.label}

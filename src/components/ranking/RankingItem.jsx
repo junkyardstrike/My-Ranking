@@ -2,6 +2,7 @@ import { useState, useEffect, memo } from 'react';
 import { useStore, getItemIndex } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
+import AddToRankingDialog from './AddToRankingDialog';
 import ScoreRating from './ScoreRating';
 import { fetchMetadata } from '../../services/metadataFetcher';
 import { getItemMetrics, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
@@ -46,6 +47,7 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
 
 function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false, isSelectable = false, isSelectedForBulk = false, onToggleSelect = null }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
   const [localIsCollapsed, setLocalIsCollapsed] = useState(propIsCollapsed);
@@ -171,11 +173,17 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
     const isActuallyCollapsed = localIsCollapsed;
     const w = isActuallyCollapsed ? 'w-10' : 'w-[54px]';
     if (!rank || !effectiveRankingId) {
+      // ランキング外の作品：押すとランキングと順位を選んで追加できる
       return (
-        <div className={`flex-shrink-0 self-start flex flex-col items-center justify-center border-2 border-dashed border-ink text-ink ${w} ${isActuallyCollapsed ? 'py-1' : 'py-1.5'}`}>
+        <button
+          type="button"
+          aria-label={`「${title || '作品'}」をランキングに追加`}
+          onClick={(e) => { e.stopPropagation(); setIsAddOpen(true); }}
+          className={`flex-shrink-0 self-start flex flex-col items-center justify-center border-2 border-dashed border-ink text-ink bg-white active:bg-ink active:text-white ${isActuallyCollapsed ? 'w-11' : w} ${isActuallyCollapsed ? 'min-h-[44px]' : 'min-h-[52px] py-1.5'}`}
+        >
           {!isActuallyCollapsed && <span className="text-[8px] font-black tracking-[0.1em] leading-none">ADD</span>}
-          <Plus size={isActuallyCollapsed ? 14 : 18} strokeWidth={3} />
-        </div>
+          <Plus size={isActuallyCollapsed ? 16 : 18} strokeWidth={3} />
+        </button>
       );
     }
     const isTop = rank <= 3;
@@ -230,29 +238,31 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
         {isEditMode ? (
           <div className="flex flex-col p-3 gap-3 min-w-0">
             {/* Header Row */}
-            <div className="flex items-start gap-2">
+            <div className="flex items-start justify-between gap-2">
               {renderRankBadge(currentRank)}
-              <div className="flex-1 min-w-0 grid grid-cols-6 gap-1" role="group" aria-label="ジャンル">
-                {GENRES.map(g => (
-                  <button
-                    key={g.id}
-                    type="button"
-                    title={g.label}
-                    aria-pressed={effectiveGenre === g.id}
-                    onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }}
-                    className={`h-9 flex items-center justify-center border-[1.5px] ${effectiveGenre === g.id ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-line active:bg-mist'}`}
-                  >
-                    <g.icon size={16} />
-                  </button>
-                ))}
-              </div>
               {dragHandleProps && (
-                <div {...dragHandleProps} className="flex-shrink-0 h-9 w-9 flex items-center justify-center cursor-grab text-ink border-2 border-ink active:bg-ink active:text-white" style={{ touchAction: 'none' }}>
+                <div {...dragHandleProps} aria-label="ドラッグして並び替え" className="flex-shrink-0 h-11 w-11 flex items-center justify-center cursor-grab text-ink border-2 border-ink active:bg-ink active:text-white" style={{ touchAction: 'none' }}>
                   <GripVertical className="w-5 h-5" />
                 </div>
               )}
             </div>
-            
+
+            {/* Genre Row（横幅いっぱいに並べて1つあたりのタップ範囲を広く取る） */}
+            <div className="grid grid-cols-6 gap-1" role="group" aria-label="ジャンル" onClick={e => e.stopPropagation()}>
+              {GENRES.map(g => (
+                <button
+                  key={g.id}
+                  type="button"
+                  aria-pressed={effectiveGenre === g.id}
+                  onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { genre: g.id }); }}
+                  className={`min-h-[48px] flex flex-col items-center justify-center gap-0.5 border-[1.5px] ${effectiveGenre === g.id ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-line active:bg-mist'}`}
+                >
+                  <g.icon size={16} />
+                  <span className="text-[9px] font-black leading-none">{g.label}</span>
+                </button>
+              ))}
+            </div>
+
             {/* Title Row */}
             <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
               <input 
@@ -263,7 +273,8 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                 onBlur={handleTitleSync}
                 onKeyDown={e => e.key === 'Enter' && handleTitleSync()}
                 placeholder="作品名を入力..." 
-                className={`flex-1 min-w-0 w-0 bg-transparent border-b-2 border-ink focus:border-teal outline-none text-ink pb-1 ${isBold ? 'font-black' : 'font-bold'}`} 
+                aria-label="作品名"
+                className={`flex-1 min-w-0 w-0 min-h-[44px] bg-transparent border-b-2 border-ink focus:border-teal outline-none text-ink ${isBold ? 'font-black' : 'font-bold'}`} 
                 style={{ color: readableTitleColor(color), fontSize: `${localFontSize}px` }} 
               />
               <button 
@@ -271,16 +282,16 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                 onClick={(e) => { e.stopPropagation(); handleAutoFetch(); }} 
                 disabled={!localTitle?.trim() || isFetching} 
                 aria-label="作品情報を自動取得"
-                className={`flex-shrink-0 p-2.5 border-2 transition-colors ${fetchStatus === 'success' ? 'bg-green-500/20 border-green-500/50 text-green-400' : fetchStatus === 'error' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-white border-ink text-ink active:bg-ink active:text-white'}`}
+                className={`flex-shrink-0 w-11 h-11 flex items-center justify-center border-2 ${fetchStatus === 'success' ? 'bg-teal border-teal text-white' : fetchStatus === 'error' ? 'bg-coral border-coral text-white' : 'bg-white border-ink text-ink active:bg-ink active:text-white'}`}
               >
                 {isFetching ? <Loader className="w-5 h-5 animate-spin" /> : <Sparkles className="w-5 h-5" />}
               </button>
             </div>
 
-            {/* Meta Row */}
-            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-              <div className="flex items-center gap-2 bg-mist p-2.5 rounded border border-line active:bg-mist transition-colors">
-                <User className="w-3.5 h-3.5 text-accent" />
+            {/* Meta Row（枠全体が入力欄のタップ範囲になるよう label で包む） */}
+            <div className="grid grid-cols-2 gap-2" onClick={e => e.stopPropagation()}>
+              <label className="flex items-center gap-2 bg-mist px-2.5 min-h-[44px] border border-line cursor-text">
+                <User className="w-4 h-4 text-muted flex-shrink-0" />
                 <input 
                   type="text" 
                   value={localAuthor} 
@@ -289,132 +300,135 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                   onBlur={handleAuthorSync}
                   onKeyDown={e => e.key === 'Enter' && handleAuthorSync()}
                   placeholder="作者名" 
-                  className="bg-transparent border-none outline-none text-ink text-[10px] font-bold w-full h-full" 
+                  aria-label="作者名"
+                  className="bg-transparent border-none outline-none text-ink font-bold w-full py-2" 
                 />
-              </div>
-              <div className="flex items-center gap-2 bg-mist p-2.5 rounded border border-line">
-                <Calendar className="w-3.5 h-3.5 text-emerald-500" />
+              </label>
+              <label className="flex items-center gap-2 bg-mist px-2.5 min-h-[44px] border border-line cursor-text">
+                <Calendar className="w-4 h-4 text-muted flex-shrink-0" />
                 <input 
                   type="date" 
                   value={toDateInputValue(createdAt)} 
                   onClick={e => e.stopPropagation()} 
                   onChange={e => onUpdate(propItem.id, { createdAt: fromDateInputValue(e.target.value) })} 
-                  className="bg-transparent border-none outline-none text-ink text-[10px] font-bold w-full" 
+                  aria-label="日付"
+                  className="bg-transparent border-none outline-none text-ink font-bold w-full py-2" 
                 />
-              </div>
+              </label>
             </div>
 
-            {/* Rank Change Row - Between Meta and Metrics */}
+            {/* Rank Change Row */}
             {(rankingId || liveItem.rankingId) && (
-              <div className="flex items-center gap-4 bg-mist p-3 rounded-sm border border-line" onClick={e => e.stopPropagation()}>
-                <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-black text-muted uppercase tracking-[0.3em] pr-2">順位変更 / RANK</span>
-                  <div className="flex items-center gap-1 bg-mist p-1 rounded border border-accent">
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const nextRank = Math.max(1, currentRank - 1);
-                        handleMove(nextRank); 
-                      }} 
-                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-mist text-accent hover:bg-mist active:scale-75 transition-all"
-                    >
-                      <Minus size={14} />
-                    </button>
-                    <div className="w-12 h-8 flex items-center justify-center">
-                      <input 
-                        type="number"
-                        min="1"
-                        key={`expanded-${id}-${currentRank}`}
-                        defaultValue={currentRank}
-                        onBlur={(e) => {
-                          const val = parseInt(e.target.value);
-                          if (val > 0 && val !== currentRank) {
-                            handleMove(val);
-                          }
-                        }}
-                        className="w-full h-full bg-accent text-white font-black text-center rounded-md text-sm outline-none focus:ring-2 focus:ring-white"
-                      />
-                    </div>
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        const nextRank = Math.min(100, currentRank + 1);
-                        handleMove(nextRank); 
-                      }} 
-                      className="w-8 h-8 flex items-center justify-center rounded-lg bg-mist text-accent hover:bg-mist active:scale-75 transition-all"
-                    >
-                      <Plus size={14} />
-                    </button>
-                  </div>
+              <div className="flex items-center justify-between gap-2 bg-mist px-2.5 py-1.5 border border-line" onClick={e => e.stopPropagation()}>
+                <span className="text-[11px] font-black text-muted">順位変更</span>
+                <div className="flex items-center gap-1">
+                  <button 
+                    type="button"
+                    aria-label="順位を上げる"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      const nextRank = Math.max(1, currentRank - 1);
+                      handleMove(nextRank); 
+                    }} 
+                    className="w-11 h-11 flex items-center justify-center border-2 border-ink bg-white text-ink active:bg-ink active:text-white"
+                  >
+                    <Minus size={16} strokeWidth={3} />
+                  </button>
+                  <input 
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    aria-label="順位"
+                    key={`expanded-${id}-${currentRank}`}
+                    defaultValue={currentRank}
+                    onBlur={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (val > 0 && val !== currentRank) {
+                        handleMove(val);
+                      }
+                    }}
+                    className="w-14 h-11 bg-ink text-white font-fes text-center outline-none focus:ring-2 focus:ring-coral"
+                  />
+                  <button 
+                    type="button"
+                    aria-label="順位を下げる"
+                    onClick={(e) => { 
+                      e.stopPropagation(); 
+                      const nextRank = Math.min(100, currentRank + 1);
+                      handleMove(nextRank); 
+                    }} 
+                    className="w-11 h-11 flex items-center justify-center border-2 border-ink bg-white text-ink active:bg-ink active:text-white"
+                  >
+                    <Plus size={16} strokeWidth={3} />
+                  </button>
                 </div>
               </div>
             )}
 
             {/* Metrics Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-              <div className="space-y-3 text-center flex-1 bg-mist p-2.5 rounded border border-line">
-                <p className="text-[9px] text-muted font-black uppercase tracking-widest flex items-center justify-center gap-2"><Star size={10} className="text-accent" /> SCORE</p>
-                <div className="flex justify-center">
-                   <ScoreRating rating={rating} onRatingChange={v => onUpdate(propItem.id, { rating: v })} />
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between gap-2 bg-mist px-2.5 py-1.5 border border-line">
+                <span className="flex items-center gap-1.5 text-[11px] font-black text-muted"><Star size={13} />スコア</span>
+                <ScoreRating rating={rating} onRatingChange={v => onUpdate(propItem.id, { rating: v })} />
               </div>
-              <div className="flex items-center gap-3 bg-mist p-2.5 rounded border border-line">
-                 <Eye className="w-3.5 h-3.5 text-blue-500" />
-                 <div className="flex items-center gap-2 flex-1">
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: Math.max(0, views - 1) }) }} className="w-8 h-8 bg-mist active:bg-mist rounded-lg text-sm text-muted">-</button>
-                    <span className="text-[11px] font-mono font-bold text-ink flex-1 text-center">{views}</span>
-                    <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: views + 1 }) }} className="w-8 h-8 bg-mist active:bg-mist rounded-lg text-sm text-muted">+</button>
-                 </div>
+              <div className="flex items-center justify-between gap-2 bg-mist px-2.5 py-1.5 border border-line">
+                <span className="flex items-center gap-1.5 text-[11px] font-black text-muted"><Eye size={13} />閲覧回数</span>
+                <div className="flex items-center gap-1">
+                  <button type="button" aria-label="閲覧回数を減らす" onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: Math.max(0, views - 1) }) }} className="w-11 h-11 flex items-center justify-center border-2 border-ink bg-white active:bg-ink active:text-white"><Minus size={16} strokeWidth={3} /></button>
+                  <span className="font-fes text-[15px] min-w-[28px] text-center">{views}</span>
+                  <button type="button" aria-label="閲覧回数を増やす" onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { views: views + 1 }) }} className="w-11 h-11 flex items-center justify-center border-2 border-ink bg-white active:bg-ink active:text-white"><Plus size={16} strokeWidth={3} /></button>
+                </div>
               </div>
             </div>
 
             {/* Time & Episodes Row */}
-            <div className="grid grid-cols-2 gap-3" onClick={e => e.stopPropagation()}>
-               <div className="bg-mist p-2.5 rounded border border-line flex items-center gap-2 active:bg-mist transition-colors active:scale-[0.98]">
-                 <Clock className="w-3.5 h-3.5 text-purple-500" />
-                 <input type="number" min="0" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-ink text-[10px] font-bold w-full" placeholder="所要時間" />
-                 <span className="text-[8px] font-black text-muted uppercase tracking-widest">{effectiveGenre === 'game' ? '時間' : '分'}</span>
-               </div>
+            <div className="grid grid-cols-2 gap-2" onClick={e => e.stopPropagation()}>
+               <label className="bg-mist px-2.5 min-h-[44px] border border-line flex items-center gap-2 cursor-text">
+                 <Clock className="w-4 h-4 text-muted flex-shrink-0" />
+                 <input type="number" inputMode="decimal" min="0" aria-label="所要時間" value={duration || ''} onChange={e => onUpdate(propItem.id, { duration: e.target.value === '' ? 0 : (effectiveGenre === 'game' ? parseFloat(e.target.value) : parseInt(e.target.value)) })} className="bg-transparent border-none outline-none text-ink font-bold w-full py-2" placeholder="所要時間" />
+                 <span className="text-[11px] font-black text-muted flex-shrink-0">{effectiveGenre === 'game' ? '時間' : '分'}</span>
+               </label>
                {(effectiveGenre === 'anime' || effectiveGenre === 'drama') && (
-                 <div className="bg-mist p-2.5 rounded border border-line flex items-center gap-2 active:bg-mist transition-colors active:scale-[0.98]">
-                   <Tv className="w-3.5 h-3.5 text-muted" />
-                   <input type="number" min="0" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-ink text-[10px] font-bold w-full" placeholder="話数" />
-                   <span className="text-[8px] font-black text-muted uppercase tracking-widest">話</span>
-                 </div>
+                 <label className="bg-mist px-2.5 min-h-[44px] border border-line flex items-center gap-2 cursor-text">
+                   <Tv className="w-4 h-4 text-muted flex-shrink-0" />
+                   <input type="number" inputMode="numeric" min="0" aria-label="話数" value={episodes || ''} onChange={e => onUpdate(propItem.id, { episodes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-ink font-bold w-full py-2" placeholder="話数" />
+                   <span className="text-[11px] font-black text-muted flex-shrink-0">話</span>
+                 </label>
                )}
                {effectiveGenre === 'manga' && (
-                 <div className="bg-mist p-2.5 rounded border border-line flex items-center gap-2 active:bg-mist transition-colors active:scale-[0.98]">
-                   <BookOpen className="w-3.5 h-3.5 text-muted" />
-                   <input type="number" min="0" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-ink text-[10px] font-bold w-full" placeholder="巻数" />
-                   <span className="text-[8px] font-black text-muted uppercase tracking-widest">巻</span>
-                 </div>
+                 <label className="bg-mist px-2.5 min-h-[44px] border border-line flex items-center gap-2 cursor-text">
+                   <BookOpen className="w-4 h-4 text-muted flex-shrink-0" />
+                   <input type="number" inputMode="numeric" min="0" aria-label="巻数" value={volumes || ''} onChange={e => onUpdate(propItem.id, { volumes: e.target.value === '' ? '' : parseInt(e.target.value) })} className="bg-transparent border-none outline-none text-ink font-bold w-full py-2" placeholder="巻数" />
+                   <span className="text-[11px] font-black text-muted flex-shrink-0">巻</span>
+                 </label>
                )}
             </div>
 
             {/* Styling Row */}
-            <div className="flex items-center gap-4 bg-mist p-2.5 rounded border border-line" onClick={e => e.stopPropagation()}>
-              <div className="flex-1 flex items-center gap-3">
-                <Type className="w-4 h-4 text-muted" />
-                <input 
-                  type="range" 
-                  min="12" 
-                  max="32" 
-                  value={localFontSize} 
-                  onClick={e => e.stopPropagation()}
-                  onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(propItem.id, { fontSize: v }); }} 
-                  className="flex-1 h-1 bg-slate-800 rounded-full accent-accent appearance-none" 
-                />
-              </div>
-              <button onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { isBold: !isBold }); }} className={`px-3 py-1.5 rounded-lg border text-[10px] font-black tracking-widest ${isBold ? 'bg-accent text-white border-accent' : 'bg-mist text-muted border-line'}`}>BOLD</button>
-              <input type="color" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { color: e.target.value })} className="w-6 h-6 bg-transparent border-none cursor-pointer" />
+            <div className="flex items-center gap-2 bg-mist px-2.5 py-1.5 border border-line" onClick={e => e.stopPropagation()}>
+              <Type className="w-4 h-4 text-muted flex-shrink-0" />
+              <input 
+                type="range" 
+                min="12" 
+                max="32" 
+                aria-label="文字サイズ"
+                value={localFontSize} 
+                onClick={e => e.stopPropagation()}
+                onChange={(e) => { const v = parseInt(e.target.value); setLocalFontSize(v); onUpdate(propItem.id, { fontSize: v }); }} 
+                className="flex-1 min-w-0 h-11 accent-teal" 
+              />
+              <button type="button" aria-pressed={isBold} onClick={(e) => { e.stopPropagation(); onUpdate(propItem.id, { isBold: !isBold }); }} className={`flex-shrink-0 min-h-[44px] px-3 border-2 text-[11px] font-black ${isBold ? 'bg-ink text-white border-ink' : 'bg-white text-ink border-ink'}`}>BOLD</button>
+              <label className="flex-shrink-0 w-11 h-11 flex items-center justify-center border-2 border-ink bg-white cursor-pointer" title="文字色">
+                <input type="color" aria-label="文字色" value={color} onClick={e => e.stopPropagation()} onChange={e => onUpdate(propItem.id, { color: e.target.value })} className="w-7 h-7 bg-transparent border-none cursor-pointer p-0" />
+              </label>
             </div>
 
             {/* Image Row */}
-            <div className="relative w-full aspect-video rounded-sm overflow-hidden border border-line bg-mist group" onClick={e => e.stopPropagation()}>
-               {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-ink/40 gap-2"><ImageIcon className="w-8 h-8 opacity-20" /><span className="text-[9px] font-black tracking-widest opacity-20">NO IMAGE</span></div>}
-               <label className="absolute inset-0 bg-mist opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all">
-                  <div className="bg-accent text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">Update Image</div>
-                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleImageUpload} />
+            <div className="relative w-full aspect-video overflow-hidden border border-line bg-mist" onClick={e => e.stopPropagation()}>
+               {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-muted gap-2"><ImageIcon className="w-8 h-8 opacity-40" /><span className="text-[10px] font-black">NO IMAGE</span></div>}
+               <label className="absolute right-2 bottom-2 min-h-[44px] px-4 flex items-center gap-1.5 bg-ink text-white text-[12px] font-black cursor-pointer active:bg-teal">
+                  <ImageIcon className="w-4 h-4" />画像を変更
+                  <input type="file" accept="image/*" className="sr-only" onChange={handleImageUpload} />
                </label>
             </div>
           </div>
@@ -425,7 +439,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                 type="button"
                 aria-pressed={isSelectedForBulk}
                 aria-label={isSelectedForBulk ? '選択を外す' : '選択する'}
-                className="flex-shrink-0 self-center p-1 -m-1"
+                className="flex-shrink-0 self-center p-2.5 -m-2.5"
                 onClick={(e) => { e.stopPropagation(); onToggleSelect && onToggleSelect(id); }}
               >
                 <span className={`w-6 h-6 border-2 border-ink flex items-center justify-center ${isSelectedForBulk ? 'bg-ink' : 'bg-white'}`}>
@@ -459,7 +473,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                 {dragHandleProps && !isEditMode && (
                   <div
                     {...dragHandleProps}
-                    className="flex-shrink-0 p-2 -my-1 -mr-1 cursor-grab text-ink border-2 border-ink active:bg-ink active:text-white"
+                    className="flex-shrink-0 w-11 h-11 -my-1 flex items-center justify-center cursor-grab text-ink border-2 border-ink active:bg-ink active:text-white"
                     style={{ touchAction: 'none' }}
                   >
                     <GripVertical size={16} />
@@ -497,7 +511,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                         type="button"
                         aria-label="閲覧回数を減らす"
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: Math.max(0, (views || 0) - 1) }); }}
-                        className="relative w-6 h-6 flex items-center justify-center border-[1.5px] border-ink active:bg-ink active:text-white after:content-[''] after:absolute after:-inset-1.5"
+                        className="relative w-7 h-7 flex items-center justify-center border-[1.5px] border-ink active:bg-ink active:text-white after:content-[''] after:absolute after:-inset-2.5"
                       >
                         <Minus size={11} strokeWidth={3} />
                       </button>
@@ -506,7 +520,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                         type="button"
                         aria-label="閲覧回数を増やす"
                         onClick={(e) => { e.stopPropagation(); onUpdate(id, { views: (views || 0) + 1 }); }}
-                        className="relative w-6 h-6 flex items-center justify-center border-[1.5px] border-ink active:bg-ink active:text-white after:content-[''] after:absolute after:-inset-1.5"
+                        className="relative w-7 h-7 flex items-center justify-center border-[1.5px] border-ink active:bg-ink active:text-white after:content-[''] after:absolute after:-inset-2.5"
                       >
                         <Plus size={11} strokeWidth={3} />
                       </button>
@@ -527,6 +541,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
           </div>
         )}
       </div>
+      {isAddOpen && <AddToRankingDialog item={liveItem} onClose={() => setIsAddOpen(false)} />}
       {/* 開いている時だけマウントする（一覧の全カードがモーダル分の処理を抱えないように） */}
       {isModalOpen && <RankingItemDetailModal 
         item={liveItem} 

@@ -377,7 +377,7 @@ export default function StatsView() {
       {/* 殿堂入りの詳細 */}
       {selectedHallItem && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-ink/60" onClick={() => setSelectedHallItem(null)} />
+          <div className="absolute inset-0 bg-ink/60 cursor-pointer" onClick={() => setSelectedHallItem(null)} aria-hidden="true" />
           <div className="relative bg-white w-full max-w-lg overflow-hidden border-2 border-ink">
             <div className="relative aspect-video w-full bg-ink">
               {selectedHallItem.imageBase64 ? (

@@ -92,7 +92,7 @@ export default function HamburgerMenu() {
         type="button"
         onClick={toggleMenu}
         aria-label="コンテンツを追加"
-        className="w-10 h-10 flex items-center justify-center bg-coral text-white active:bg-ink ml-1"
+        className="w-11 h-11 flex items-center justify-center bg-coral text-white active:bg-ink ml-1"
       >
         <Plus className="w-6 h-6" strokeWidth={3} />
       </button>
@@ -100,7 +100,7 @@ export default function HamburgerMenu() {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div 
-            className={`fixed inset-0 bg-ink/60  z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            className={`fixed inset-0 bg-ink/60 cursor-pointer z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
             onClick={() => { setIsOpen(false); setShowGenreSelect(false); setShowRecordItem(false); }}
           />
 

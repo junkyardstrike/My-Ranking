@@ -271,9 +271,11 @@ export default function SettingsView() {
                 </div>
                 <button 
                   onClick={handleToggleViewCount}
-                  className={`relative z-10 w-14 h-7 rounded-full p-1 transition-all duration-500 ${settings.useViewCount ? 'bg-teal' : 'bg-line'}`}
+                  aria-pressed={!!settings.useViewCount}
+                  aria-label="閲覧回数を計算に含める"
+                  className={`relative z-10 flex-shrink-0 w-14 h-7 rounded-full p-1 transition-colors duration-150 after:content-[''] after:absolute after:-inset-2.5 ${settings.useViewCount ? 'bg-teal' : 'bg-line'}`}
                 >
-                  <div className={`w-5 h-5 bg-white rounded-full  transition-transform duration-300 ${settings.useViewCount ? 'translate-x-7' : 'translate-x-0'}`} />
+                  <div className={`w-5 h-5 bg-white rounded-full  transition-transform duration-150 ${settings.useViewCount ? 'translate-x-7' : 'translate-x-0'}`} />
                 </button>
               </div>
 

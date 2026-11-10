@@ -69,16 +69,20 @@ function ActionButtons({ id, name, type }) {
   return (
     <div className="absolute top-2 left-2 z-30 flex items-center gap-1.5 pointer-events-auto">
       <button 
+        type="button"
+        aria-label="名前を変更"
         onClick={handleEdit}
-        className="bg-mist p-2.5 rounded-full hover:bg-accent active:bg-accent transition-colors text-ink border border-line"
+        className="w-11 h-11 flex items-center justify-center bg-white text-ink border-2 border-ink active:bg-ink active:text-white"
       >
-        <Edit2 className="w-3.5 h-3.5" />
+        <Edit2 className="w-4 h-4" />
       </button>
       <button 
+        type="button"
+        aria-label="削除"
         onClick={handleDelete}
-        className="bg-mist p-2.5 rounded-full hover:bg-red-500 active:bg-red-500 transition-colors text-ink border border-line"
+        className="w-11 h-11 flex items-center justify-center bg-white text-coral border-2 border-ink active:bg-coral active:text-white"
       >
-        <Trash2 className="w-3.5 h-3.5" />
+        <Trash2 className="w-4 h-4" />
       </button>
 
       {isDeleteDialogOpen && createPortal(
@@ -86,7 +90,7 @@ function ActionButtons({ id, name, type }) {
           className="fixed inset-0 z-[300] flex items-center justify-center p-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="absolute inset-0 bg-ink/60" onClick={() => setIsDeleteDialogOpen(false)} />
+          <div className="absolute inset-0 bg-ink/60 cursor-pointer" onClick={() => setIsDeleteDialogOpen(false)} aria-hidden="true" />
           <div className="relative w-full max-w-sm bg-white border border-line rounded-sm p-6 space-y-5">
             <div className="space-y-2">
               <h2 className="text-lg font-black text-ink tracking-tight">「{name}」を削除</h2>
@@ -222,7 +226,7 @@ function SortableFolder({ folder, folders, rankings }) {
         <div 
           {...listeners} 
           {...attributes} 
-          className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
+          className="absolute top-1.5 right-1.5 w-11 h-11 flex items-center justify-center cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
           style={{ touchAction: 'none' }}
         >
           <GripVertical className="w-5 h-5" />
@@ -259,7 +263,7 @@ function SortableFolder({ folder, folders, rankings }) {
       {isEditMode && (
         <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
           <label 
-            className="bg-mist p-2.5 rounded-full transition-all cursor-pointer hover:bg-ink/60 flex items-center justify-center border border-line hover:scale-110"
+            className="w-11 h-11 cursor-pointer flex items-center justify-center bg-white border-2 border-ink active:bg-ink"
             onClick={e => e.stopPropagation()}
           >
             <ImageIcon className="w-3.5 h-3.5 text-ink" />
@@ -333,7 +337,7 @@ function SortableRanking({ ranking }) {
           <div 
             {...listeners} 
             {...attributes} 
-            className="absolute top-2 right-2 p-2 cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
+            className="absolute top-1.5 right-1.5 w-11 h-11 flex items-center justify-center cursor-grab active:cursor-grabbing text-ink bg-white z-30 pointer-events-auto"
           style={{ touchAction: 'none' }}
           >
             <GripVertical className="w-5 h-5" />
@@ -353,7 +357,7 @@ function SortableRanking({ ranking }) {
             <ActionButtons id={ranking.id} name={ranking.title} type="ranking" />
             <div className="absolute bottom-2 right-2 z-30 pointer-events-auto">
               <label 
-                className="bg-mist p-2.5 rounded-full transition-all cursor-pointer hover:bg-ink/60 flex items-center justify-center border border-line hover:scale-110"
+                className="w-11 h-11 cursor-pointer flex items-center justify-center bg-white border-2 border-ink active:bg-ink"
                 onClick={e => e.stopPropagation()}
               >
                 <ImageIcon className="w-3.5 h-3.5 text-ink" />

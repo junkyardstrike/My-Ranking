@@ -200,50 +200,53 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   return createPortal(
     <div className="fixed inset-0 z-[2147483647] flex items-center justify-center p-0 sm:p-6 duration-300">
-      <div className="absolute inset-0 bg-white" onClick={handleClose} />
+      <div className="absolute inset-0 bg-ink/60 cursor-pointer" onClick={handleClose} aria-hidden="true" />
       
       <div className="relative w-full max-w-5xl bg-white border-x border-line sm:rounded-sm overflow-hidden flex flex-col h-full sm:h-auto sm:max-h-[94vh] duration-300">
         
         
-        <div className="flex items-center justify-between p-6 border-b border-line bg-mist z-[100]">
-          <div className="flex items-center gap-4">
+        {/* 全画面表示のため、上端は iPhone のステータスバー分を空ける（ボタンが重なって押せなくなるのを防ぐ） */}
+        <div className="flex items-center justify-between gap-2 px-3 pb-2 pt-[max(8px,env(safe-area-inset-top))] sm:pt-2 border-b-[3px] border-ink bg-white z-[100]">
+          <div className="flex items-center gap-2 min-w-0">
              <button 
                type="button"
+               aria-pressed={isGlobalEditMode}
                onClick={() => setEditMode(!useStore.getState().isEditMode)} 
-               className="flex items-center gap-3 bg-mist px-4 py-2 rounded-full border border-line cursor-pointer hover:bg-mist transition-colors duration-100 active:scale-95"
+               className="flex items-center gap-2 h-11 px-2 active:bg-mist"
              >
-                <span className={`text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-100 ${isGlobalEditMode ? 'text-accent' : 'text-ink'}`}>編集モード</span>
-                <div className={`w-10 h-5 rounded-full p-1 flex items-center transition-colors duration-100 ${isGlobalEditMode ? 'bg-mist border border-accent' : 'bg-mist border border-line'}`}>
-                   <div className={`w-3 h-3 rounded-full transition-transform duration-150 ease-out ${isGlobalEditMode ? 'bg-accent translate-x-5' : 'bg-slate-600 translate-x-0'}`} />
-               </div>
+                <span className={`text-[12px] font-black ${isGlobalEditMode ? 'text-ink' : 'text-muted'}`}>編集モード</span>
+                <span className={`relative w-9 h-5 rounded-full transition-colors duration-150 ${isGlobalEditMode ? 'bg-teal' : 'bg-line'}`}>
+                   <span className={`absolute top-[3px] left-[3px] w-3.5 h-3.5 rounded-full bg-white transition-transform duration-150 ${isGlobalEditMode ? 'translate-x-4' : ''}`} />
+                </span>
             </button>
             {hasChanges && (
               <button 
                 type="button"
                 onClick={handleSave}
-                className="flex items-center gap-2 bg-accent text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-[0.2em] active:bg-coral active:scale-95 transition-all"
+                className="flex items-center gap-1.5 h-11 px-3 bg-coral text-white font-black text-[12px] border-2 border-ink active:bg-ink whitespace-nowrap"
               >
-                <CheckCircle2 size={14} /> 変更を保存
+                <CheckCircle2 size={15} /> 変更を保存
               </button>
             )}
           </div>
           <button 
             type="button"
+            aria-label="閉じる"
             onClick={handleClose} 
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-mist border border-line text-ink hover:bg-mist transition-all active:scale-90"
+            className="flex-shrink-0 w-11 h-11 flex items-center justify-center bg-white border-2 border-ink text-ink active:bg-ink active:text-white"
           >
-            <X size={24} />
+            <X size={22} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar">
+        <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar pb-[env(safe-area-inset-bottom)]">
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
              {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
                    <label 
                      htmlFor={`modal-upload-${id}`}
-                     className="bg-white text-white px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.3em] cursor-pointer pointer-events-auto hover:scale-105 active:scale-95 transition-all"
+                     className="flex items-center gap-1.5 min-h-[44px] px-5 bg-ink text-white text-[13px] font-black border-2 border-white cursor-pointer pointer-events-auto active:bg-teal"
                    >
                      画像を更新
                    </label>
@@ -311,7 +314,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                    key={key} 
                                    type="button"
                                    onClick={() => handleUpdate({ genre: key })}
-                                   className={`flex items-center gap-1.5 px-3 py-2 rounded transition-all active:scale-90 touch-manipulation ${isSelectedGenre ? 'bg-mist text-accent border border-accent ' : 'text-muted hover:text-ink hover:bg-mist active:bg-mist'}`}
+                                   aria-pressed={isSelectedGenre}
+                                   title={info.label}
+                                   className={`flex items-center justify-center gap-1.5 min-w-[44px] h-11 px-2.5 border-[1.5px] ${isSelectedGenre ? 'bg-ink text-white border-ink' : 'bg-white text-muted border-line active:bg-mist'}`}
                                  >
                                     <Icon size={16} />
                                     {isSelectedGenre && <span className="text-[10px] font-black uppercase tracking-widest">{info.label}</span>}
@@ -401,15 +406,17 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                                   <div className="flex items-center gap-2">
                                      <button 
                                        type="button"
+                                       aria-label="閲覧回数を減らす"
                                        onClick={() => handleUpdate({ views: Math.max(0, views - 1) })}
-                                       className="w-10 h-10 bg-mist rounded border border-line text-ink active:bg-mist active:scale-90 transition-all font-bold"
-                                     >-</button>
+                                       className="w-11 h-11 flex items-center justify-center bg-white border-2 border-ink text-ink active:bg-ink active:text-white"
+                                     ><Minus size={16} strokeWidth={3} /></button>
                                      <span className="font-mono font-black text-2xl w-12 text-center">{views}</span>
                                      <button 
                                        type="button"
+                                       aria-label="閲覧回数を増やす"
                                        onClick={() => handleUpdate({ views: views + 1 })}
-                                       className="w-10 h-10 bg-mist rounded border border-line text-ink active:bg-mist active:scale-90 transition-all font-bold"
-                                     >+</button>
+                                       className="w-11 h-11 flex items-center justify-center bg-white border-2 border-ink text-ink active:bg-ink active:text-white"
+                                     ><Plus size={16} strokeWidth={3} /></button>
                                   </div>
                                ) : (
                                   <p className="text-3xl font-black text-ink font-mono text-center">{views.toLocaleString()}回</p>
@@ -543,9 +550,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
                           <button 
                             type="button"
                             onClick={handleCopy}
-                            className="text-[10px] text-accent hover:text-accent font-black uppercase tracking-[0.3em] flex items-center gap-2 transition-colors active:scale-95 px-3 py-2 -mr-3 -my-2"
+                            className="text-[12px] text-ink font-black flex items-center gap-1.5 min-h-[44px] px-3 border-2 border-ink active:bg-ink active:text-white"
                           >
-                             <Copy size={12} /> コピー
+                             <Copy size={14} /> コピー
                           </button>
                        </div>
                       {isGlobalEditMode ? (

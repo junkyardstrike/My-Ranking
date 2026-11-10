@@ -15,7 +15,7 @@ function DroppableBreadcrumbItem({ folder, index, isLast }) {
       {index > 0 && <ChevronRight className="w-4 h-4 text-muted flex-shrink-0" />}
       <Link 
         to={folder ? `/folder/${folder.id}` : "/"} 
-        className={`p-1.5 transition-all rounded-md flex items-center ${
+        className={`px-1.5 min-h-[44px] flex items-center ${
           isOver 
             ? 'bg-accent text-ink scale-110 relative z-10' 
             : 'hover:text-ink hover:bg-surface-light text-muted'

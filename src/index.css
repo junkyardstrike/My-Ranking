@@ -51,7 +51,7 @@
   .fes-pass::before { content: ""; @apply absolute left-1/2 top-2.5 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white; }
 
   /* 太枠ボタン */
-  .fes-btn { @apply inline-flex items-center gap-1.5 border-2 border-ink bg-white px-3 py-1.5 text-[11px] font-black text-ink transition-colors active:bg-ink active:text-white; }
+  .fes-btn { @apply inline-flex items-center justify-center gap-1.5 border-2 border-ink bg-white px-3 min-h-[44px] text-[12px] font-black text-ink transition-colors active:bg-ink active:text-white; }
 
   /* セクション（太い上罫線＋英字見出し） */
   .fes-section { @apply border-t-[3px] border-ink pt-3; }

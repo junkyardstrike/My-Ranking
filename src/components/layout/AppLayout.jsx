@@ -13,7 +13,7 @@ function Toggle({ label, shortLabel, on, onClick, color }) {
       type="button"
       onClick={onClick}
       aria-pressed={on}
-      className="flex items-center gap-1.5 py-1.5 px-1.5 sm:px-2 active:bg-mist"
+      className="flex items-center gap-1.5 h-11 px-1.5 sm:px-2 active:bg-mist"
     >
       <span className={`text-[10px] font-black ${on ? 'text-ink' : 'text-muted'}`}>
         {shortLabel ? (<><span className="hidden xs:inline">{label}</span><span className="xs:hidden">{shortLabel}</span></>) : label}
