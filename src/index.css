@@ -17,6 +17,10 @@
   input, textarea, select {
     font-family: inherit;
     font-size: 16px !important;
+    /* iOS Safari では親の user-select:none（ボタン・label に付けている）が入力欄にも効いて、
+       文字が入力できなくなることがあるため、入力欄は明示的に選択可能にする */
+    -webkit-user-select: text;
+    user-select: text;
     /* iOS Safari では入力欄の最小幅が「文字数×平均文字幅」で決まり、日本語フォントだと枠より広くなって
        カードの右端（検索ボタンなど）が画面外にはみ出す。枠に合わせて縮められるようにする */
     min-width: 0;

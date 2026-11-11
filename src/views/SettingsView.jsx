@@ -341,7 +341,7 @@ export default function SettingsView() {
           </div>
           <div>
             <p className="text-sm font-black text-ink tracking-widest uppercase">MASTERPIECE PWA</p>
-            <p className="text-[11px] text-muted font-medium">Premium Cinematic Experience</p>
+            <p className="text-[11px] text-muted font-bold">バージョン {__APP_VERSION__}（{new Date(__BUILD_TIME__).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })} 更新）</p>
           </div>
         </div>
       </div>

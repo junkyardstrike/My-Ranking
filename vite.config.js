@@ -2,13 +2,21 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// 設定画面に表示する版の情報（Vercel ではコミットIDが環境変数で渡される）
+const APP_VERSION = (process.env.VERCEL_GIT_COMMIT_SHA || 'dev').slice(0, 7)
+const BUILD_TIME = new Date().toISOString()
+
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
+    __BUILD_TIME__: JSON.stringify(BUILD_TIME),
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: false, // main.jsx で registerSW を呼ぶ
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'pwa-512x512.png'],
       manifest: {
         name: 'MasterPiece - Cinematic Rank Manager',
@@ -38,6 +46,10 @@ export default defineConfig({
         ]
       },
       workbox: {
+        // 新しい版を待たせずにすぐ有効にする
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
