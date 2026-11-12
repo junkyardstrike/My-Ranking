@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useDeferredValue } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import RankingList from '../components/ranking/RankingList';
@@ -23,6 +23,11 @@ export default function RankingView() {
       setIsCollapsed(false);
     }
   }, [isReorderMode]);
+
+  // スイッチ類は即座に切り替え、作品カードの作り直しは後回しにする（押した直後に画面が固まらないように）
+  const listEditMode = useDeferredValue(isEditMode);
+  const listReorderMode = useDeferredValue(isReorderMode);
+  const listCollapsed = useDeferredValue(isCollapsed);
 
   const ranking = rankings.find(r => r.id === rankingId);
 
@@ -71,8 +76,9 @@ export default function RankingView() {
 
       <RankingList 
         ranking={ranking} 
-        isCollapsed={isCollapsed} 
-        isEditMode={isEditMode}
+        isCollapsed={listCollapsed} 
+        isEditMode={listEditMode}
+        isReorderMode={listReorderMode}
         onSave={handleSave}
       />
     </div>

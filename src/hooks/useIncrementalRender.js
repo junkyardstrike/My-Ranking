@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { startTransition, useEffect, useRef, useState } from 'react';
 
 // 長いリストを最初から全部描画すると画面切り替えが重くなり、その間のタップが効かなくなる。
 // 最初は initial 件だけ描画し、末尾が近づいたら step 件ずつ追加で描画する。
-export default function useIncrementalRender(total, { initial = 30, step = 30, resetKey } = {}) {
+export default function useIncrementalRender(total, { initial = 12, step = 24, resetKey } = {}) {
   const [count, setCount] = useState(initial);
   const [prevResetKey, setPrevResetKey] = useState(resetKey);
   const sentinelRef = useRef(null);
@@ -18,7 +18,8 @@ export default function useIncrementalRender(total, { initial = 30, step = 30, r
     if (!el || count >= total) return;
     const observer = new IntersectionObserver((entries) => {
       if (entries.some(e => e.isIntersecting)) {
-        setCount(c => Math.min(total, c + step));
+        // 続きの描画は後回しにできる更新として扱い、タップなどの操作を優先させる
+        startTransition(() => setCount(c => Math.min(total, c + step)));
       }
     }, { rootMargin: '1200px 0px' });
     observer.observe(el);

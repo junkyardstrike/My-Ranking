@@ -241,7 +241,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
         <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar pb-[env(safe-area-inset-bottom)]">
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
-             {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
+             {imageBase64 ? <img loading="lazy" decoding="async" src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
                    <label 

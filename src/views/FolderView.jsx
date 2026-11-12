@@ -235,7 +235,7 @@ function SortableFolder({ folder, folders, rankings }) {
 
       {coverImage && (
          <div className="absolute inset-0 z-0 transition-all duration-700">
-           <img src={coverImage} alt="" className="w-full h-full object-cover opacity-45" />
+           <img loading="lazy" decoding="async" src={coverImage} alt="" className="w-full h-full object-cover opacity-45" />
            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
          </div>
       )}
@@ -318,7 +318,7 @@ function SortableRanking({ ranking }) {
         {ranking.coverImageBase64 ? (
            <>
              <div className="absolute inset-0 z-0 transition-all duration-700">
-               <img src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover opacity-45" />
+               <img loading="lazy" decoding="async" src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover opacity-45" />
                <div className="absolute inset-0 bg-gradient-to-t from-teal via-teal/40 to-transparent" />
              </div>
            </>
@@ -474,8 +474,8 @@ export default function FolderView() {
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {childFolders.map((folder, idx) => (
-                    <div key={folder.id} className="premium-item-animate" style={{ animationDelay: `${Math.min(idx, 12) * 60}ms` }}>
+                  {childFolders.map((folder) => (
+                    <div key={folder.id}>
                       <SortableFolder folder={folder} folders={folders} rankings={rankings} />
                     </div>
                   ))}
@@ -493,8 +493,8 @@ export default function FolderView() {
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                  {childRankings.map((ranking, idx) => (
-                    <div key={ranking.id} className="premium-item-animate" style={{ animationDelay: `${Math.min(childFolders.length + idx, 12) * 60}ms` }}>
+                  {childRankings.map((ranking) => (
+                    <div key={ranking.id}>
                       <SortableRanking ranking={ranking} />
                     </div>
                   ))}

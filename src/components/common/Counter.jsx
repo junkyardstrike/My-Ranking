@@ -1,31 +1,5 @@
-import { useState, useEffect } from 'react';
-
-export default function Counter({ value, duration = 1000 }) {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = parseInt(value);
-    if (start === end) {
-      setCount(end);
-      return;
-    }
-
-    let totalMiliseconds = duration;
-    let incrementTime = (totalMiliseconds / end) > 10 ? (totalMiliseconds / end) : 10;
-    
-    let timer = setInterval(() => {
-      start += Math.ceil(end / (duration / incrementTime));
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, incrementTime);
-
-    return () => clearInterval(timer);
-  }, [value, duration]);
-
-  return <span>{count.toLocaleString()}</span>;
+// 数値の表示。以前は 0 から1秒かけて数え上げていたが、画面切り替えが遅く感じる原因になるため即時表示にした
+export default function Counter({ value }) {
+  const n = parseInt(value) || 0;
+  return <span>{n.toLocaleString()}</span>;
 }

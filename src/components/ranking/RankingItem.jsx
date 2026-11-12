@@ -425,7 +425,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
 
             {/* Image Row */}
             <div className="relative w-full aspect-video overflow-hidden border border-line bg-mist" onClick={e => e.stopPropagation()}>
-               {imageBase64 ? <img src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-muted gap-2"><ImageIcon className="w-8 h-8 opacity-40" /><span className="text-[10px] font-black">NO IMAGE</span></div>}
+               {imageBase64 ? <img loading="lazy" decoding="async" src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex flex-col items-center justify-center text-muted gap-2"><ImageIcon className="w-8 h-8 opacity-40" /><span className="text-[10px] font-black">NO IMAGE</span></div>}
                <label className="absolute right-2 bottom-2 min-h-[44px] px-4 flex items-center gap-1.5 bg-ink text-white text-[12px] font-black cursor-pointer active:bg-teal">
                   <ImageIcon className="w-4 h-4" />画像を変更
                   <input type="file" accept="image/*" className="sr-only" onChange={handleImageUpload} />
@@ -468,7 +468,7 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
                   )}
                 </div>
                 {!localIsCollapsed && imageBase64 && (
-                  <img src={imageBase64} alt="" className="flex-shrink-0 w-[72px] h-[48px] object-cover" />
+                  <img loading="lazy" decoding="async" src={imageBase64} alt="" className="flex-shrink-0 w-[72px] h-[48px] object-cover" />
                 )}
                 {dragHandleProps && !isEditMode && (
                   <div

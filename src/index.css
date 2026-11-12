@@ -72,22 +72,3 @@
 ::-webkit-scrollbar-thumb { background: #b9cfcc; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #0a7a6f; }
 
-.premium-item-animate {
-  animation: premiumEntry 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* filter: blur を使うと要素ごとに重い再描画が走りタップ応答が遅れるため transform/opacity のみ */
-@keyframes premiumEntry {
-  0% {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .premium-item-animate { animation: none; }
-}

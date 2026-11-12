@@ -3,10 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import PixelWalker from '../components/common/PixelWalker';
 import { 
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid
-} from 'recharts';
-import { 
   PieChart as PieIcon, 
   BarChart3, 
   Trophy, 
@@ -198,6 +194,17 @@ export default function StatsView() {
   if (!stats) return null;
 
   const maxBin = Math.max(...stats.scoreBins.map(b => b.count), 1);
+  // 各ジャンルの割合を円周の角度に変換（境目に白い隙間を入れる）
+  const donutGradient = (() => {
+    const total = stats.genreData.reduce((sum, g) => sum + g.value, 0);
+    if (!total) return '#d5e3e1';
+    let acc = 0;
+    const gap = stats.genreData.length > 1 ? 1.5 : 0;
+    return 'conic-gradient(' + stats.genreData.map(g => {
+      const start = acc; acc += (g.value / total) * 360;
+      return `${g.color} ${start}deg ${Math.max(start, acc - gap)}deg, #fff ${Math.max(start, acc - gap)}deg ${acc}deg`;
+    }).join(', ') + ')';
+  })();
   const dd = (g) => getDefaultDuration(g, settings);
 
   return (
@@ -245,7 +252,7 @@ export default function StatsView() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {stats.lifetimeStats.genreLifetime.map(g => (
             <div key={g.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[86px] flex flex-col justify-between" style={{ borderColor: g.color }}>
-              {g.bgImage && <img src={g.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              {g.bgImage && <img loading="lazy" decoding="async" src={g.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
               <div className="relative flex items-start justify-between gap-1">
                 <div className="min-w-0">
                   <p className="text-[13px] font-black truncate">{g.name}</p>
@@ -284,7 +291,7 @@ export default function StatsView() {
                 onClick={() => setSelectedHallItem(item)}
                 className="relative overflow-hidden bg-ink text-white text-left p-3 min-h-[120px] flex flex-col justify-between active:opacity-80"
               >
-                {item.imageBase64 && <img src={item.imageBase64} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />}
+                {item.imageBase64 && <img loading="lazy" decoding="async" src={item.imageBase64} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />}
                 <span className="relative">
                   <span className="block text-[9px] font-black tracking-[0.15em] text-sun">RATING</span>
                   <span className="font-fes text-[34px] leading-none text-sun">{item.rating}</span><span className="font-fes text-xs text-sun ml-0.5">PT</span>
@@ -312,14 +319,14 @@ export default function StatsView() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* ジャンル別比率 */}
         <Section en="GENRE RATIO" ja="ジャンル別比率">
-          <div className="h-40 relative pointer-events-none">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={stats.genreData} cx="50%" cy="50%" innerRadius={50} outerRadius={68} paddingAngle={2} dataKey="value" stroke="none" isAnimationActive={false}>
-                  {stats.genreData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
+          {/* ドーナツグラフ（グラフ用ライブラリを使わず CSS の円錐グラデーションで描く。描画が軽く、画面切替が速い） */}
+          <div className="h-40 relative pointer-events-none flex items-center justify-center">
+            <div
+              className="w-[136px] h-[136px] rounded-full"
+              style={{ background: donutGradient, WebkitMask: 'radial-gradient(circle, transparent 50px, #000 51px)', mask: 'radial-gradient(circle, transparent 50px, #000 51px)' }}
+              role="img"
+              aria-label={`ジャンル別比率：${stats.genreData.map(g => `${g.name}${g.value}作品`).join('、')}`}
+            />
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-[10px] font-black text-muted">合計</span>
               <span className="font-fes text-[28px] leading-none"><Counter value={stats.totalCount} /></span>
@@ -361,7 +368,7 @@ export default function StatsView() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {stats.genreAverages.map((genre) => (
             <div key={genre.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[96px] flex flex-col justify-between" style={{ borderColor: genre.color }}>
-              {genre.bgImage && <img src={genre.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              {genre.bgImage && <img loading="lazy" decoding="async" src={genre.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
               <div className="relative flex items-start justify-between gap-1">
                 <span className="font-fes text-[9px] text-muted">{genre.id.toUpperCase()}</span>
                 <span className="text-right text-[10px] font-bold text-muted leading-tight">COUNT<br /><span className="font-fes text-[12px] text-ink">{genre.count}</span>{GENRE_UNITS[genre.id] || '作品'}</span>
@@ -381,7 +388,7 @@ export default function StatsView() {
           <div className="relative bg-white w-full max-w-lg overflow-hidden border-2 border-ink">
             <div className="relative aspect-video w-full bg-ink">
               {selectedHallItem.imageBase64 ? (
-                <img src={selectedHallItem.imageBase64} alt="" className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={selectedHallItem.imageBase64} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><Trophy className="w-16 h-16 text-sun" /></div>
               )}

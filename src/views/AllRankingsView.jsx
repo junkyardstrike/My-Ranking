@@ -1,5 +1,5 @@
 import { useStore } from '../store/useStore';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useDeferredValue } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
@@ -90,8 +90,14 @@ export default function AllRankingsView() {
   }, [allItems, searchQuery, selectedGenre]);
 
   const isActuallyCollapsed = isCollapsed;
+  // スイッチ類は即座に切り替え、作品カードの作り直しは後回しにする（押した直後に画面が固まらないように）
+  const listEditMode = useDeferredValue(isEditMode);
+  const listReorderMode = useDeferredValue(isReorderMode);
+  const listCollapsed = useDeferredValue(isActuallyCollapsed);
+  // 編集用カードは重いので、最初に描く枚数を少なくする
   const [renderCount, sentinelRef] = useIncrementalRender(filteredItems.length, {
-    resetKey: `${searchQuery}|${selectedGenre}`,
+    initial: listEditMode ? 6 : 12,
+    resetKey: `${searchQuery}|${selectedGenre}|${listEditMode}`,
   });
 
   const handleUpdate = (id, updates) => {
@@ -205,18 +211,16 @@ export default function AllRankingsView() {
           <p className="text-xs text-muted font-bold">条件に一致するレコードがアーカイブにありません</p>
         </div>
       ) : (
-        <div className={isActuallyCollapsed ? 'space-y-1.5' : 'space-y-3'}>
-          {filteredItems.slice(0, renderCount).map((item, idx) => (
+        <div className={listCollapsed ? 'space-y-1.5' : 'space-y-3'}>
+          {filteredItems.slice(0, renderCount).map((item) => (
             <div 
-              key={item.id} 
-              className="premium-item-animate"
-              style={{ animationDelay: `${Math.min(idx, 12) * 40}ms` }}
+              key={item.id}
             >
               <RankingItem 
                 item={item} 
-                isEditMode={isEditMode} 
-                isReorderMode={isReorderMode}
-                isCollapsed={isActuallyCollapsed}
+                isEditMode={listEditMode} 
+                isReorderMode={listReorderMode}
+                isCollapsed={listCollapsed}
                 onUpdate={handleUpdate}
                 onMove={handleMove}
                 genre={item.genre || 'music'}

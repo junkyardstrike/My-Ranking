@@ -24,13 +24,36 @@ const loadData = async (key, defaultValue) => {
   }
 };
 
-const saveData = async (key, value) => {
+const saveDataNow = async (key, value) => {
   try {
     await localforage.setItem(key, value);
   } catch (err) {
     console.error('Error saving data', err);
   }
 };
+
+// 保存はまとめて少し遅らせる。画像を含む全データを操作のたびに保存すると、
+// 閲覧回数の＋などを押すたびに画面が一瞬固まり、反応が遅く感じるため。
+const SAVE_DELAY_MS = 200;
+const pendingSaves = new Map();
+let saveTimer = null;
+const flushSaves = () => {
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  const entries = [...pendingSaves.entries()];
+  pendingSaves.clear();
+  return Promise.all(entries.map(([key, value]) => saveDataNow(key, value)));
+};
+const saveData = (key, value) => {
+  pendingSaves.set(key, value);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushSaves, SAVE_DELAY_MS);
+};
+// アプリを閉じる・別のアプリに切り替える時は、待たずにすぐ保存する
+if (typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSaves(); });
+  window.addEventListener('pagehide', flushSaves);
+}
 
 // getAllItems() が表示用に付与する項目は保存データに混ぜない
 const stripDerivedFields = (item) => {
@@ -283,21 +306,24 @@ export const useStore = create((set, get) => ({
   updateItem: (itemId, updates) => {
     set(state => {
       // Update in rankings
-      const newRankings = state.rankings.map(r => ({
-        ...r,
-        items: r.items.map(item => item.id === itemId ? { ...item, ...updates } : item)
-      }));
+      const newRankings = state.rankings.map(r => (
+        r.items.some(item => item.id === itemId)
+          ? { ...r, items: r.items.map(item => item.id === itemId ? { ...item, ...updates } : item) }
+          : r
+      ));
 
       // Update in unrankedItems
       const newUnrankedItems = state.unrankedItems.map(item => 
         item.id === itemId ? { ...item, ...updates } : item
       );
 
-      // Save both
-      saveData('rankings', newRankings);
-      saveData('unrankedItems', newUnrankedItems);
-
-      return { rankings: newRankings, unrankedItems: newUnrankedItems };
+      // 変わった方だけ保存し、変わっていない方は同じ配列を返して再描画も避ける
+      const rankingsChanged = state.rankings.some(r => r.items.some(item => item.id === itemId));
+      const unrankedChanged = state.unrankedItems.some(item => item.id === itemId);
+      const next = {};
+      if (rankingsChanged) { saveData('rankings', newRankings); next.rankings = newRankings; }
+      if (unrankedChanged) { saveData('unrankedItems', newUnrankedItems); next.unrankedItems = newUnrankedItems; }
+      return next;
     });
   },
 
@@ -497,14 +523,18 @@ export const useStore = create((set, get) => ({
     if (settings) updateObj.settings = settings;
     
     set(updateObj);
-    await saveData('rankings', rankings);
-    await saveData('folders', folders);
-    await saveData('unrankedItems', unrankedItems);
-    if (settings) await saveData('settings', settings);
+    pendingSaves.clear();
+    await saveDataNow('rankings', rankings);
+    await saveDataNow('folders', folders);
+    await saveDataNow('unrankedItems', unrankedItems);
+    if (settings) await saveDataNow('settings', settings);
     return true;
   },
 
   clearData: async () => {
+    // 保存待ちのデータが消去後に書き戻されないよう破棄する
+    pendingSaves.clear();
+    clearTimeout(saveTimer);
     await localforage.clear();
     set({ 
       rankings: [], 

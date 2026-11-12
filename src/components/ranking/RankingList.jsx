@@ -62,8 +62,7 @@ function SortableItem({ item, isEditMode, isReorderMode, isCollapsed, rankingId,
   );
 }
 
-export default function RankingList({ ranking, isCollapsed: propIsCollapsed = false, isEditMode = false, onSave }) {
-  const isReorderMode = useStore(state => state.isReorderMode);
+export default function RankingList({ ranking, isCollapsed: propIsCollapsed = false, isEditMode = false, isReorderMode = false, onSave }) {
   const updateItem = useStore(state => state.updateItem);
   // 常にストアの最新データを使う（ローカルコピーを持つと、順位履歴などが古い内容で上書きされるため）
   const items = ranking.items;
@@ -119,7 +118,9 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
 
   const isActuallyCollapsed = propIsCollapsed;
   const visibleItems = items.filter(item => item.title || item.imageBase64 || isEditMode);
+  // 編集用カードは重いので、最初に描く枚数を少なくする
   const [renderCount, sentinelRef, ensureRendered] = useIncrementalRender(visibleItems.length, {
+    initial: isEditMode ? 6 : 12,
     resetKey: `${ranking.id}|${isEditMode}`,
   });
   ensureRenderedRef.current = ensureRendered;
@@ -140,11 +141,9 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
       <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
         <SortableContext items={renderedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
           <div className={`space-y-1 ${isActuallyCollapsed ? 'space-y-1' : 'space-y-3'}`}>
-            {renderedItems.map((item, idx) => (
+            {renderedItems.map((item) => (
               <div 
                 key={item.id}
-                className="premium-item-animate"
-                style={{ animationDelay: `${Math.min(idx, 12) * 60}ms` }}
               >
                 <SortableItem 
                   item={item} 
