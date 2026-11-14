@@ -1,5 +1,5 @@
 import { useStore } from '../../store/useStore';
-import { Link, useParams } from 'react-router-dom';
+import { Link, matchPath, useLocation } from 'react-router-dom';
 import { ChevronRight, Home } from 'lucide-react';
 import { useDroppable } from '@dnd-kit/core';
 
@@ -28,7 +28,8 @@ function DroppableBreadcrumbItem({ folder, index, isLast }) {
 }
 
 export default function Breadcrumb() {
-  const { folderId } = useParams();
+  const { pathname } = useLocation();
+  const folderId = matchPath('/folder/:folderId', pathname)?.params.folderId;
   const folders = useStore(state => state.folders);
 
   // Reconstruct path

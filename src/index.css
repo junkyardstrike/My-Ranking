@@ -47,6 +47,11 @@
 }
 
 @layer components {
+  /* 画面外の要素は配置・描画の計算を後回しにする。
+     タブ切り替えで画面を表示し直す時に、画面外のカードまで全部計算して遅くなるのを防ぐ */
+  .cv-card { content-visibility: auto; contain-intrinsic-size: auto 170px; }
+  .cv-section { content-visibility: auto; contain-intrinsic-size: auto 420px; }
+
   /* 英字見出し用の書体（数字・ラベル） */
   .font-fes { font-family: 'Archivo Black', 'Zen Kaku Gothic New', sans-serif; font-weight: 400; letter-spacing: 0.01em; }
 

@@ -1,4 +1,3 @@
-import { useLocation } from 'react-router-dom';
 import { 
   DndContext, 
   closestCenter, 
@@ -67,7 +66,6 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   // 常にストアの最新データを使う（ローカルコピーを持つと、順位履歴などが古い内容で上書きされるため）
   const items = ranking.items;
   // Use location key to FORCE full re-mount on every navigation
-  const { key: locationKey } = useLocation();
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
@@ -136,7 +134,7 @@ export default function RankingList({ ranking, isCollapsed: propIsCollapsed = fa
   }
 
   return (
-    <div className="relative" key={locationKey}>
+    <div className="relative">
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
         <SortableContext items={renderedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>

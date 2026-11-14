@@ -1,24 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout';
-import FolderView from './views/FolderView';
-import RankingView from './views/RankingView';
-import AllRankingsView from './views/AllRankingsView';
-import SettingsView from './views/SettingsView';
 
-import StatsView from './views/StatsView';
-
+// 画面の出し分けは AppLayout が行う（下部タブの4画面を保持したまま表示だけ切り替えるため）
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<FolderView />} />
-          <Route path="folder/:folderId" element={<FolderView />} />
-          <Route path="ranking/:rankingId" element={<RankingView />} />
-          <Route path="all" element={<AllRankingsView />} />
-          <Route path="stats" element={<StatsView />} />
-          <Route path="settings" element={<SettingsView />} />
-        </Route>
+        <Route path="/*" element={<AppLayout />} />
       </Routes>
     </BrowserRouter>
   );

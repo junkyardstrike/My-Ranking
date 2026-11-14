@@ -1,5 +1,5 @@
 import { useStore } from '../store/useStore';
-import { useState, useMemo, useEffect, useDeferredValue } from 'react';
+import { useState, useMemo, useEffect, useDeferredValue, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import RankingItem from '../components/ranking/RankingItem';
 import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
@@ -20,7 +20,6 @@ const GENRE_FILTERS = [
 export default function AllRankingsView() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { key: locationKey } = location;
   const isEditMode = useStore(state => state.isEditMode);
   const updateItem = useStore(state => state.updateItem);
   const moveItemToRank = useStore(state => state.moveItemToRank);
@@ -32,6 +31,12 @@ export default function AllRankingsView() {
   const [selectedIds, setSelectedIds] = useState([]);
   const targetRankingId = location.state?.targetRankingId;
   const isSelectMode = location.state?.mode === 'select';
+  // この画面はタブを切り替えても保持されるため、追加先のランキングが変わったら選択をリセットする
+  const [selectionTarget, setSelectionTarget] = useState(targetRankingId);
+  if (selectionTarget !== targetRankingId) {
+    setSelectionTarget(targetRankingId);
+    setSelectedIds([]);
+  }
   
   const allItems = useMemo(() => getAllItems(), [rankings, unrankedItems, getAllItems]);
   
@@ -100,24 +105,25 @@ export default function AllRankingsView() {
     resetKey: `${searchQuery}|${selectedGenre}|${listEditMode}`,
   });
 
-  const handleUpdate = (id, updates) => {
+  // 作品カードは memo 化しているので、渡す関数は固定する（毎回作り直すと全カードが描き直される）
+  const handleUpdate = useCallback((id, updates) => {
     updateItem(id, updates);
     setHasChanges(true);
-  };
+  }, [updateItem]);
 
-  const handleMove = (id, targetRank) => {
+  const handleMove = useCallback((id, targetRank) => {
     const item = allItems.find(i => i.id === id);
     if (item && item.rankingId) {
       moveItemToRank(item.rankingId, id, targetRank);
       setHasChanges(true);
     }
-  };
+  }, [allItems, moveItemToRank]);
 
-  const handleToggleSelect = (id) => {
+  const handleToggleSelect = useCallback((id) => {
     setSelectedIds(prev => 
       prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
     );
-  };
+  }, []);
 
   const handleBulkAdd = () => {
     if (selectedIds.length === 0 || !targetRankingId) return;
@@ -138,7 +144,7 @@ export default function AllRankingsView() {
   };
 
   return (
-    <div className="pt-1 pb-32 grid grid-cols-[minmax(0,1fr)] gap-4" key={locationKey}>
+    <div className="pt-1 pb-32 grid grid-cols-[minmax(0,1fr)] gap-4">
       <div className="fes-pass">
         <p className="font-fes text-[11px] tracking-[0.04em] opacity-90">ARCHIVE PASS</p>
         <h1 className="font-fes text-[28px] leading-tight mt-0.5">Records</h1>

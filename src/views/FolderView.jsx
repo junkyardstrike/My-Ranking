@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { Folder, ListOrdered, GripVertical, Image as ImageIcon, Trash2, Edit2, ArrowLeft } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -213,7 +213,7 @@ function SortableFolder({ folder, folders, rankings }) {
     <div 
       ref={setNodeRef}
       style={style}
-      className={`group relative overflow-hidden bg-ink text-white flex flex-col justify-end h-28 w-full ${
+      className={`group relative overflow-hidden bg-ink text-white flex flex-col justify-end h-28 w-full [content-visibility:auto] [contain-intrinsic-size:auto_112px] ${
         isDragging ? 'z-50 ring-4 ring-coral' :
         ''
       }`}
@@ -374,7 +374,6 @@ function SortableRanking({ ranking }) {
 export default function FolderView() {
   const { folderId } = useParams();
   const navigate = useNavigate();
-  const { key: locationKey } = useLocation();
   
   const folders = useStore(state => state.folders);
   const rankings = useStore(state => state.rankings);
@@ -433,7 +432,7 @@ export default function FolderView() {
 
   return (
     <>
-      <div className="flex flex-col gap-4 pb-20 pt-1" key={locationKey}>
+      <div className="flex flex-col gap-4 pb-20 pt-1">
         {!isRoot && (
           <div>
             <button

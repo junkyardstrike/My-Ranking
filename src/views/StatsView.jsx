@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import PixelWalker from '../components/common/PixelWalker';
 import { 
@@ -57,7 +56,7 @@ const GENRE_COLORS = {
 
 function Section({ en, ja, children, className = '' }) {
   return (
-    <section className={`fes-section grid gap-3 ${className}`}>
+    <section className={`cv-section fes-section grid gap-3 ${className}`}>
       <h2 className="fes-h">{en}<small>{ja}</small></h2>
       {children}
     </section>
@@ -70,14 +69,9 @@ export default function StatsView() {
   const unrankedItems = useStore(state => state.unrankedItems);
   const settings = useStore(state => state.settings);
   
-  const location = useLocation();
   const [isHallOfFameExpanded, setIsHallOfFameExpanded] = useState(false);
   const [selectedHallItem, setSelectedHallItem] = useState(null);
 
-  // Reset expanded state on tab mount
-  useEffect(() => {
-    setIsHallOfFameExpanded(false);
-  }, [location.pathname]);
 
   // Lock scroll when modal is open
   useEffect(() => {

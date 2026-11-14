@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 import { useStore, getItemIndex } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, AlignLeft, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, MoreHorizontal, ChevronRight, ChevronDown, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import RankingItemDetailModal from './RankingItemDetailModal';
@@ -48,6 +48,8 @@ const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
 function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, onMove, genre: propGenre, isCollapsed: propIsCollapsed = false, rankingId, isReorderMode = false, isSelectable = false, isSelectedForBulk = false, onToggleSelect = null }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  // 順位変更後に移動先へスクロールするためのカード要素（タブの画面を保持しているので ID 検索だと非表示側を掴むことがある）
+  const cardRef = useRef(null);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchStatus, setFetchStatus] = useState(null);
   const [localIsCollapsed, setLocalIsCollapsed] = useState(propIsCollapsed);
@@ -204,15 +206,13 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
       onMove(id, newRank);
       // Follow the item to its new position after a short delay for store/DOM update
       setTimeout(() => {
-        const element = document.getElementById(`ranking-item-${id}`);
+        const element = cardRef.current;
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          // Brief flash effect
-          element.style.ringWidth = '4px';
-          element.style.ringColor = '#D4AF37';
-          element.classList.add('ring-4', 'ring-accent/50');
+          // 移動先を一瞬強調する
+          element.classList.add('ring-4', 'ring-coral');
           setTimeout(() => {
-            element.classList.remove('ring-4', 'ring-accent/50');
+            element.classList.remove('ring-4', 'ring-coral');
           }, 1000);
         }
       }, 100);
@@ -224,8 +224,9 @@ function RankingItem({ item: propItem, isEditMode, dragHandleProps, onUpdate, on
   return (
     <>
       <div 
-        id={`ranking-item-${id}`}
-        className={`relative flex flex-col cursor-pointer transition-colors duration-150 ${isEditMode ? 'border-2 border-ink bg-white' : 'select-none border-t-[3px] border-ink bg-white pt-2.5 pb-1 active:bg-mist'}`}
+        ref={cardRef}
+        data-item-id={id}
+        className={`cv-card relative flex flex-col cursor-pointer transition-colors duration-150 ${isEditMode ? 'border-2 border-ink bg-white' : 'select-none border-t-[3px] border-ink bg-white pt-2.5 pb-1 active:bg-mist'}`}
         onClick={(e) => {
           if (isReorderMode && dragHandleProps) return;
           // ポータル内(詳細モーダル)からバブリングしてきたクリックは無視
