@@ -1,20 +1,20 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore';
+import { Link, navigate } from '../lib/router';
+import Img from '../components/common/Img';
+import { saveImage } from '../lib/images';
+import { compressImageFile } from '../utils/imageFile';
 import { Folder, ListOrdered, GripVertical, Image as ImageIcon, Trash2, Edit2, ArrowLeft } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { 
-  DndContext, 
-  closestCenter, 
-  PointerSensor, 
-  useSensor, 
-  useSensors, 
-  DragOverlay 
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core';
 import { 
-  arrayMove, 
-  SortableContext, 
-  verticalListSortingStrategy,
+  SortableContext,
   rectSortingStrategy,
   useSortable
 } from '@dnd-kit/sortable';
@@ -27,12 +27,13 @@ function ActionButtons({ id, name, type }) {
   const deleteRanking = useStore(state => state.deleteRanking);
   const folders = useStore(state => state.folders);
   const rankings = useStore(state => state.rankings);
+  const items = useStore(state => state.items);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // 削除対象に含まれる作品数（フォルダの場合は配下すべて）
   const itemCount = type === 'folder'
-    ? getRecursiveItemCount(id, folders, rankings)
-    : (rankings.find(r => r.id === id)?.items || []).filter(i => i.title).length;
+    ? getRecursiveItemCount(id, folders, rankings, items)
+    : (rankings.find(r => r.id === id)?.itemIds || []).filter(i => items[i]?.title).length;
 
   const runDelete = (keepItems) => {
     if (type === 'folder') deleteFolder(id, { keepItems });
@@ -131,47 +132,34 @@ function ActionButtons({ id, name, type }) {
   );
 }
 
-const getFolderCoverImage = (folder, rankings) => {
-  if (folder.coverImageBase64) return folder.coverImageBase64;
-  
+// フォルダの表紙：設定した画像、無ければ最初のランキングの1位の画像、無ければ中の作品の画像
+const getFolderCoverImage = (folder, rankings, items) => {
+  if (folder.cover) return folder.cover;
   const folderRankings = rankings.filter(r => r.folderId === folder.id);
-  
-  if (folderRankings.length > 0) {
-    const oldestRanking = folderRankings[0];
-    const rank1Item = oldestRanking.items?.find(item => item.currentRank === 1);
-    if (rank1Item && rank1Item.imageBase64) {
-      return rank1Item.imageBase64;
-    }
+  const first = folderRankings[0];
+  if (first) {
+    const rank1 = items[first.itemIds[0]];
+    if (rank1?.img) return rank1.img;
   }
-
   for (const ranking of folderRankings) {
-    const anyItem = ranking.items?.find(item => item.imageBase64);
-    if (anyItem && anyItem.imageBase64) {
-      return anyItem.imageBase64;
-    }
+    const id = ranking.itemIds.find(i => items[i]?.img);
+    if (id) return items[id].img;
   }
-
   return null;
 };
 
-const getRecursiveItemCount = (folderId, allFolders, allRankings) => {
+const getRecursiveItemCount = (folderId, allFolders, allRankings, items) => {
   let count = 0;
-  
-  const folderRankings = allRankings.filter(r => r.folderId === folderId);
-  folderRankings.forEach(r => {
-    const validItems = (r.items || []).filter(item => item.title?.trim() || item.imageBase64);
-    count += validItems.length;
+  allRankings.forEach(r => {
+    if (r.folderId === folderId) count += r.itemIds.filter(id => items[id]?.title?.trim() || items[id]?.img).length;
   });
-  
-  const subFolders = allFolders.filter(f => f.parentId === folderId);
-  subFolders.forEach(sf => {
-    count += getRecursiveItemCount(sf.id, allFolders, allRankings);
+  allFolders.forEach(sf => {
+    if (sf.parentId === folderId) count += getRecursiveItemCount(sf.id, allFolders, allRankings, items);
   });
-  
   return count;
 };
 
-function SortableFolder({ folder, folders, rankings }) {
+const SortableFolder = memo(function SortableFolder({ folder, totalItems, coverImage }) {
   const isEditMode = useStore(state => state.isEditMode);
   const isReorderMode = useStore(state => state.isReorderMode);
   const updateFolder = useStore(state => state.updateFolder);
@@ -188,19 +176,10 @@ function SortableFolder({ folder, folders, rankings }) {
     disabled: !isReorderMode
   });
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        updateFolder(folder.id, { coverImageBase64: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) updateFolder(folder.id, { cover: saveImage(await compressImageFile(file, 1200, 0.8)) });
   };
-
-  const totalItems = getRecursiveItemCount(folder.id, folders, rankings);
-  const coverImage = getFolderCoverImage(folder, rankings);
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -235,7 +214,7 @@ function SortableFolder({ folder, folders, rankings }) {
 
       {coverImage && (
          <div className="absolute inset-0 z-0 transition-all duration-700">
-           <img loading="lazy" decoding="async" src={coverImage} alt="" className="w-full h-full object-cover opacity-45" />
+           <Img k={coverImage} className="w-full h-full object-cover opacity-45" />
            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
          </div>
       )}
@@ -273,9 +252,9 @@ function SortableFolder({ folder, folders, rankings }) {
       )}
     </div>
   );
-}
+});
 
-function SortableRanking({ ranking }) {
+const SortableRanking = memo(function SortableRanking({ ranking }) {
   const isEditMode = useStore(state => state.isEditMode);
   const isReorderMode = useStore(state => state.isReorderMode);
   const updateRanking = useStore(state => state.updateRanking);
@@ -299,15 +278,9 @@ function SortableRanking({ ranking }) {
     opacity: isDragging ? 0.6 : 1,
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        updateRanking(ranking.id, { coverImageBase64: reader.result });
-      };
-      reader.readAsDataURL(file);
-    }
+    if (file) updateRanking(ranking.id, { cover: saveImage(await compressImageFile(file, 1200, 0.8)) });
   };
 
   return (
@@ -315,10 +288,10 @@ function SortableRanking({ ranking }) {
       <div className={`group relative bg-teal text-white h-28 overflow-hidden flex flex-col justify-end ${isDragging ? 'ring-4 ring-coral' : ''}`}>
         <Link to={`/ranking/${ranking.id}`} className="absolute inset-0 z-10" />
 
-        {ranking.coverImageBase64 ? (
+        {ranking.cover ? (
            <>
              <div className="absolute inset-0 z-0 transition-all duration-700">
-               <img loading="lazy" decoding="async" src={ranking.coverImageBase64} alt="" className="w-full h-full object-cover opacity-45" />
+               <Img k={ranking.cover} className="w-full h-full object-cover opacity-45" />
                <div className="absolute inset-0 bg-gradient-to-t from-teal via-teal/40 to-transparent" />
              </div>
            </>
@@ -369,25 +342,17 @@ function SortableRanking({ ranking }) {
       </div>
     </div>
   );
-}
+});
 
-export default function FolderView() {
-  const { folderId } = useParams();
-  const navigate = useNavigate();
-  
+export default function FolderView({ folderId }) {
   const folders = useStore(state => state.folders);
   const rankings = useStore(state => state.rankings);
-  const setFolders = useStore(state => state.setFolders);
-  const setRankings = useStore(state => state.setRankings);
-  const isReorderMode = useStore(state => state.isReorderMode);
-  const setCurrentFolderId = useStore(state => state.setCurrentFolderId);
+  const items = useStore(state => state.items);
+  const reorderFolders = useStore(state => state.reorderFolders);
+  const reorderRankings = useStore(state => state.reorderRankings);
 
   const currentFolderId = folderId || null;
   const isRoot = currentFolderId === null;
-  
-  useEffect(() => {
-    setCurrentFolderId(currentFolderId);
-  }, [currentFolderId, setCurrentFolderId]);
 
   const childFolders = useMemo(() => folders.filter(f => f.parentId === currentFolderId), [folders, currentFolderId]);
   const childRankings = useMemo(() => rankings.filter(r => r.folderId === currentFolderId), [rankings, currentFolderId]);
@@ -395,9 +360,9 @@ export default function FolderView() {
 
   useEffect(() => {
     if (!isRoot && currentFolderId && !currentFolder) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
-  }, [isRoot, currentFolderId, currentFolder, navigate]);
+  }, [isRoot, currentFolderId, currentFolder]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -409,25 +374,8 @@ export default function FolderView() {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    // Check if we are reordering folders
-    const activeFolderIdx = folders.findIndex(f => f.id === active.id);
-    const overFolderIdx = folders.findIndex(f => f.id === over.id);
-
-    if (activeFolderIdx !== -1 && overFolderIdx !== -1) {
-      const newFolders = arrayMove(folders, activeFolderIdx, overFolderIdx);
-      setFolders(newFolders);
-      return;
-    }
-
-    // Check if we are reordering rankings
-    const activeRankingIdx = rankings.findIndex(r => r.id === active.id);
-    const overRankingIdx = rankings.findIndex(r => r.id === over.id);
-
-    if (activeRankingIdx !== -1 && overRankingIdx !== -1) {
-      const newRankings = arrayMove(rankings, activeRankingIdx, overRankingIdx);
-      setRankings(newRankings);
-      return;
-    }
+    if (folders.some(f => f.id === active.id) && folders.some(f => f.id === over.id)) reorderFolders(active.id, over.id);
+    else if (rankings.some(r => r.id === active.id) && rankings.some(r => r.id === over.id)) reorderRankings(active.id, over.id);
   };
 
   return (
@@ -475,7 +423,7 @@ export default function FolderView() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                   {childFolders.map((folder) => (
                     <div key={folder.id}>
-                      <SortableFolder folder={folder} folders={folders} rankings={rankings} />
+                      <SortableFolder folder={folder} totalItems={getRecursiveItemCount(folder.id, folders, rankings, items)} coverImage={getFolderCoverImage(folder, rankings, items)} />
                     </div>
                   ))}
                 </div>

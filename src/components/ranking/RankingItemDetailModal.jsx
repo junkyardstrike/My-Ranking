@@ -1,8 +1,12 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
-import { useStore, getItemIndex } from '../../store/useStore';
+import { useStore, getPlacement, getAllItems } from '../../store/useStore';
+import Img from '../common/Img';
+import { saveImage, deleteImages } from '../../lib/images';
+import { compressImageFile } from '../../utils/imageFile';
+import { confirmDuplicate, extractCounts } from '../../utils/genres';
 import { fetchMetadata } from '../../services/metadataFetcher';
 import { readableTitleColor } from '../../utils/colors';
 import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
@@ -16,38 +20,19 @@ const GENRE_MAP = {
   music: { label: '音楽', icon: Music },
 };
 
-const compressImage = (base64Str, maxWidth = 1000, quality = 0.7) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = base64Str;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
-      if (width > maxWidth) {
-        height = Math.round((height * maxWidth) / width);
-        width = maxWidth;
-      }
-      canvas.width = width; canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      resolve(canvas.toDataURL('image/jpeg', quality));
-    };
-  });
-};
-
-export default function RankingItemDetailModal({ item: propItem, isOpen, onClose, onUpdate, onMove, rankingId: propRankingId }) {
+export default function RankingItemDetailModal({ id, onClose }) {
   const isGlobalEditMode = useStore(state => state.isEditMode);
   const setEditMode = useStore(state => state.setEditMode);
   const rankings = useStore(state => state.rankings);
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const updateItemStore = useStore(state => state.updateItem);
-  const moveItemToRank = useStore(state => state.moveItemToRank);
   const settings = useStore(state => state.settings);
 
-  const itemFromStore = useStore(useCallback(state => getItemIndex(state).get(propItem?.id), [propItem?.id]));
-
-  const liveItem = itemFromStore || propItem;
+  const liveItem = useStore(state => state.items[id]);
+  const placement = useStore(state => getPlacement(state).get(id));
+  const rankingId = placement?.rankingId ?? null;
+  const currentRank = placement ? placement.index + 1 : undefined;
+  const rankingGenre = rankings.find(r => r.id === rankingId)?.genre;
 
   const [draftItem, setDraftItem] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
@@ -58,29 +43,27 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   // モーダルを開いた時点の編集モード。閉じたらこの状態に戻す（一覧側の編集モードを勝手にOFFにしない）
   const editModeOnOpenRef = useRef(false);
 
-  useEffect(() => {
-    if (isOpen && liveItem) {
-      setDraftItem({ ...liveItem });
-      setHasChanges(false);
-      editModeOnOpenRef.current = useStore.getState().isEditMode;
-    }
-  }, [isOpen, liveItem?.id]);
+  // 開いた時点の内容を下書きとして編集し、「変更を保存」で反映する
+  const [seenId, setSeenId] = useState(null);
+  if (liveItem && seenId !== id) {
+    setSeenId(id);
+    setDraftItem({ ...liveItem });
+    setHasChanges(false);
+  }
+  useEffect(() => { editModeOnOpenRef.current = useStore.getState().isEditMode; }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-      setIsAddingToRanking(false);
-    }
+    document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
-  }, [isOpen, liveItem?.id]);
+  }, []);
 
-  if (!isOpen || !draftItem) return null;
+  if (!draftItem) return null;
 
-  const { id, currentRank, title, author, memo, createdAt, imageBase64, views = 0, rating = 0, isSelected = false, rankingId, genre: rawGenre, isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = draftItem;
+  const { title, author, memo, createdAt, img, views = 0, rating = 0, genre: rawGenre, isBold = false, color = '#ffffff', fontSize = 20, duration, episodes = 1, volumes = 1 } = draftItem;
+  const isSelected = !!rankingId;
+  const propRankingId = null;
 
-  const genre = normalizeGenre(rawGenre);
+  const genre = normalizeGenre(rawGenre || rankingGenre);
   const { unitDuration, hasOwnDuration, viewCount: finalViewCount, totalHours: totalLifetimeHours } = getItemMetrics({ ...draftItem, genre }, settings);
   const baseDuration = hasOwnDuration ? Number(duration) : null;
 
@@ -91,11 +74,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   const handleSave = () => {
     if (!draftItem) return;
-    if (onUpdate) {
-      onUpdate(id, draftItem);
-    } else {
-      updateItemStore(id, draftItem);
-    }
+    updateItemStore(id, draftItem);
     setHasChanges(false);
     setEditMode(editModeOnOpenRef.current);
     onClose();
@@ -105,7 +84,8 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     if (!selectedRankingId) return;
     if (window.confirm(`${Math.max(1, Math.min(100, parseInt(selectedRank) || 1))}位に挿入します。よろしいですか？`)) {
       const rank = Math.max(1, Math.min(100, parseInt(selectedRank) || 1));
-      insertItemIntoRanking(selectedRankingId, liveItem, rank);
+      discardDraftImage();
+      insertItemIntoRanking(selectedRankingId, id, rank);
       setIsAddingToRanking(false);
       setEditMode(editModeOnOpenRef.current);
       onClose();
@@ -115,12 +95,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const compressed = await compressImage(reader.result);
-        handleUpdate({ imageBase64: compressed });
-      };
-      reader.readAsDataURL(file);
+      // 保存前に何度か選び直した場合、使わなくなった画像は消しておく
+      if (draftItem.img && draftItem.img !== liveItem?.img) deleteImages([draftItem.img]);
+      handleUpdate({ img: saveImage(await compressImageFile(file)) });
     }
   };
 
@@ -130,20 +107,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     try {
       const result = await fetchMetadata(draftItem.title.trim(), genre);
       if (result) {
-        const updates = { memo: result.memo, author: result.author || author };
-        
-        if (result.memo) {
-          const currentGenre = genre || 'music';
-          if (currentGenre === 'manga') {
-            const volMatch = result.memo.match(/VOLUMES:\s*全?(\d+)巻/i) || result.memo.match(/全(\d+)巻/) || result.memo.match(/(\d+)巻/);
-            if (volMatch && volMatch[1]) updates.volumes = parseInt(volMatch[1]);
-          } else if (currentGenre === 'anime' || currentGenre === 'drama') {
-            const epMatch = result.memo.match(/EPISODES:\s*(\d+)話/i) || result.memo.match(/全(\d+)話/) || result.memo.match(/(\d+)話/);
-            if (epMatch && epMatch[1]) updates.episodes = parseInt(epMatch[1]);
-          }
-        }
-        
-        handleUpdate(updates);
+        handleUpdate({ memo: result.memo, author: result.author || author, ...extractCounts(result.memo, genre) });
       }
     } catch (e) { console.error(e); }
     finally { setIsFetching(false); }
@@ -151,30 +115,9 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
   const handleTitleSync = () => {
     const newTitle = draftItem.title;
-    if (newTitle !== title && newTitle.trim() !== '') {
-      const allItems = useStore.getState().getAllItems();
-      const duplicateItems = allItems.filter(item => 
-        item.id !== id && 
-        item.title?.toLowerCase().trim() === newTitle.toLowerCase().trim()
-      );
-
-      if (duplicateItems.length > 0) {
-        const GENRE_LABELS = {
-          anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
-        };
-        
-        const duplicateDetails = duplicateItems.map(item => {
-          const gLabel = GENRE_LABELS[item.genre] || item.genre;
-          const rTitle = item.rankingTitle || 'レコード一覧';
-          return `・「${gLabel}」の「${rTitle}」`;
-        });
-        
-        const detailString = duplicateDetails.join('\n');
-        
-        if (!confirm(`【重複注意】\n「${newTitle}」は既に以下の場所に登録されています：\n\n${detailString}\n\nこのまま登録しますか？`)) {
-          handleUpdate({ title: title || '' });
-          return;
-        }
+    if (newTitle !== liveItem?.title && newTitle.trim() !== '') {
+      if (!confirmDuplicate(getAllItems(useStore.getState()), newTitle, id)) {
+        handleUpdate({ title: liveItem?.title || '' });
       }
     }
   };
@@ -185,12 +128,18 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
     alert('作品情報をコピーしました');
   };
 
+  // 保存せずに閉じる時、下書きで選んだ画像は使わないので消す
+  const discardDraftImage = () => {
+    if (draftItem.img && draftItem.img !== liveItem?.img) deleteImages([draftItem.img]);
+  };
+
   const handleClose = () => {
     if (hasChanges) {
       if (!window.confirm('変更が保存されていません。破棄して閉じますか？')) {
         return;
       }
     }
+    discardDraftImage();
     setEditMode(editModeOnOpenRef.current);
     onClose();
   };
@@ -241,7 +190,7 @@ export default function RankingItemDetailModal({ item: propItem, isOpen, onClose
 
         <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar pb-[env(safe-area-inset-bottom)]">
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
-             {imageBase64 ? <img loading="lazy" decoding="async" src={imageBase64} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
+             {img ? <Img k={img} thumb={false} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
                 <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none">
                    <label 

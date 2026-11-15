@@ -1,5 +1,6 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { useStore } from '../store/useStore';
+import { useState, useMemo, useEffect } from 'react';
+import { useStore, getAllItems } from '../store/useStore';
+import Img from '../components/common/Img';
 import PixelWalker from '../components/common/PixelWalker';
 import { 
   PieChart as PieIcon, 
@@ -64,9 +65,7 @@ function Section({ en, ja, children, className = '' }) {
 }
 
 export default function StatsView() {
-  const getAllItems = useStore(state => state.getAllItems);
-  const rankings = useStore(state => state.rankings);
-  const unrankedItems = useStore(state => state.unrankedItems);
+  const entries = useStore(getAllItems);
   const settings = useStore(state => state.settings);
   
   const [isHallOfFameExpanded, setIsHallOfFameExpanded] = useState(false);
@@ -84,7 +83,7 @@ export default function StatsView() {
   }, [selectedHallItem]);
 
   const stats = useMemo(() => {
-    const allItems = getAllItems();
+    const allItems = entries.map(e => ({ ...e.item, genre: e.genre }));
     
     // 1. Genre Distribution
     const genreCounts = {};
@@ -94,9 +93,9 @@ export default function StatsView() {
       const g = item.genre || 'other';
       genreCounts[g] = (genreCounts[g] || 0) + 1;
       
-      if (item.imageBase64) {
+      if (item.img) {
         if (!genreImages[g]) genreImages[g] = [];
-        genreImages[g].push(item.imageBase64);
+        genreImages[g].push(item.img);
       }
     });
     
@@ -183,7 +182,7 @@ export default function StatsView() {
       lifetimeStats,
       genreAverages
     };
-  }, [rankings, unrankedItems, getAllItems, settings]);
+  }, [entries, settings]);
 
   if (!stats) return null;
 
@@ -246,7 +245,7 @@ export default function StatsView() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
           {stats.lifetimeStats.genreLifetime.map(g => (
             <div key={g.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[86px] flex flex-col justify-between" style={{ borderColor: g.color }}>
-              {g.bgImage && <img loading="lazy" decoding="async" src={g.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              {g.bgImage && <Img k={g.bgImage} className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
               <div className="relative flex items-start justify-between gap-1">
                 <div className="min-w-0">
                   <p className="text-[13px] font-black truncate">{g.name}</p>
@@ -285,7 +284,7 @@ export default function StatsView() {
                 onClick={() => setSelectedHallItem(item)}
                 className="relative overflow-hidden bg-ink text-white text-left p-3 min-h-[120px] flex flex-col justify-between active:opacity-80"
               >
-                {item.imageBase64 && <img loading="lazy" decoding="async" src={item.imageBase64} alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />}
+                {item.img && <Img k={item.img} className="absolute inset-0 w-full h-full object-cover opacity-30" />}
                 <span className="relative">
                   <span className="block text-[9px] font-black tracking-[0.15em] text-sun">RATING</span>
                   <span className="font-fes text-[34px] leading-none text-sun">{item.rating}</span><span className="font-fes text-xs text-sun ml-0.5">PT</span>
@@ -362,7 +361,7 @@ export default function StatsView() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {stats.genreAverages.map((genre) => (
             <div key={genre.id} className="relative overflow-hidden bg-mist border-l-4 p-2.5 min-h-[96px] flex flex-col justify-between" style={{ borderColor: genre.color }}>
-              {genre.bgImage && <img loading="lazy" decoding="async" src={genre.bgImage} alt="" className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
+              {genre.bgImage && <Img k={genre.bgImage} className="absolute right-0 top-0 h-full w-1/3 object-cover opacity-25 grayscale" />}
               <div className="relative flex items-start justify-between gap-1">
                 <span className="font-fes text-[9px] text-muted">{genre.id.toUpperCase()}</span>
                 <span className="text-right text-[10px] font-bold text-muted leading-tight">COUNT<br /><span className="font-fes text-[12px] text-ink">{genre.count}</span>{GENRE_UNITS[genre.id] || '作品'}</span>
@@ -381,8 +380,8 @@ export default function StatsView() {
           <div className="absolute inset-0 bg-ink/60 cursor-pointer" onClick={() => setSelectedHallItem(null)} aria-hidden="true" />
           <div className="relative bg-white w-full max-w-lg overflow-hidden border-2 border-ink">
             <div className="relative aspect-video w-full bg-ink">
-              {selectedHallItem.imageBase64 ? (
-                <img loading="lazy" decoding="async" src={selectedHallItem.imageBase64} alt="" className="w-full h-full object-cover" />
+              {selectedHallItem.img ? (
+                <Img k={selectedHallItem.img} thumb={false} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center"><Trophy className="w-16 h-16 text-sun" /></div>
               )}

@@ -1,30 +1,37 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { Trophy, LayoutList, Settings, Archive, BarChart3 } from 'lucide-react';
+import { Trophy, Settings, Archive, BarChart3 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { tabOf, usePendingTab, resolveTab } from './tabs';
+import { useRoute, tabOf, navigate } from '../../lib/router';
 
 const TABS = [
-  { id: 'home',     icon: Trophy,      label: 'MASTERPIECE', path: '/' },
-  { id: 'all',      icon: Archive,     label: 'RECORDS', path: '/all' },
-  { id: 'stats',    icon: BarChart3,   label: 'STATS',   path: '/stats' },
-  { id: 'settings', icon: Settings,    label: 'SETTINGS',path: '/settings' },
+  { id: 'home',     icon: Trophy,    label: 'MASTERPIECE', path: '/' },
+  { id: 'all',      icon: Archive,   label: 'RECORDS',     path: '/all' },
+  { id: 'stats',    icon: BarChart3, label: 'STATS',       path: '/stats' },
+  { id: 'settings', icon: Settings,  label: 'SETTINGS',    path: '/settings' },
 ];
 
 export default function BottomTabBar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  // 押した瞬間にタブの色を切り替える（画面の切り替え完了を待たない）
-  const pending = usePendingTab(state => state.pending);
-  const setPending = usePendingTab(state => state.setPending);
-  const routeTab = tabOf(location.pathname);
-  const activeTab = resolveTab(pending, location.pathname);
+  const pathname = useRoute(s => s.pathname);
+  const activeTab = tabOf(pathname);
 
   // MASTERPIECE タブで最後に開いていた画面（フォルダ/ランキング）を覚えておく
   const lastHomePath = useRef('/');
   useEffect(() => {
-    if (routeTab === 'home') lastHomePath.current = location.pathname;
-  }, [routeTab, location.pathname]);
+    if (activeTab === 'home') lastHomePath.current = pathname;
+  }, [activeTab, pathname]);
+
+  const handleNavigate = (tab) => {
+    const current = window.location.pathname;
+    let path = tab.path;
+    if (tab.id === 'home') {
+      // 他のタブから戻る時は前に開いていた画面へ。MASTERPIECE で押した時はトップへ
+      path = tabOf(current) === 'home' ? '/' : lastHomePath.current;
+    }
+    if (path === current) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    navigate(path);
+  };
 
   // iPhone 標準のタブバーと同じく「指が触れた瞬間」に切り替える（指を離すまでの待ち時間をなくす）。
   // 同じタップで click も届くので、直前に pointerdown で処理したタブは click では処理しない。
@@ -38,20 +45,6 @@ export default function BottomTabBar() {
     const h = handledByPointer.current;
     if (h.id === tab.id && performance.now() - h.at < 1000) return;
     handleNavigate(tab);
-  };
-
-  const handleNavigate = (tab) => {
-    let path = tab.path;
-    if (tab.id === 'home') {
-      // 他のタブから戻る時は前に開いていた画面へ。MASTERPIECE で押した時はトップへ
-      path = routeTab === 'home' ? '/' : lastHomePath.current;
-    }
-    if (path === location.pathname) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-    setPending({ id: tab.id, from: location.pathname });
-    navigate(path);
   };
 
   return (

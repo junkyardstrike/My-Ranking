@@ -1,8 +1,8 @@
-import { useStore } from '../store/useStore';
-import { useState, useMemo, useEffect, useDeferredValue, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useStore, getAllItems } from '../store/useStore';
+import { useState, useMemo, useDeferredValue, useCallback } from 'react';
+import { useRoute, navigate, clearRouteState } from '../lib/router';
 import RankingItem from '../components/ranking/RankingItem';
-import { Search, ListFilter, SlidersHorizontal, LayoutGrid, List, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
+import { Search, ListFilter, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import ModeBanner from '../components/common/ModeBanner';
 import useIncrementalRender from '../hooks/useIncrementalRender';
@@ -17,131 +17,90 @@ const GENRE_FILTERS = [
   { id: 'music', label: '音楽', icon: Music },
 ];
 
+const timeOf = (iso) => { const t = new Date(iso || 0).getTime(); return isNaN(t) ? 0 : t; };
+
+// 並び順：レコード（未ランクイン）が先、その中でジャンルごと。レコードは新しい順、ランキングの作品は順位順
+const compareEntries = (a, b) => {
+  if (a.isSelected !== b.isSelected) return a.isSelected ? 1 : -1;
+  if (a.genre !== b.genre) return a.genre.localeCompare(b.genre);
+  if (!a.isSelected) {
+    if (b.time !== a.time) return b.time - a.time;
+    return (b.id || '').localeCompare(a.id || '');
+  }
+  return (a.currentRank || 999) - (b.currentRank || 999);
+};
+
 export default function AllRankingsView() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const routeState = useRoute(s => s.state);
   const isEditMode = useStore(state => state.isEditMode);
-  const updateItem = useStore(state => state.updateItem);
-  const moveItemToRank = useStore(state => state.moveItemToRank);
-  const rankings = useStore(state => state.rankings);
-  const unrankedItems = useStore(state => state.unrankedItems);
-  const getAllItems = useStore(state => state.getAllItems);
+  const isReorderMode = useStore(state => state.isReorderMode);
+  const entries = useStore(getAllItems);
+  const targetTitle = useStore(state => state.rankings.find(r => r.id === routeState?.targetRankingId)?.title);
   const bulkInsertItemsIntoRanking = useStore(state => state.bulkInsertItemsIntoRanking);
-  
+
   const [selectedIds, setSelectedIds] = useState([]);
-  const targetRankingId = location.state?.targetRankingId;
-  const isSelectMode = location.state?.mode === 'select';
+  const targetRankingId = routeState?.targetRankingId;
+  const isSelectMode = routeState?.mode === 'select';
   // この画面はタブを切り替えても保持されるため、追加先のランキングが変わったら選択をリセットする
   const [selectionTarget, setSelectionTarget] = useState(targetRankingId);
   if (selectionTarget !== targetRankingId) {
     setSelectionTarget(targetRankingId);
     setSelectedIds([]);
   }
-  
-  const allItems = useMemo(() => getAllItems(), [rankings, unrankedItems, getAllItems]);
-  
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState(location.state?.filterGenre || 'all');
-  const [hasChanges, setHasChanges] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const isReorderMode = useStore(state => state.isReorderMode);
+  const [selectedGenre, setSelectedGenre] = useState(routeState?.filterGenre || 'all');
+  // 並び替えモード中は自動で最小化、終わったら展開する
+  const [isCollapsed, setIsCollapsed] = useState(isReorderMode);
+  const [seenReorder, setSeenReorder] = useState(isReorderMode);
+  if (seenReorder !== isReorderMode) {
+    setSeenReorder(isReorderMode);
+    setIsCollapsed(isReorderMode);
+  }
 
-  // Auto-collapse when reorder mode is on, auto-expand when off
-  useEffect(() => {
-    if (isReorderMode) {
-      setIsCollapsed(true);
-    } else {
-      setIsCollapsed(false);
-    }
-  }, [isReorderMode]);
-  
+  // ボタンの見た目は押した瞬間に切り替え、一覧の作り直しはその直後に行う
+  const listGenre = useDeferredValue(selectedGenre);
+  const listQuery = useDeferredValue(searchQuery);
+
+  // 並べ替えはデータが変わった時だけ行う（検索・ジャンルの切り替えでは並べ直さない）
+  const sorted = useMemo(() => entries
+    .map(e => ({ id: e.id, isSelected: e.isSelected, genre: e.genre, currentRank: e.currentRank, time: timeOf(e.item.createdAt), title: (e.item.title || '').toLowerCase(), author: (e.item.author || '').toLowerCase() }))
+    .sort(compareEntries), [entries]);
+
   const filteredItems = useMemo(() => {
-    return allItems
-      .filter(item => {
-        const matchesSearch = 
-          (item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (item.author || '').toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesGenre = selectedGenre === 'all' || item.genre === selectedGenre;
-        return matchesSearch && matchesGenre;
-      })
-      .sort((a, b) => {
-        // 1. ABSOLUTE Priority: Unranked (isSelected: false) vs Ranked (isSelected: true)
-        // This is the most reliable flag from useStore.js
-        if (a.isSelected !== b.isSelected) {
-          return a.isSelected ? 1 : -1; // false comes BEFORE true
-        }
+    const q = listQuery.toLowerCase();
+    return sorted.filter(e => (listGenre === 'all' || e.genre === listGenre) && (!q || e.title.includes(q) || e.author.includes(q)));
+  }, [sorted, listGenre, listQuery]);
 
-        // 2. Group by genre within those groups
-        const aGenre = a.genre || 'other';
-        const bGenre = b.genre || 'other';
-        if (aGenre !== bGenre) {
-          return aGenre.localeCompare(bGenre);
-        }
-
-        // 3. Final sorting within group
-        if (!a.isSelected) {
-          // Unranked: Newest first (createdAt DESC)
-          const timeA = new Date(a.createdAt || 0).getTime();
-          const timeB = new Date(b.createdAt || 0).getTime();
-          if (timeB !== timeA) return timeB - timeA;
-          return (b.id || '').localeCompare(a.id || ''); // Fallback to ID for stable sort
-        } else {
-          // Ranked: By their position in the ranking (1, 2, 3...)
-          const rankA = a.currentRank || 999;
-          const rankB = b.currentRank || 999;
-          return rankA - rankB;
-        }
-      });
-  }, [allItems, searchQuery, selectedGenre]);
-
-  const isActuallyCollapsed = isCollapsed;
   // スイッチ類は即座に切り替え、作品カードの作り直しは後回しにする（押した直後に画面が固まらないように）
   const listEditMode = useDeferredValue(isEditMode);
   const listReorderMode = useDeferredValue(isReorderMode);
-  const listCollapsed = useDeferredValue(isActuallyCollapsed);
+  const listCollapsed = useDeferredValue(isCollapsed);
   // 編集用カードは重いので、最初に描く枚数を少なくする
   const [renderCount, sentinelRef] = useIncrementalRender(filteredItems.length, {
-    initial: listEditMode ? 6 : 12,
-    resetKey: `${searchQuery}|${selectedGenre}|${listEditMode}`,
+    initial: listEditMode ? 3 : listCollapsed ? 16 : 6,
+    resetKey: `${listQuery}|${listGenre}|${listEditMode}`,
   });
 
-  // 作品カードは memo 化しているので、渡す関数は固定する（毎回作り直すと全カードが描き直される）
-  const handleUpdate = useCallback((id, updates) => {
-    updateItem(id, updates);
-    setHasChanges(true);
-  }, [updateItem]);
-
-  const handleMove = useCallback((id, targetRank) => {
-    const item = allItems.find(i => i.id === id);
-    if (item && item.rankingId) {
-      moveItemToRank(item.rankingId, id, targetRank);
-      setHasChanges(true);
-    }
-  }, [allItems, moveItemToRank]);
-
   const handleToggleSelect = useCallback((id) => {
-    setSelectedIds(prev => 
-      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
-    );
+    setSelectedIds(prev => (prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]));
   }, []);
 
   const handleBulkAdd = () => {
     if (selectedIds.length === 0 || !targetRankingId) return;
-    const itemsToAdd = allItems.filter(i => selectedIds.includes(i.id) && !i.isSelected);
-    const inserted = bulkInsertItemsIntoRanking(targetRankingId, itemsToAdd);
-    if (inserted < itemsToAdd.length) {
-      alert(`ランキングの空き枠（100枠）が足りないため、${itemsToAdd.length - inserted}作品は追加されずにレコードに残りました。`);
+    const unranked = new Set(useStore.getState().unranked);
+    const idsToAdd = selectedIds.filter(id => unranked.has(id));
+    const inserted = bulkInsertItemsIntoRanking(targetRankingId, idsToAdd);
+    if (inserted < idsToAdd.length) {
+      alert(`ランキングの空き枠（100枠）が足りないため、${idsToAdd.length - inserted}作品は追加されずにレコードに残りました。`);
     }
     setSelectedIds([]);
-    window.history.replaceState({}, document.title); // Clear state
+    clearRouteState();
     navigate(`/ranking/${targetRankingId}`);
   };
 
-  const handleSave = () => {
-    setHasChanges(false);
-    // Zustand store persists to localStorage automatically in this app's current setup
-    alert('変更を保存しました。');
-  };
+  const isActuallyCollapsed = isCollapsed;
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
 
   return (
     <div className="pt-1 pb-32 grid grid-cols-[minmax(0,1fr)] gap-4">
@@ -169,7 +128,7 @@ export default function AllRankingsView() {
       {isSelectMode && targetRankingId && (
         <div className="bg-sun px-3 py-2.5 flex items-center justify-between gap-3">
           <p className="text-[12px] font-black text-ink min-w-0">
-            「{rankings.find(r => r.id === targetRankingId)?.title}」への作品を選出中…
+            「{targetTitle}」への作品を選出中…
           </p>
           <button type="button" onClick={() => navigate(`/ranking/${targetRankingId}`)} className="fes-btn flex-shrink-0">
             キャンセル
@@ -219,22 +178,16 @@ export default function AllRankingsView() {
       ) : (
         <div className={listCollapsed ? 'space-y-1.5' : 'space-y-3'}>
           {filteredItems.slice(0, renderCount).map((item) => (
-            <div 
-              key={item.id}
-            >
-              <RankingItem 
-                item={item} 
-                isEditMode={listEditMode} 
+            <div key={item.id}>
+              <RankingItem
+                id={item.id}
+                isEditMode={listEditMode}
                 isReorderMode={listReorderMode}
                 isCollapsed={listCollapsed}
-                onUpdate={handleUpdate}
-                onMove={handleMove}
-                genre={item.genre || 'music'}
-                rankingId={item.rankingId}
                 // 「レコードから追加」はレコード（未ランクイン）の作品のみ選択可能。
                 // 他ランキングの作品を選ぶと同じ作品が2つのランキングに重複してしまうため
                 isSelectable={isSelectMode && !item.isSelected}
-                isSelectedForBulk={selectedIds.includes(item.id)}
+                isSelectedForBulk={selectedSet.has(item.id)}
                 onToggleSelect={handleToggleSelect}
               />
             </div>

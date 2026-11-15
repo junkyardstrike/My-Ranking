@@ -7,15 +7,17 @@ import { normalizeGenre } from '../../utils/itemMetrics';
 const GENRE_LABELS = { anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽' };
 
 // ランキング外の作品を、ランキングと順位を選んでその場で追加するダイアログ
-export default function AddToRankingDialog({ item, onClose }) {
+export default function AddToRankingDialog({ id, onClose }) {
+  const item = useStore(state => state.items[id]);
   const rankings = useStore(state => state.rankings);
+  const items = useStore(state => state.items);
   const insertItemIntoRanking = useStore(state => state.insertItemIntoRanking);
   const itemGenre = normalizeGenre(item.genre);
 
   // 同じジャンルのランキングを先に並べる
   const options = useMemo(() => rankings
-    .map(r => ({ id: r.id, title: r.title, genre: normalizeGenre(r.genre), filled: (r.items || []).filter(i => i.title).length }))
-    .sort((a, b) => (b.genre === itemGenre) - (a.genre === itemGenre)), [rankings, itemGenre]);
+    .map(r => ({ id: r.id, title: r.title, genre: normalizeGenre(r.genre), filled: r.itemIds.filter(i => items[i]?.title).length }))
+    .sort((a, b) => (b.genre === itemGenre) - (a.genre === itemGenre)), [rankings, items, itemGenre]);
 
   const [selectedId, setSelectedId] = useState(options[0]?.id || '');
   const selected = options.find(o => o.id === selectedId);
@@ -27,7 +29,7 @@ export default function AddToRankingDialog({ item, onClose }) {
   const select = (id) => { setSelectedId(id); setRankInput(null); };
   const handleAdd = () => {
     if (!selected) return;
-    insertItemIntoRanking(selected.id, item, rank);
+    insertItemIntoRanking(selected.id, id, rank);
     onClose();
   };
 

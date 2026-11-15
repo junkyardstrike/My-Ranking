@@ -1,6 +1,6 @@
-import { startTransition, useEffect, useRef, useState } from 'react';
+import { startTransition, useCallback, useEffect, useRef, useState } from 'react';
 
-// 長いリストを最初から全部描画すると画面切り替えが重くなり、その間のタップが効かなくなる。
+// 長いリストを最初から全部描画すると画面切り替えが重くなる。
 // 最初は initial 件だけ描画し、末尾が近づいたら step 件ずつ追加で描画する。
 export default function useIncrementalRender(total, { initial = 12, step = 24, resetKey } = {}) {
   const [count, setCount] = useState(initial);
@@ -27,7 +27,7 @@ export default function useIncrementalRender(total, { initial = 12, step = 24, r
   }, [count, total, step]);
 
   // 指定件数までは確実に描画しておく（順位変更で移動した先へスクロールする時など）
-  const ensureRendered = (n) => setCount(c => Math.max(c, n));
+  const ensureRendered = useCallback((n) => setCount(c => Math.max(c, n)), []);
 
   return [Math.min(count, total), sentinelRef, ensureRendered];
 }

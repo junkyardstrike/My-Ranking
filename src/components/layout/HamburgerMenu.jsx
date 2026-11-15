@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useLocation, matchPath } from 'react-router-dom';
+import { useRoute, matchPath } from '../../lib/router';
 import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2 } from 'lucide-react';
-import { useStore } from '../../store/useStore';
+import { useStore, getAllItems } from '../../store/useStore';
 
 const GENRES = [
   { id: 'anime', label: 'アニメ', icon: Tv, color: 'bg-genre-anime', emoji: '📺' },
@@ -21,16 +21,16 @@ export default function HamburgerMenu() {
   const [recordTitle, setRecordTitle] = useState('');
   const [selectedRecordGenre, setSelectedRecordGenre] = useState('music');
   
-  const location = useLocation();
+  const pathname = useRoute(s => s.pathname);
   const rankings = useStore(state => state.rankings);
   // 作成先フォルダは「今表示している画面」から決める。
   // （以前は最後に開いたフォルダが残り、STATS画面などで作ると見えないフォルダに作られていた）
-  const folderMatch = matchPath('/folder/:folderId', location.pathname);
-  const rankingMatch = matchPath('/ranking/:rankingId', location.pathname);
+  const folderMatch = matchPath('/folder/:folderId', pathname);
+  const rankingMatch = matchPath('/ranking/:rankingId', pathname);
   const currentFolderId = folderMatch
-    ? folderMatch.params.folderId
+    ? folderMatch.folderId
     : rankingMatch
-      ? (rankings.find(r => r.id === rankingMatch.params.rankingId)?.folderId ?? null)
+      ? (rankings.find(r => r.id === rankingMatch.rankingId)?.folderId ?? null)
       : null;
   const addFolder = useStore(state => state.addFolder);
   const addRanking = useStore(state => state.addRanking);
@@ -55,10 +55,10 @@ export default function HamburgerMenu() {
   const handleRecordItem = () => {
     if (!recordTitle.trim()) return;
 
-    const allItems = useStore.getState().getAllItems();
+    const allItems = getAllItems(useStore.getState());
     const cleanTitle = recordTitle.trim();
     const duplicateItems = allItems.filter(item => 
-      item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim()
+      item.item.title?.toLowerCase().trim() === cleanTitle.toLowerCase().trim()
     );
 
     if (duplicateItems.length > 0) {
@@ -100,12 +100,12 @@ export default function HamburgerMenu() {
       {typeof document !== 'undefined' && createPortal(
         <>
           <div 
-            className={`fixed inset-0 bg-ink/60 cursor-pointer z-[100] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            className={`fixed inset-0 bg-ink/60 cursor-pointer z-[100] ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
             onClick={() => { setIsOpen(false); setShowGenreSelect(false); setShowRecordItem(false); }}
           />
 
           <div className={`fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${isOpen && !showGenreSelect && !showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform ${isOpen && !showGenreSelect && !showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="font-black text-2xl text-ink uppercase">コンテンツ追加</h2>
@@ -138,7 +138,7 @@ export default function HamburgerMenu() {
 
           {/* New Ranking Modal */}
           <div className={`fixed inset-0 z-[102] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${showGenreSelect ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform ${showGenreSelect ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-ink uppercase">ランキングを新規作成</h2>
@@ -165,7 +165,7 @@ export default function HamburgerMenu() {
 
           {/* Record Item Modal - Integrated Genre Selection */}
           <div className={`fixed inset-0 z-[102] flex items-center justify-center p-4 pointer-events-none`}>
-            <div className={`bg-white border-2 border-ink w-full max-w-sm transform transition-all duration-300 ${showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
+            <div className={`bg-white border-2 border-ink w-full max-w-sm transform ${showRecordItem ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'}`}>
               <div className="p-8 space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="font-black text-xl text-ink uppercase">レコードを作成</h2>

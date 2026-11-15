@@ -1,43 +1,31 @@
-import { useState, useEffect, useDeferredValue } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useDeferredValue } from 'react';
 import { useStore } from '../store/useStore';
+import { navigate } from '../lib/router';
 import RankingList from '../components/ranking/RankingList';
 import ModeBanner from '../components/common/ModeBanner';
 import { ArrowLeft, Maximize2, Minimize2, PlusSquare } from 'lucide-react';
 
-export default function RankingView() {
-  const { rankingId } = useParams();
-  const navigate = useNavigate();
-  const rankings = useStore(state => state.rankings);
+export default function RankingView({ rankingId }) {
+  const ranking = useStore(state => state.rankings.find(r => r.id === rankingId));
   const isEditMode = useStore(state => state.isEditMode);
-  const updateRankingItems = useStore(state => state.updateRankingItems);
-  
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const isReorderMode = useStore(state => state.isReorderMode);
 
-  // Auto-collapse when reorder mode is on, auto-expand when off
-  useEffect(() => {
-    if (isReorderMode) {
-      setIsCollapsed(true);
-    } else {
-      setIsCollapsed(false);
-    }
-  }, [isReorderMode]);
+  // 並び替えモード中は自動で最小化、終わったら展開する
+  const [isCollapsed, setIsCollapsed] = useState(isReorderMode);
+  const [seenReorder, setSeenReorder] = useState(isReorderMode);
+  if (seenReorder !== isReorderMode) {
+    setSeenReorder(isReorderMode);
+    setIsCollapsed(isReorderMode);
+  }
 
   // スイッチ類は即座に切り替え、作品カードの作り直しは後回しにする（押した直後に画面が固まらないように）
   const listEditMode = useDeferredValue(isEditMode);
   const listReorderMode = useDeferredValue(isReorderMode);
   const listCollapsed = useDeferredValue(isCollapsed);
 
-  const ranking = rankings.find(r => r.id === rankingId);
-
   if (!ranking) {
     return <div className="p-8 text-center text-muted font-bold">ランキングが見つかりません</div>;
   }
-
-  const handleSave = (newItems) => {
-    updateRankingItems(ranking.id, newItems);
-  };
 
   return (
     <div className="pt-1 grid grid-cols-[minmax(0,1fr)] gap-4">
@@ -74,12 +62,11 @@ export default function RankingView() {
 
       <ModeBanner isEditMode={isEditMode} isReorderMode={isReorderMode} editNote="※この画面での編集操作は即時保存されます。" />
 
-      <RankingList 
-        ranking={ranking} 
-        isCollapsed={listCollapsed} 
+      <RankingList
+        ranking={ranking}
+        isCollapsed={listCollapsed}
         isEditMode={listEditMode}
         isReorderMode={listReorderMode}
-        onSave={handleSave}
       />
     </div>
   );

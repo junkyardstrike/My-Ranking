@@ -1,13 +1,14 @@
 import { useState, useRef } from 'react';
-import { useStore } from '../store/useStore';
+import { useStore, getAllItems } from '../store/useStore';
 import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles, FileText } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import { getDefaultDuration } from '../utils/itemMetrics';
 
 export default function SettingsView() {
-  const rankings = useStore(state => state.rankings) || [];
-  const unrankedItems = useStore(state => state.unrankedItems) || [];
-  const folders = useStore(state => state.folders) || [];
+  const rankings = useStore(state => state.rankings);
+  const folderCount = useStore(state => state.folders.length);
+  const unrankedCount = useStore(state => state.unranked.length);
+  const items = useStore(state => state.items);
   const settings = useStore(state => state.settings) || {};
   const updateSettings = useStore(state => state.updateSettings);
   const importData = useStore(state => state.importData);
@@ -17,12 +18,12 @@ export default function SettingsView() {
   const [status, setStatus] = useState(null); // { type: 'success'|'error', message: string }
   const fileInputRef = useRef(null);
 
-  const totalItemsInRankings = rankings.reduce((acc, r) => acc + (r.items || []).filter(i => i.title).length, 0);
-  const totalItems = totalItemsInRankings + unrankedItems.length;
+  const totalItemsInRankings = rankings.reduce((acc, r) => acc + r.itemIds.filter(id => items[id]?.title).length, 0);
+  const totalItems = totalItemsInRankings + unrankedCount;
 
-  const handleExport = () => {
-    // 設定（デフォルト所要時間など）もバックアップに含める（復元時に設定が消えないように）
-    const data = { rankings, folders, unrankedItems, settings, exportedAt: new Date().toISOString() };
+  const handleExport = async () => {
+    // 以前と同じ形式（画像は base64）で書き出す。設定（デフォルト所要時間など）も含める
+    const data = await useStore.getState().exportData();
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -34,7 +35,7 @@ export default function SettingsView() {
   };
 
   const handleExportCSV = () => {
-    const allItems = useStore.getState().getAllItems();
+    const allItems = getAllItems(useStore.getState()).map(e => ({ ...e.item, genre: e.genre }));
     const headers = ['ID', 'Title', 'Author', 'Genre', 'Rating', 'Views', 'Created At', 'Memo'];
     const rows = allItems.map(i => [
       i.id,
@@ -149,7 +150,7 @@ export default function SettingsView() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {[
-          { label: 'フォルダ', value: folders.length },
+          { label: 'フォルダ', value: folderCount },
           { label: 'ランキング', value: rankings.length },
           { label: '作品数', value: totalItems },
         ].map(s => (
