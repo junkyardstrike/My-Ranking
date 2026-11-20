@@ -33,6 +33,14 @@ export const getUnitMultiplier = (item) => {
 
 export const getItemMetrics = (item, settings) => {
   const genre = normalizeGenre(item?.genre);
+  // YouTube（チャンネル）で年別の視聴時間を入力していれば、その合計を使う
+  if (genre === 'youtube') {
+    const log = Object.values(item?.watchLog || {});
+    if (log.length) {
+      const minutes = log.reduce((sum, m) => sum + Math.max(0, Number(m) || 0), 0);
+      return { genre, isGame: false, unitDuration: 0, hasOwnDuration: false, multiplier: 1, viewCount: 1, totalHours: minutes / 60, fromWatchLog: true };
+    }
+  }
   const isGame = genre === 'game';
   const ownDuration = Number(item?.duration);
   const hasOwnDuration = Number.isFinite(ownDuration) && ownDuration > 0;

@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useStore, getAllItems } from '../store/useStore';
 import Img from '../components/common/Img';
+import YoutubeYearly from '../components/stats/YoutubeYearly';
 import PixelWalker from '../components/common/PixelWalker';
 import { 
   PieChart as PieIcon, 
@@ -265,6 +266,9 @@ export default function StatsView() {
           ))}
         </div>
       </Section>
+
+      {/* YouTube の年別視聴時間（記録がある時だけ表示） */}
+      <YoutubeYearly entries={entries} />
 
       {/* 殿堂入り */}
       <Section en="HALL OF FAME" ja="殿堂入り">

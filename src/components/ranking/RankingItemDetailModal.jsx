@@ -7,6 +7,8 @@ import Img from '../common/Img';
 import { saveImage, deleteImages } from '../../lib/images';
 import { compressImageFile } from '../../utils/imageFile';
 import { confirmDuplicate, extractCounts } from '../../utils/genres';
+import WatchLogEditor from './WatchLogEditor';
+import { logEntries, fmtMinutes } from '../../utils/watchLog';
 import { fetchMetadata } from '../../services/metadataFetcher';
 import { readableTitleColor } from '../../utils/colors';
 import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
@@ -65,7 +67,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
   const propRankingId = null;
 
   const genre = normalizeGenre(rawGenre || rankingGenre);
-  const { unitDuration, hasOwnDuration, viewCount: finalViewCount, totalHours: totalLifetimeHours } = getItemMetrics({ ...draftItem, genre }, settings);
+  const { unitDuration, hasOwnDuration, viewCount: finalViewCount, totalHours: totalLifetimeHours, fromWatchLog } = getItemMetrics({ ...draftItem, genre }, settings);
   const baseDuration = hasOwnDuration ? Number(duration) : null;
 
   const handleUpdate = (updates) => {
@@ -382,6 +384,16 @@ export default function RankingItemDetailModal({ id, onClose }) {
                                </p>
                                <p className="text-sm font-black text-muted uppercase tracking-widest">時間 / HOURS</p>
                             </div>
+                            {fromWatchLog ? (
+                              <div className="w-full bg-mist px-4 py-3 rounded-sm border border-line grid gap-1">
+                                {logEntries(draftItem).map(([year, min]) => (
+                                  <div key={year} className="flex items-baseline justify-between gap-3 text-[13px] font-black">
+                                    <span className="font-fes text-accent">{year}年</span>
+                                    <span>{fmtMinutes(min)}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
                             <div className="w-full bg-mist px-4 py-3 rounded-sm border border-line flex items-center justify-center gap-3">
                                <span className="text-[11px] sm:text-[13px] font-black text-accent tracking-widest uppercase">
                                   {genre === 'game' ? (
@@ -393,12 +405,16 @@ export default function RankingItemDetailModal({ id, onClose }) {
                                   )}
                                </span>
                             </div>
+                            )}
                          </div>
                       </div>
 
                       {isGlobalEditMode && (
                          <div className="bg-mist p-6 rounded-sm border border-line space-y-6">
                             <p className="text-[10px] text-ink font-black uppercase tracking-widest flex items-center gap-2"><Clock size={14} /> 詳細設定 / DETAILS</p>
+                            {genre === 'youtube' ? (
+                              <WatchLogEditor item={draftItem} onChange={watchLog => handleUpdate({ watchLog })} />
+                            ) : (
                             <div className="grid grid-cols-2 gap-4">
                                <div className="space-y-2">
                                   <label className="text-[10px] font-black text-muted uppercase tracking-widest">
@@ -428,6 +444,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
                                  </div>
                                )}
                             </div>
+                            )}
                          </div>
                       )}
 

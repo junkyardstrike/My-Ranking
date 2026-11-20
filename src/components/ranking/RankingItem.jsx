@@ -3,6 +3,8 @@ import { useStore, getPlacement, getAllItems } from '../../store/useStore';
 import { GripVertical, Image as ImageIcon, Calendar, Crown, User, Type, Eye, Loader, Sparkles, Tv, BookOpen, History, Plus, Minus, Star, Clock, CheckCircle2 } from 'lucide-react';
 import { openDetail, openAdd } from './dialogs';
 import ScoreRating from './ScoreRating';
+import WatchLogEditor from './WatchLogEditor';
+import { logEntries, fmtHoursShort } from '../../utils/watchLog';
 import Img from '../common/Img';
 import { fetchMetadata } from '../../services/metadataFetcher';
 import { getItemMetrics, normalizeGenre, toDateInputValue, fromDateInputValue } from '../../utils/itemMetrics';
@@ -226,6 +228,9 @@ function EditCard({ item, genre, rank, rankingId, dragHandleProps, onMove, badge
         </div>
       </div>
 
+      {genre === 'youtube' ? (
+        <WatchLogEditor item={item} onChange={watchLog => update(id, { watchLog })} />
+      ) : (
       <div className="grid grid-cols-2 gap-2" onClick={stop}>
         <label className="bg-mist px-2.5 min-h-[44px] border border-line flex items-center gap-2 cursor-text">
           <Clock className="w-4 h-4 text-muted flex-shrink-0" />
@@ -247,6 +252,7 @@ function EditCard({ item, genre, rank, rankingId, dragHandleProps, onMove, badge
           </label>
         )}
       </div>
+      )}
 
       <div className="flex items-center gap-2 bg-mist px-2.5 py-1.5 border border-line" onClick={stop}>
         <Type className="w-4 h-4 text-muted flex-shrink-0" />
@@ -283,6 +289,7 @@ function ViewCard({ item, genre, rank, collapsed, dragHandleProps, isSelectable,
   const dateObj = createdAt ? new Date(createdAt) : null;
   const formattedDate = (dateObj && !isNaN(dateObj.getTime())) ? dateObj.toLocaleDateString('ja-JP').split('/').slice(1).join('/') : '';
   const lastRank = previousRanks.length > 0 ? previousRanks[previousRanks.length - 1].rank : null;
+  const latestLog = genre === 'youtube' ? logEntries(item)[0] : null;
 
   return (
     <div className="flex gap-3">
@@ -343,6 +350,9 @@ function ViewCard({ item, genre, rank, collapsed, dragHandleProps, isSelectable,
               <span className="fes-tag font-fes">{rating}pt</span>
               {totalHours > 0 && (
                 <span className="fes-tag"><Clock className="w-2.5 h-2.5 mr-0.5" />{totalHours.toFixed(1)}h</span>
+              )}
+              {genre === 'youtube' && latestLog && (
+                <span className="fes-tag font-fes">{latestLog[0]}:{fmtHoursShort(latestLog[1])}</span>
               )}
               {formattedDate && (
                 <span className="fes-tag"><Calendar className="w-2.5 h-2.5 mr-0.5" />{formattedDate}</span>
