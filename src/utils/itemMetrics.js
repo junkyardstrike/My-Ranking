@@ -4,6 +4,7 @@
 export const DEFAULT_DURATIONS = {
   movie: 120,
   music: 3,
+  youtube: 15,
   anime: 20,
   drama: 40,
   manga: 30,

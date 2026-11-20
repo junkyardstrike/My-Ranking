@@ -4,7 +4,7 @@ import { X, Minus, Plus, ListPlus } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { normalizeGenre } from '../../utils/itemMetrics';
 
-const GENRE_LABELS = { anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽' };
+const GENRE_LABELS = { anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽', youtube: 'YouTube' };
 
 // ランキング外の作品を、ランキングと順位を選んでその場で追加するダイアログ
 export default function AddToRankingDialog({ id, onClose }) {

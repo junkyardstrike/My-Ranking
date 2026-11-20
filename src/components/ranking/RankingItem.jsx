@@ -109,7 +109,7 @@ function EditCard({ item, genre, rank, rankingId, dragHandleProps, onMove, badge
       </div>
 
       {/* ジャンル（横幅いっぱいに並べて1つあたりのタップ範囲を広く取る） */}
-      <div className="grid grid-cols-6 gap-1" role="group" aria-label="ジャンル" onClick={stop}>
+      <div className="grid grid-cols-4 sm:grid-cols-7 gap-1" role="group" aria-label="ジャンル" onClick={stop}>
         {GENRES.map(g => (
           <button
             key={g.id}

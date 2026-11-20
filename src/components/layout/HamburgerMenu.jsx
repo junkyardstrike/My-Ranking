@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useRoute, matchPath } from '../../lib/router';
-import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2 } from 'lucide-react';
+import { Plus, X, FolderPlus, FileText, Sparkles, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, SquarePlay } from 'lucide-react';
 import { useStore, getAllItems } from '../../store/useStore';
 
 const GENRES = [
@@ -11,6 +11,7 @@ const GENRES = [
   { id: 'drama', label: 'ドラマ', icon: Clapperboard, color: 'bg-genre-drama', emoji: '🎭' },
   { id: 'game', label: 'ゲーム', icon: Gamepad2, color: 'bg-genre-game', emoji: '🎮' },
   { id: 'music', label: '音楽', icon: Music, color: 'bg-genre-music', emoji: '🎵' },
+  { id: 'youtube', label: 'YouTube', icon: SquarePlay, color: 'bg-genre-youtube', emoji: '▶️' },
 ];
 
 export default function HamburgerMenu() {
@@ -63,7 +64,7 @@ export default function HamburgerMenu() {
 
     if (duplicateItems.length > 0) {
       const GENRE_LABELS = {
-        anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽'
+        anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽', youtube: 'YouTube'
       };
       
       const duplicateDetails = duplicateItems.map(item => {

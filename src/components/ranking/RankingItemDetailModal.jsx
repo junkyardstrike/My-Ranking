@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
+import { X, Calendar, User, Eye, Crown, AlignLeft, Edit3, Star, CheckCircle2, ListPlus, ArrowRight, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, SquarePlay, Copy, History, MoreHorizontal, Type, Sparkles, Loader, Trash2, Plus, Minus, Clock } from 'lucide-react';
 import ScoreRating from './ScoreRating';
 import { useStore, getPlacement, getAllItems } from '../../store/useStore';
 import Img from '../common/Img';
@@ -18,6 +18,7 @@ const GENRE_MAP = {
   drama: { label: 'ドラマ', icon: Clapperboard },
   game: { label: 'ゲーム', icon: Gamepad2 },
   music: { label: '音楽', icon: Music },
+  youtube: { label: 'YouTube', icon: SquarePlay },
 };
 
 export default function RankingItemDetailModal({ id, onClose }) {

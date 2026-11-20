@@ -1,4 +1,4 @@
-import { Tv, BookOpen, Film, Clapperboard, Music, Gamepad2 } from 'lucide-react';
+import { Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, SquarePlay } from 'lucide-react';
 
 export const GENRES = [
   { id: 'anime', label: 'アニメ', icon: Tv },
@@ -7,14 +7,15 @@ export const GENRES = [
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
   { id: 'game', label: 'ゲーム', icon: Gamepad2 },
   { id: 'music', label: '音楽', icon: Music },
+  { id: 'youtube', label: 'YouTube', icon: SquarePlay },
 ];
 
 export const GENRE_COLORS = {
-  anime: '#0a7a6f', manga: '#c13b7a', movie: '#ff5a3c', drama: '#e2a400', game: '#3c5bd6', music: '#7a8a89', other: '#7a8a89',
+  anime: '#0a7a6f', manga: '#c13b7a', movie: '#ff5a3c', drama: '#e2a400', game: '#3c5bd6', music: '#7a8a89', youtube: '#e0262b', other: '#7a8a89',
 };
 
 export const GENRE_LABELS = {
-  anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽',
+  anime: 'アニメ', manga: '漫画', movie: '映画', drama: 'ドラマ', game: 'ゲーム', music: '音楽', youtube: 'YouTube',
 };
 
 // 同じ名前の作品が既にあれば確認する。登録してよければ true

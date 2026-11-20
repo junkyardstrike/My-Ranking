@@ -32,6 +32,7 @@ const GENRE_LABELS = {
   drama: 'ドラマ',
   game: 'ゲーム',
   music: '音楽',
+  youtube: 'YouTube',
   other: 'その他'
 };
 
@@ -42,6 +43,7 @@ const GENRE_UNITS = {
   drama: '作品',
   game: '作品',
   music: '曲',
+  youtube: '本',
   other: '作品'
 };
 
@@ -52,6 +54,7 @@ const GENRE_COLORS = {
   drama: '#e2a400',
   game: '#3c5bd6',
   music: '#7a8a89',
+  youtube: '#e0262b',
   other: '#7a8a89'
 };
 
@@ -236,7 +239,7 @@ export default function StatsView() {
         </div>
         <div className="text-[10px] text-muted font-bold leading-relaxed">
           <p>※（所要時間×話数／巻）×閲覧回数を合算した概算値です。</p>
-          <p>アニメ{dd('anime')}分／ドラマ{dd('drama')}分／映画{dd('movie')}分／漫画{dd('manga')}分／音楽{dd('music')}分（ゲームは{dd('game') > 0 ? `${dd('game')}時間` : '時間入力'}）</p>
+          <p>アニメ{dd('anime')}分／ドラマ{dd('drama')}分／映画{dd('movie')}分／漫画{dd('manga')}分／音楽{dd('music')}分／YouTube{dd('youtube')}分（ゲームは{dd('game') > 0 ? `${dd('game')}時間` : '時間入力'}）</p>
         </div>
       </Section>
 

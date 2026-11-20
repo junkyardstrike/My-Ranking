@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useStore, getAllItems } from '../store/useStore';
-import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, Sparkles, FileText } from 'lucide-react';
+import { Settings, Trash2, Download, Upload, Info, Palette, CheckCircle2, AlertCircle, Clock, Settings2, Activity, Tv, Film, Music, BookOpen, Clapperboard, Gamepad2, SquarePlay, Sparkles, FileText } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import { getDefaultDuration } from '../utils/itemMetrics';
 
@@ -291,6 +291,7 @@ export default function SettingsView() {
                   {[
                     { id: 'movie', label: '映画', icon: Film, unit: '作品' },
                     { id: 'music', label: '音楽', icon: Music, unit: '曲' },
+                    { id: 'youtube', label: 'YouTube', icon: SquarePlay, unit: '本' },
                     { id: 'anime', label: 'アニメ', icon: Tv, unit: '話' },
                     { id: 'drama', label: 'ドラマ', icon: Clapperboard, unit: '話' },
                     { id: 'manga', label: '漫画', icon: BookOpen, unit: '巻' },

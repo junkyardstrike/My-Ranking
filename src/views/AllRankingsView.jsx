@@ -2,7 +2,7 @@ import { useStore, getAllItems } from '../store/useStore';
 import { useState, useMemo, useDeferredValue, useCallback } from 'react';
 import { useRoute, navigate, clearRouteState } from '../lib/router';
 import RankingItem from '../components/ranking/RankingItem';
-import { Search, ListFilter, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
+import { Search, ListFilter, Tv, BookOpen, Film, Clapperboard, Music, Gamepad2, SquarePlay, Hash, Save, Maximize2, Minimize2 } from 'lucide-react';
 import Counter from '../components/common/Counter';
 import ModeBanner from '../components/common/ModeBanner';
 import useIncrementalRender from '../hooks/useIncrementalRender';
@@ -15,6 +15,7 @@ const GENRE_FILTERS = [
   { id: 'drama', label: 'ドラマ', icon: Clapperboard },
   { id: 'game', label: 'ゲーム', icon: Gamepad2 },
   { id: 'music', label: '音楽', icon: Music },
+  { id: 'youtube', label: 'YouTube', icon: SquarePlay },
 ];
 
 const timeOf = (iso) => { const t = new Date(iso || 0).getTime(); return isNaN(t) ? 0 : t; };

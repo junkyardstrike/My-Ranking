@@ -30,6 +30,7 @@ export default {
           drama: '#e2a400',
           game: '#3c5bd6',
           music: '#7a8a89',
+          youtube: '#e0262b',
         },
       },
       fontFamily: {
