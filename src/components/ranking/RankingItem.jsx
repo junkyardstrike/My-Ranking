@@ -66,7 +66,11 @@ function EditCard({ item, genre, rank, rankingId, dragHandleProps, onMove, badge
       return;
     }
     const updates = { title: localTitle };
-    if (!createdAt) updates.createdAt = new Date().toISOString();
+    // ランキングの空き枠に作品名を入れた（＝作品を作った）時は、閲覧回数を 1 から始める
+    if (!createdAt) {
+      updates.createdAt = new Date().toISOString();
+      if (!views) updates.views = 1;
+    }
     update(id, updates);
   };
   const handleAuthorSync = () => { if (localAuthor !== author) update(id, { author: localAuthor }); };

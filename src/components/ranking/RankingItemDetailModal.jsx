@@ -188,7 +188,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain custom-scrollbar pb-[env(safe-area-inset-bottom)]">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden overscroll-contain custom-scrollbar pb-[env(safe-area-inset-bottom)]">
           <div className="relative w-full aspect-video sm:aspect-[24/10] bg-black group z-0">
              {img ? <Img k={img} thumb={false} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Film size={60} className="opacity-10" /></div>}
              {isGlobalEditMode && (
@@ -233,7 +233,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
                     </button>
                  </div>
                ) : (
-                 <h2 className="text-4xl sm:text-6xl font-black text-ink leading-none flex items-center flex-wrap gap-y-4 pr-6" style={{ color: readableTitleColor(color) }}>
+                 <h2 className="text-4xl sm:text-6xl font-black text-ink leading-none flex items-center flex-wrap gap-y-4 pr-6 min-w-0 [overflow-wrap:anywhere]" style={{ color: readableTitleColor(color) }}>
                    {title || 'Untitled'}
                  </h2>
                )}
@@ -253,7 +253,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
                     )}
 
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="bg-mist border border-line rounded-sm p-1.5 flex items-center gap-1">
+                      <div className="bg-mist border border-line rounded-sm p-1.5 flex flex-wrap items-center gap-1 max-w-full">
                          {isGlobalEditMode ? (
                             Object.entries(GENRE_MAP).map(([key, info]) => {
                                const Icon = info.icon;
@@ -298,7 +298,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
                        <div className="w-12 h-12 rounded-sm bg-mist flex items-center justify-center border border-accent">
                          <User size={24} className="text-accent" />
                        </div>
-                       <div className="flex flex-col">
+                       <div className="flex flex-col min-w-0 [overflow-wrap:anywhere]">
                          <span className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-1">作者 / AUTHOR</span>
                          {isGlobalEditMode ? (
                             <input 
@@ -319,7 +319,7 @@ export default function RankingItemDetailModal({ id, onClose }) {
                        <div className="w-12 h-12 rounded-sm bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                          <Calendar size={24} className="text-emerald-400" />
                        </div>
-                       <div className="flex flex-col">
+                       <div className="flex flex-col min-w-0 [overflow-wrap:anywhere]">
                          <span className="text-[9px] font-black text-muted uppercase tracking-[0.3em] mb-1">作成日 / DATE</span>
                          {isGlobalEditMode ? (
                             <input type="date" value={toDateInputValue(createdAt)} onChange={e => handleUpdate({ createdAt: fromDateInputValue(e.target.value) })} className="bg-mist border border-line rounded px-4 py-2 text-xs font-black text-ink outline-none focus:border-accent" />

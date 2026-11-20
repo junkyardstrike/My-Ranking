@@ -357,7 +357,7 @@ export const useStore = create((set, get) => ({
   recordItem: (data) => {
     const item = {
       id: generateId(), title: data.title || '', author: data.author || '', memo: data.memo || '', rating: data.rating || 0, img: null,
-      createdAt: new Date().toISOString(), views: 0, fontSize: 20, color: '#ffffff', isBold: false, previousRanks: [], genre: data.genre || 'other',
+      createdAt: new Date().toISOString(), views: 1, fontSize: 20, color: '#ffffff', isBold: false, previousRanks: [], genre: data.genre || 'other',
     };
     commit(set, { items: { ...get().items, [item.id]: item }, unranked: [item.id, ...get().unranked] }, { items: [item.id], kv: ['unranked'] });
     return item;
